@@ -33,3 +33,5 @@ Samplers is a framework to build mobile citizen science applications.
   ```
 
 5. paso 5
+
+## SamplersConfig.json format and options
