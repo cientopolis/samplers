@@ -42,3 +42,6 @@ captures/
 
 #idea files
 .idea/
+
+# Readme file
+README.md
