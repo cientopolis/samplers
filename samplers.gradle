@@ -1,0 +1,126 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'org.codehaus.groovy:gradle-groovy-android-plugin:0.3.6'
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'groovyx.grooid.groovy-android'
+
+import groovy.json.JsonSlurper
+
+
+def app_path = "app/src/main/java/com/example/xavier/pruebas/"
+def package_name = "com.example.xavier.pruebas"
+
+
+task samplers_config {
+    println "SAMPLERS START ---------------------"
+
+    def inputFile = new File("SamplersConfig.json")
+    def json = new JsonSlurper().parseText(inputFile.text)
+
+    // APLICATION
+    println json.aplication.title
+    println json.aplication.wellcomeMessage
+
+    // WORKFLOW
+    println json.workflow.actionLabel
+    println json.workflow.tasks
+
+    json.workflow.tasks.each { task ->
+        println "   " + task.type
+        print "   " + task.title
+        println " : " + task.options
+
+        task.options.each { option ->
+            println "       " + option
+        }
+    }
+
+    // MAIN ACTIVITY
+    File main_activity_file = new File(app_path+"MyMainSamplersActivity.java")
+    main_activity_file.text = "package "+package_name+"; \n"
+    main_activity_file.text += "import android.os.Bundle; \n"
+    main_activity_file.text += "import android.content.Intent; \n"
+    main_activity_file.text += "import android.view.View; \n"
+    main_activity_file.text += "import org.cientopolis.samplers.ui.SamplersMainActivity; \n"
+
+    main_activity_file.text += "public class MyMainSamplersActivity extends SamplersMainActivity { \n"
+    // onCreate
+    main_activity_file.text += "@Override \n"
+    main_activity_file.text += "protected void onCreate(Bundle savedInstanceState) { \n"
+    main_activity_file.text += "    super.onCreate(savedInstanceState); \n"
+
+    main_activity_file.text += "    lb_main_titulo.setText(\""+ json.aplication.wellcomeMessage +"\"); \n"
+
+    main_activity_file.text += "} \n"
+
+    // tomarMuestra
+    main_activity_file.text += "@Override \n"
+    main_activity_file.text += "protected void startTakeSampleActivity(){ \n"
+    main_activity_file.text += "    Intent intent = new Intent(this, MyTakeSampleActivity.class); \n"
+    main_activity_file.text += "    startActivity(intent); \n"
+    main_activity_file.text += "} \n"
+
+
+    main_activity_file.text += "} \n"
+
+    // TAKE SAMPLE ACTIVITY
+    File take_sample_activity_file = new File(app_path+"MyTakeSampleActivity.java")
+    take_sample_activity_file.text = "package "+package_name+"; \n"
+    take_sample_activity_file.text += "import android.os.Bundle; \n"
+    take_sample_activity_file.text += "import org.cientopolis.samplers.ui.take_sample.TakeSampleActivity; \n"
+    take_sample_activity_file.text += "import org.cientopolis.samplers.modelo.*; \n"
+    take_sample_activity_file.text += "import java.util.ArrayList; \n"
+
+    take_sample_activity_file.text += "public class MyTakeSampleActivity extends TakeSampleActivity { \n"
+    take_sample_activity_file.text += "@Override \n"
+    take_sample_activity_file.text += "protected void onCreate(Bundle savedInstanceState) { \n"
+    take_sample_activity_file.text += "    super.onCreate(savedInstanceState); \n"
+
+    take_sample_activity_file.text += "    workflow = new Workflow(); \n"
+
+    json.workflow.tasks.each { task ->
+        switch (task.type) {
+            case "MultipleSelect":
+                // Opciones para el multi select
+                // TODO renombrar la variable optionsToSelect xq si hay dos Task del mismo tipo va a dar error de variable repetida
+                take_sample_activity_file.text += "    ArrayList<MultipleSelectOption> optionsToSelect = new ArrayList<MultipleSelectOption>(); \n"
+
+                task.options.each { option ->
+                    take_sample_activity_file.text += "    optionsToSelect.add(new MultipleSelectOption(\""+option+"\", false)); \n"
+
+                    // TODO poner en el archivo de Strings y tomarlo de ahi
+                    //optionsToSelect.add(new MultipleSelectOption(getResources().getString(R.string.step_3_param_1), false));
+                }
+                take_sample_activity_file.text += "    workflow.addStep(new MultipleSelectStep(optionsToSelect)); \n"
+                break
+
+            case "SelectOne":
+                // Opciones para el select one
+                // TODO renombrar la variable optionsToSelect xq si hay dos Task del mismo tipo va a dar error de variable repetida
+                take_sample_activity_file.text += "    ArrayList<MultipleSelectOption> optionsToSelect2 = new ArrayList<MultipleSelectOption>(); \n"
+
+                task.options.each { option ->
+                    take_sample_activity_file.text += "    optionsToSelect2.add(new MultipleSelectOption(\""+option+"\",false)); \n"
+
+                    // TODO poner en el archivo de Strings y tomarlo de ahi
+                    // optionsToSelect2.add(new MultipleSelectOption(getResources().getString(R.string.step_5_param_1),false));
+                }
+
+                take_sample_activity_file.text += "    workflow.addStep(new SelectOneStep(optionsToSelect2)); \n"
+                break
+        }
+    }
+
+    take_sample_activity_file.text += "} \n"
+    take_sample_activity_file.text += "} \n"
+
+
+    println "SAMPLERS END -----------------------"
+}

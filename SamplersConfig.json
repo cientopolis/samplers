@@ -1,0 +1,22 @@
+{
+  "aplication": {
+	"title" : "Aplicacion de Prueba",
+	"wellcomeMessage" : "Bienvenido a la Aplicacion de Prueba!"
+  } ,
+  "workflow": {
+	"actionLabel" : "Tomar Muestra",
+    "tasks": [
+		{
+		"type": "MultipleSelect",
+		"title" : "Marque lo que ve",
+		"options" : ["Arboles","Basura","Arroyo","Animales"]
+		},
+		
+		{
+		"type": "SelectOne",
+		"title" : "Seleccione uno solo",
+		"options" : ["Opcion 1","Opcion 2","Opcion 3","Opcion 4"]
+		}
+    ]
+  }
+}
