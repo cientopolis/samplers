@@ -5,7 +5,7 @@ Samplers is a framework to build mobile citizen science applications.
 
 ## Steps to use the framework
 1. Create a JSON file named **SamplersConfig.json**
-  - Format and options available are [here](./README.md#samplersconfigjson-format-and-options)
+  - Format and options available are [here](./#samplersconfigjson-format-and-options)
   - To check for sintax problems you can use [this JSON validador](https://jsonformatter.curiousconcept.com/)
   - You can use [this example **SamplersConfig.json** file](https://github.com/cientopolis/samplers)
   
