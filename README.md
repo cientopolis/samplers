@@ -48,7 +48,7 @@ Samplers is a framework to build mobile citizen science applications.
       
   
 - Example:
-  ```javascript
+  ```json
   {
     "aplication": {
     "title" : "Samplers Hello World App",
