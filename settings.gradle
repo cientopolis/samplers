@@ -1,1 +1,1 @@
-include ':samplersFramework'
+include ':samplersFramework', ':sampleApplication'

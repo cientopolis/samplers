@@ -1,5 +1,6 @@
 package org.cientopolis.samplers.ui.take_sample;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -107,7 +108,7 @@ public class MultipleSelectFragment extends Fragment {
         @Override
         public void onClick(View v) {
             if (mListener == null) {
-                Log.e("NextClickListener", "mListener NULL !!!");
+                Log.e("NextClickListener", "OMG! mListener NULL !!!");
             }
             else {
                 mListener.onOptionsSelected(mParamOptionsToShow);
@@ -116,11 +117,14 @@ public class MultipleSelectFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(Activity context) {
+        Log.e("MultipleSelectFragment", "entra onAttach");
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
+            Log.e("MultipleSelectFragment", "mListener asignado");
         } else {
+            Log.e("MultipleSelectFragment", "mListener NO asignado");
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }

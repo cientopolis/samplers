@@ -53,8 +53,8 @@ public class SamplersMainActivity extends Activity {
     }
 
     protected void startTakeSampleActivity() {
-        Intent intent = new Intent(this, TakeSampleActivity.class);
-        startActivity(intent);
+        //Intent intent = new Intent(this, TakeSampleActivity.class);
+        //startActivity(intent);
     }
 
 }
