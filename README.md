@@ -7,17 +7,17 @@ Samplers is a framework to build mobile citizen science applications.
 1. Create a JSON file named **SamplersConfig.json**
   - Format and options available are [here](#samplersconfigjson-format-and-options)
   - To check for sintax problems you can use [this JSON validador](https://jsonformatter.curiousconcept.com/)
-  - You can use [this example **SamplersConfig.json** file](https://github.com/cientopolis/samplers)
+  - You can use [this example **SamplersConfig.json** file](https://github.com/cientopolis/samplers/blob/master/SamplersConfig.json)
   
 2. Create a new empty Android Studio project (without any activity)
   - The Minimun SDK Version must be **API17: Android 4.2 (Jelly Bean)** 
 
-3. Import the framework library
+3. Import the framework library into your Android Studio project
   - Download the latest **samplersFramework.arr** from [here](https://github.com/cientopolis/samplers)
   - Import the library into the project: **File -> New -> New Module -> Import .JAR/.AAR Package**
 
 4. Add the necessary dependencies
-  - On yuour application build.gradle
+  - On your application build.gradle
   ```gradle
   dependencies {
     // here the standards dependencies created by Android Studio
