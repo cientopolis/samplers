@@ -7,18 +7,18 @@ import java.util.ArrayList;
  */
 public class MultipleSelectStep extends Step {
 
-    private ArrayList<MultipleSelectOption> optionsToSelect;
+    private ArrayList<SelectOption> optionsToSelect;
 
     public MultipleSelectStep() {
-        optionsToSelect = new ArrayList<MultipleSelectOption>();
+        optionsToSelect = new ArrayList<SelectOption>();
     }
 
-    public MultipleSelectStep(ArrayList<MultipleSelectOption> anOptionsToSelect) {
+    public MultipleSelectStep(ArrayList<SelectOption> anOptionsToSelect) {
 
         optionsToSelect = anOptionsToSelect;
     }
 
-    public ArrayList<MultipleSelectOption> getOptionsToSelect() {
+    public ArrayList<SelectOption> getOptionsToSelect() {
         return optionsToSelect;
     }
 }

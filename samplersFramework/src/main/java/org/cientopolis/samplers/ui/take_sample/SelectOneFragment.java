@@ -1,7 +1,6 @@
 package org.cientopolis.samplers.ui.take_sample;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -14,14 +13,16 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import org.cientopolis.samplers.R;
-import org.cientopolis.samplers.modelo.MultipleSelectOption;
+import org.cientopolis.samplers.modelo.SelectOneStep;
+import org.cientopolis.samplers.modelo.SelectOption;
+import org.cientopolis.samplers.modelo.SelectOneStepResult;
 
 import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link SelectOneFragment.OnFragmentInteractionListener} interface
+ * {@link OnOneOptionSelectedListener} interface
  * to handle interaction events.
  * Use the {@link SelectOneFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -30,8 +31,9 @@ public class SelectOneFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param_options";
 
-    private ArrayList<MultipleSelectOption> mParamOptionsToShow;
-    private OnFragmentInteractionListener mListener;
+    private ArrayList<SelectOption> mParamOptionsToShow;
+    private SelectOneStep step;
+    private OnOneOptionSelectedListener mListener;
 
     public SelectOneFragment() {
         // Required empty public constructor
@@ -44,8 +46,7 @@ public class SelectOneFragment extends Fragment {
      * @param mParamOptionsToShow A list of options to show as checkboxes.
      * @return A new instance of fragment MultipleSelectFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static SelectOneFragment newInstance(ArrayList<MultipleSelectOption> mParamOptionsToShow) {
+    public static SelectOneFragment newInstance(ArrayList<SelectOption> mParamOptionsToShow) {
         SelectOneFragment fragment = new SelectOneFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_PARAM1, mParamOptionsToShow);
@@ -57,7 +58,7 @@ public class SelectOneFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParamOptionsToShow = (ArrayList<MultipleSelectOption>) getArguments().getSerializable(ARG_PARAM1);
+            mParamOptionsToShow = (ArrayList<SelectOption>) getArguments().getSerializable(ARG_PARAM1);
         }
     }
 
@@ -67,13 +68,14 @@ public class SelectOneFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_select_one, container, false);
 
+        // The radio group that will contain the radio buttons with the options to select
         RadioGroup radio_group = (RadioGroup) rootView.findViewById(R.id.radio_group);
-
 
         RadioButton radioButton;
 
         if (radio_group != null) {
-            for (MultipleSelectOption option : mParamOptionsToShow) {
+            // create a radio button for each option to show/select
+            for (SelectOption option : mParamOptionsToShow) {
                 radioButton = new RadioButton(getActivity());
                 radioButton.setText(option.getTextToShow());
                 radioButton.setTextSize(20);
@@ -85,10 +87,10 @@ public class SelectOneFragment extends Fragment {
             }
         }
         else
-            Log.e("MultipleSelectFragment", "NULLLLLL");
+            Log.e("SelectOneFragment", "RadioGroup NULL");
 
-        Button bt_siguiente = (Button) rootView.findViewById(R.id.bt_next);
-        bt_siguiente.setOnClickListener(new NextClickListener());
+        Button bt_next = (Button) rootView.findViewById(R.id.bt_next);
+        bt_next.setOnClickListener(new NextClickListener());
 
         return rootView;
     }
@@ -97,7 +99,7 @@ public class SelectOneFragment extends Fragment {
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            MultipleSelectOption option = (MultipleSelectOption) buttonView.getTag();
+            SelectOption option = (SelectOption) buttonView.getTag();
             option.setSelected(isChecked);
         }
     }
@@ -111,19 +113,29 @@ public class SelectOneFragment extends Fragment {
                 Log.e("NextClickListener", "mListener NULL !!!");
             }
             else {
-                mListener.onOneOptionSelected(mParamOptionsToShow);
+                if (validate()) {
+                    SelectOneStepResult selectOneStepResult = new SelectOneStepResult(step.getSelectedOption());
+
+                    mListener.onOneOptionSelected(selectOneStepResult);
+                }
+
             }
         }
+    }
+
+    private boolean validate() {
+        // TODO validate that the user select one option
+        return true;
     }
 
     @Override
     public void onAttach(Activity context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
+        if (context instanceof OnOneOptionSelectedListener) {
+            mListener = (OnOneOptionSelectedListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnOneOptionSelectedListener");
         }
     }
 
@@ -143,7 +155,7 @@ public class SelectOneFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
-        void onOneOptionSelected(ArrayList<MultipleSelectOption> aOptionsToShow);
+    public interface OnOneOptionSelectedListener {
+        void onOneOptionSelected(SelectOneStepResult selectOneStepResult);
     }
 }

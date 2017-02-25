@@ -1,7 +1,6 @@
 package org.cientopolis.samplers.ui.take_sample;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -14,7 +13,7 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 
 import org.cientopolis.samplers.R;
-import org.cientopolis.samplers.modelo.MultipleSelectOption;
+import org.cientopolis.samplers.modelo.SelectOption;
 
 import java.util.ArrayList;
 
@@ -30,7 +29,7 @@ public class MultipleSelectFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param_options";
 
-    private ArrayList<MultipleSelectOption> mParamOptionsToShow;
+    private ArrayList<SelectOption> mParamOptionsToShow;
     private OnFragmentInteractionListener mListener;
 
     public MultipleSelectFragment() {
@@ -45,7 +44,7 @@ public class MultipleSelectFragment extends Fragment {
      * @return A new instance of fragment MultipleSelectFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MultipleSelectFragment newInstance(ArrayList<MultipleSelectOption> mParamOptionsToShow) {
+    public static MultipleSelectFragment newInstance(ArrayList<SelectOption> mParamOptionsToShow) {
         MultipleSelectFragment fragment = new MultipleSelectFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_PARAM1, mParamOptionsToShow);
@@ -57,7 +56,7 @@ public class MultipleSelectFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParamOptionsToShow = (ArrayList<MultipleSelectOption>) getArguments().getSerializable(ARG_PARAM1);
+            mParamOptionsToShow = (ArrayList<SelectOption>) getArguments().getSerializable(ARG_PARAM1);
         }
     }
 
@@ -73,7 +72,7 @@ public class MultipleSelectFragment extends Fragment {
         CheckBox checkBox;
 
         if (vertical_layout != null) {
-            for (MultipleSelectOption option : mParamOptionsToShow) {
+            for (SelectOption option : mParamOptionsToShow) {
                 checkBox = new CheckBox(getActivity());
                 checkBox.setText(option.getTextToShow());
                 checkBox.setTextSize(20);
@@ -97,7 +96,7 @@ public class MultipleSelectFragment extends Fragment {
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            MultipleSelectOption option = (MultipleSelectOption) buttonView.getTag();
+            SelectOption option = (SelectOption) buttonView.getTag();
             option.setSelected(isChecked);
         }
     }
@@ -126,7 +125,7 @@ public class MultipleSelectFragment extends Fragment {
         } else {
             Log.e("MultipleSelectFragment", "mListener NO asignado");
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement OnOneOptionSelectedListener");
         }
     }
 
@@ -147,6 +146,6 @@ public class MultipleSelectFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onOptionsSelected(ArrayList<MultipleSelectOption> aOptionsToShow);
+        void onOptionsSelected(ArrayList<SelectOption> aOptionsToShow);
     }
 }
