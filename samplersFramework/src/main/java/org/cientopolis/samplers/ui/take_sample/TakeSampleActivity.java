@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.modelo.InformationStep;
+import org.cientopolis.samplers.modelo.MultipleSelectStepResult;
 import org.cientopolis.samplers.modelo.SelectOption;
 import org.cientopolis.samplers.modelo.MultipleSelectStep;
 import org.cientopolis.samplers.modelo.PhotoStep;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class TakeSampleActivity extends Activity implements InformationFragment.OnInformationFragmentInteractionListener,
-                                                                     PhotoCameraFragment.OnPhotoCameraFragmentInteractionListener,
+                                                                     //PhotoCameraFragment.OnPhotoCameraFragmentInteractionListener,
                                                                      MultipleSelectFragment.OnFragmentInteractionListener,
                                                                      SelectOneFragment.OnOneOptionSelectedListener {
 
@@ -80,15 +81,15 @@ public class TakeSampleActivity extends Activity implements InformationFragment.
                 if (InformationStep.class.isInstance(step)) {
                     InformationStep informationStep = (InformationStep) step;
                     fragment = InformationFragment.newInstance(informationStep.getTextToShow());
-                } else if (PhotoStep.class.isInstance(step)) {
+                }/* else if (PhotoStep.class.isInstance(step)) {
                     PhotoStep photoStep = (PhotoStep) step;
                     fragment = PhotoCameraFragment.newInstance(photoStep.getInstructionsToShow(), photoStep.getPathToImageToOverlay());
-                } else if (MultipleSelectStep.class.isInstance(step)) {
+                }*/ else if (MultipleSelectStep.class.isInstance(step)) {
                     MultipleSelectStep multipleSelectStep = (MultipleSelectStep) step;
-                    fragment = MultipleSelectFragment.newInstance(multipleSelectStep.getOptionsToSelect());
+                    fragment = MultipleSelectFragment.newInstance(multipleSelectStep);
                 } else if (SelectOneStep.class.isInstance(step)) {
                     SelectOneStep selectOneStep = (SelectOneStep) step;
-                    fragment = SelectOneFragment.newInstance(selectOneStep.getOptionsToSelect());
+                    fragment = SelectOneFragment.newInstance(selectOneStep);
                 } else
                     fragment = null;
 
@@ -137,7 +138,7 @@ public class TakeSampleActivity extends Activity implements InformationFragment.
         return super.onKeyDown(keyCode, event);
     }
 
-    @Override
+   // @Override
     public void  onPhotoCameraFragmentInteraction(Uri uri) {
         Log.e("TakeSampleActivity", "onPhotoCameraFragmentInteraction");
         nextStep();
@@ -155,11 +156,13 @@ public class TakeSampleActivity extends Activity implements InformationFragment.
 
 
     @Override
-    public void onOptionsSelected(ArrayList<SelectOption> aOptionsToShow) {
+    public void onOptionsSelected(MultipleSelectStepResult multipleSelectStepResult) {
+
+/*
         for (SelectOption option : aOptionsToShow) {
             Log.e("onOptionsSelected", option.getTextToShow() +":" + String.valueOf(option.isSelected()));
         }
-
+*/
         nextStep();
     }
 

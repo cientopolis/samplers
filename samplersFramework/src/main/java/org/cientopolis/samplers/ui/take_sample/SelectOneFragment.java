@@ -31,7 +31,7 @@ public class SelectOneFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param_options";
 
-    private ArrayList<SelectOption> mParamOptionsToShow;
+
     private SelectOneStep step;
     private OnOneOptionSelectedListener mListener;
 
@@ -43,13 +43,13 @@ public class SelectOneFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param mParamOptionsToShow A list of options to show as checkboxes.
+     * @param step A SelectOneStep wich has the list of options to show as checkboxes.
      * @return A new instance of fragment MultipleSelectFragment.
      */
-    public static SelectOneFragment newInstance(ArrayList<SelectOption> mParamOptionsToShow) {
+    public static SelectOneFragment newInstance(SelectOneStep step) {
         SelectOneFragment fragment = new SelectOneFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_PARAM1, mParamOptionsToShow);
+        args.putSerializable(ARG_PARAM1, step);
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,7 +58,7 @@ public class SelectOneFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParamOptionsToShow = (ArrayList<SelectOption>) getArguments().getSerializable(ARG_PARAM1);
+            this.step = (SelectOneStep) getArguments().getSerializable(ARG_PARAM1);
         }
     }
 
@@ -75,7 +75,7 @@ public class SelectOneFragment extends Fragment {
 
         if (radio_group != null) {
             // create a radio button for each option to show/select
-            for (SelectOption option : mParamOptionsToShow) {
+            for (SelectOption option : step.getOptionsToSelect()) {
                 radioButton = new RadioButton(getActivity());
                 radioButton.setText(option.getTextToShow());
                 radioButton.setTextSize(20);
@@ -130,6 +130,7 @@ public class SelectOneFragment extends Fragment {
 
     @Override
     public void onAttach(Activity context) {
+        Log.e("SelectOneFragment", "entra onAttach");
         super.onAttach(context);
         if (context instanceof OnOneOptionSelectedListener) {
             mListener = (OnOneOptionSelectedListener) context;

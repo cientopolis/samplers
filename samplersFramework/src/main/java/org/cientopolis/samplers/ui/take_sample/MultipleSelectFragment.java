@@ -13,6 +13,9 @@ import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 
 import org.cientopolis.samplers.R;
+import org.cientopolis.samplers.modelo.MultipleSelectStep;
+import org.cientopolis.samplers.modelo.MultipleSelectStepResult;
+import org.cientopolis.samplers.modelo.SelectOneStepResult;
 import org.cientopolis.samplers.modelo.SelectOption;
 
 import java.util.ArrayList;
@@ -29,7 +32,8 @@ public class MultipleSelectFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param_options";
 
-    private ArrayList<SelectOption> mParamOptionsToShow;
+    //private ArrayList<SelectOption> mParamOptionsToShow;
+    private MultipleSelectStep step;
     private OnFragmentInteractionListener mListener;
 
     public MultipleSelectFragment() {
@@ -40,14 +44,14 @@ public class MultipleSelectFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param mParamOptionsToShow A list of options to show as checkboxes.
+     * @param step A MultipleSelectStep wich has the options to show as checkboxes.
      * @return A new instance of fragment MultipleSelectFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static MultipleSelectFragment newInstance(ArrayList<SelectOption> mParamOptionsToShow) {
+    public static MultipleSelectFragment newInstance(MultipleSelectStep step) {
         MultipleSelectFragment fragment = new MultipleSelectFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_PARAM1, mParamOptionsToShow);
+        args.putSerializable(ARG_PARAM1, step);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,7 +60,7 @@ public class MultipleSelectFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParamOptionsToShow = (ArrayList<SelectOption>) getArguments().getSerializable(ARG_PARAM1);
+            this.step = (MultipleSelectStep) getArguments().getSerializable(ARG_PARAM1);
         }
     }
 
@@ -72,7 +76,7 @@ public class MultipleSelectFragment extends Fragment {
         CheckBox checkBox;
 
         if (vertical_layout != null) {
-            for (SelectOption option : mParamOptionsToShow) {
+            for (SelectOption option : step.getOptionsToSelect()) {
                 checkBox = new CheckBox(getActivity());
                 checkBox.setText(option.getTextToShow());
                 checkBox.setTextSize(20);
@@ -110,7 +114,8 @@ public class MultipleSelectFragment extends Fragment {
                 Log.e("NextClickListener", "OMG! mListener NULL !!!");
             }
             else {
-                mListener.onOptionsSelected(mParamOptionsToShow);
+                MultipleSelectStepResult multipleSelectStepResult = new MultipleSelectStepResult();
+                mListener.onOptionsSelected(multipleSelectStepResult);
             }
         }
     }
@@ -146,6 +151,6 @@ public class MultipleSelectFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        void onOptionsSelected(ArrayList<SelectOption> aOptionsToShow);
+        void onOptionsSelected(MultipleSelectStepResult multipleSelectStepResult);
     }
 }
