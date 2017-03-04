@@ -5,6 +5,8 @@ import android.os.Bundle;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import org.cientopolis.samplers.model.InformationStep;
 import org.cientopolis.samplers.model.SelectOption;
 import org.cientopolis.samplers.model.MultipleSelectStep;
 import org.cientopolis.samplers.model.SelectOneStep;
@@ -33,7 +35,7 @@ public class MyTakeSampleActivity extends TakeSampleActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //workflow = new Workflow();
+        workflow.addStep(new InformationStep("Informacion de prueba para ver que se muestra bien"));
 
         ArrayList<SelectOption> optionsToSelect = new ArrayList<SelectOption>();
         optionsToSelect.add(new SelectOption(1,"Arboles", false));
@@ -48,8 +50,8 @@ public class MyTakeSampleActivity extends TakeSampleActivity {
         optionsToSelect2.add(new SelectOption(3,"Opcion 3",false));
         optionsToSelect2.add(new SelectOption(4,"Opcion 4",false));
         workflow.addStep(new SelectOneStep(optionsToSelect2));
-
 /*
+
         File fileSample;
         try {
             File fileDir = new File(getApplicationContext().getFilesDir(),"samples");

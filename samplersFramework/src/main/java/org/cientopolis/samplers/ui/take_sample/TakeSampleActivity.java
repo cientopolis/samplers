@@ -62,20 +62,16 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
 
                 // TODO Apply a pattern
                 if (InformationStep.class.isInstance(step)) {
-                    InformationStep informationStep = (InformationStep) step;
-                    fragment = InformationFragment.newInstance(informationStep);
+                    fragment = StepFragment.newInstance(InformationFragment.class, step);
                 }/* else if (PhotoStep.class.isInstance(step)) {
                     PhotoStep photoStep = (PhotoStep) step;
                     fragment = PhotoCameraFragment.newInstance(photoStep.getInstructionsToShow(), photoStep.getPathToImageToOverlay());
                 }*/ else if (MultipleSelectStep.class.isInstance(step)) {
-                    MultipleSelectStep multipleSelectStep = (MultipleSelectStep) step;
-                    fragment = MultipleSelectFragment.newInstance(multipleSelectStep);
+                    fragment = StepFragment.newInstance(MultipleSelectFragment.class, step);
                 } else if (SelectOneStep.class.isInstance(step)) {
-                    SelectOneStep selectOneStep = (SelectOneStep) step;
-                    fragment = SelectOneFragment.newInstance(selectOneStep);
+                    fragment = StepFragment.newInstance(SelectOneFragment.class, step);
                 } else
                     fragment = null;
-
 
                 if (fragment != null) {
 
