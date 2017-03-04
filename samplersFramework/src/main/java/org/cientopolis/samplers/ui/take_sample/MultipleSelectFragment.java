@@ -11,30 +11,24 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-
 import org.cientopolis.samplers.R;
-import org.cientopolis.samplers.modelo.MultipleSelectStep;
-import org.cientopolis.samplers.modelo.MultipleSelectStepResult;
-import org.cientopolis.samplers.modelo.SelectOneStepResult;
-import org.cientopolis.samplers.modelo.SelectOption;
-
-import java.util.ArrayList;
+import org.cientopolis.samplers.model.MultipleSelectStep;
+import org.cientopolis.samplers.model.MultipleSelectStepResult;
+import org.cientopolis.samplers.model.SelectOption;
+import org.cientopolis.samplers.model.StepResult;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MultipleSelectFragment.OnFragmentInteractionListener} interface
+ * {@link StepFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link MultipleSelectFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MultipleSelectFragment extends Fragment {
+public class MultipleSelectFragment extends StepFragment {
 
-    private static final String ARG_PARAM1 = "param_options";
+    private static final String ARG_STEP = "param_step";
 
-    //private ArrayList<SelectOption> mParamOptionsToShow;
-    private MultipleSelectStep step;
-    private OnFragmentInteractionListener mListener;
 
     public MultipleSelectFragment() {
         // Required empty public constructor
@@ -51,19 +45,12 @@ public class MultipleSelectFragment extends Fragment {
     public static MultipleSelectFragment newInstance(MultipleSelectStep step) {
         MultipleSelectFragment fragment = new MultipleSelectFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_PARAM1, step);
+        args.putSerializable(ARG_STEP, step);
         fragment.setArguments(args);
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            this.step = (MultipleSelectStep) getArguments().getSerializable(ARG_PARAM1);
-        }
-    }
-
+/*
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -76,7 +63,7 @@ public class MultipleSelectFragment extends Fragment {
         CheckBox checkBox;
 
         if (vertical_layout != null) {
-            for (SelectOption option : step.getOptionsToSelect()) {
+            for (SelectOption option : getStep().getOptionsToSelect()) {
                 checkBox = new CheckBox(getActivity());
                 checkBox.setText(option.getTextToShow());
                 checkBox.setTextSize(20);
@@ -90,11 +77,42 @@ public class MultipleSelectFragment extends Fragment {
         else
             Log.e("MultipleSelectFragment", "NULLLLLL");
 
-        Button bt_siguiente = (Button) rootView.findViewById(R.id.bt_next);
-        bt_siguiente.setOnClickListener(new NextClickListener());
-
         return rootView;
     }
+*/
+
+    @Override
+    protected int getLayoutResource() {
+        return R.layout.fragment_multiple_select;
+    }
+
+    @Override
+    protected void onCreateViewStepFragment(View rootView, Bundle savedInstanceState) {
+        LinearLayout vertical_layout = (LinearLayout) rootView.findViewById(R.id.vertical_layout);
+
+        CheckBox checkBox;
+
+        if (vertical_layout != null) {
+            for (SelectOption option : getStep().getOptionsToSelect()) {
+                checkBox = new CheckBox(getActivity());
+                checkBox.setText(option.getTextToShow());
+                checkBox.setTextSize(20);
+                checkBox.setTag(option);
+                checkBox.setChecked(option.isSelected());
+                checkBox.setOnCheckedChangeListener(new MyOnCheckedChangeListener());
+
+                vertical_layout.addView(checkBox);
+            }
+        }
+        else
+            Log.e("MultipleSelectFragment", "NULLLLLL");
+    }
+
+    private MultipleSelectStep getStep() {
+
+        return (MultipleSelectStep) step;
+    }
+
 
     private class MyOnCheckedChangeListener implements CompoundButton.OnCheckedChangeListener {
 
@@ -106,51 +124,11 @@ public class MultipleSelectFragment extends Fragment {
     }
 
 
-    private class NextClickListener implements View.OnClickListener{
-
-        @Override
-        public void onClick(View v) {
-            if (mListener == null) {
-                Log.e("NextClickListener", "OMG! mListener NULL !!!");
-            }
-            else {
-                MultipleSelectStepResult multipleSelectStepResult = new MultipleSelectStepResult();
-                mListener.onOptionsSelected(multipleSelectStepResult);
-            }
-        }
-    }
 
     @Override
-    public void onAttach(Activity context) {
-        Log.e("MultipleSelectFragment", "entra onAttach");
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-            Log.e("MultipleSelectFragment", "mListener asignado");
-        } else {
-            Log.e("MultipleSelectFragment", "mListener NO asignado");
-            throw new RuntimeException(context.toString()
-                    + " must implement OnOneOptionSelectedListener");
-        }
+    protected StepResult getStepResult() {
+        return new MultipleSelectStepResult(getStep().getSelectedOptions());
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        void onOptionsSelected(MultipleSelectStepResult multipleSelectStepResult);
-    }
 }

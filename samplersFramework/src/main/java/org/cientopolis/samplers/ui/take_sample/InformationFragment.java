@@ -10,23 +10,23 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import org.cientopolis.samplers.R;
+import org.cientopolis.samplers.model.InformationStep;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link InformationFragment.OnInformationFragmentInteractionListener} interface
+ * {@link StepFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link InformationFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class InformationFragment extends Fragment {
 
-    private static final String ARG_TEXT_TO_SHOW = "texto";
+    private static final String ARG_STEP = "texto";
 
-    private String mParamTextToShow;
-
-    private OnInformationFragmentInteractionListener mListener;
+    private InformationStep step;
+    private StepFragmentInteractionListener mListener;
 
     public InformationFragment() {
         // Required empty public constructor
@@ -36,14 +36,14 @@ public class InformationFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param aText Text to show.
+     * @param step a InformationStep with the Text to show.
      * @return A new instance of fragment InformationFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static InformationFragment newInstance(String aText) {
+    public static InformationFragment newInstance(InformationStep step) {
         InformationFragment fragment = new InformationFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_TEXT_TO_SHOW, aText);
+        args.putSerializable(ARG_STEP, step);
         fragment.setArguments(args);
         return fragment;
     }
@@ -52,7 +52,7 @@ public class InformationFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParamTextToShow = getArguments().getString(ARG_TEXT_TO_SHOW);
+            this.step = (InformationStep) getArguments().getSerializable(ARG_STEP);
         }
     }
 
@@ -63,7 +63,7 @@ public class InformationFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_information, container, false);
 
         TextView textView = (TextView) rootView.findViewById(R.id.lb_text_to_show);
-        textView.setText(mParamTextToShow);
+        textView.setText(step.getTextToShow());
 
         Button bt_siguiente = (Button) rootView.findViewById(R.id.bt_next);
         bt_siguiente.setOnClickListener(new NextClickListener());
@@ -76,11 +76,11 @@ public class InformationFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        if (activity instanceof OnInformationFragmentInteractionListener) {
-            mListener = (OnInformationFragmentInteractionListener) activity;
+        if (activity instanceof StepFragmentInteractionListener) {
+            mListener = (StepFragmentInteractionListener) activity;
         } else {
             throw new RuntimeException(activity.toString()
-                    + " must implement OnInformationFragmentInteractionListener");
+                    + " must implement StepFragmentInteractionListener");
         }
     }
 
@@ -98,23 +98,11 @@ public class InformationFragment extends Fragment {
                 Log.e("NextClickListener", "mListener NULL !!!");
             }
             else {
-                mListener.onInformationReaded();
+                // // TODO: 01/03/2017 see stepResult of InformationStep
+                mListener.onStepFinished(null);
             }
         }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnInformationFragmentInteractionListener {
 
-        void onInformationReaded();
-    }
 }

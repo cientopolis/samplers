@@ -5,36 +5,25 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
-
 import org.cientopolis.samplers.R;
-import org.cientopolis.samplers.modelo.InformationStep;
-import org.cientopolis.samplers.modelo.MultipleSelectStepResult;
-import org.cientopolis.samplers.modelo.SelectOption;
-import org.cientopolis.samplers.modelo.MultipleSelectStep;
-import org.cientopolis.samplers.modelo.PhotoStep;
-import org.cientopolis.samplers.modelo.Sample;
-import org.cientopolis.samplers.modelo.SelectOneStep;
-import org.cientopolis.samplers.modelo.SelectOneStepResult;
-import org.cientopolis.samplers.modelo.Step;
-import org.cientopolis.samplers.modelo.Workflow;
+import org.cientopolis.samplers.model.InformationStep;
+import org.cientopolis.samplers.model.MultipleSelectStep;
+import org.cientopolis.samplers.model.Sample;
+import org.cientopolis.samplers.model.SelectOneStep;
+import org.cientopolis.samplers.model.Step;
+import org.cientopolis.samplers.model.StepResult;
+import org.cientopolis.samplers.model.Workflow;
 import org.cientopolis.samplers.persistence.DAO_Factory;
 
 
-import java.util.ArrayList;
 import java.util.Date;
 
-public class TakeSampleActivity extends Activity implements InformationFragment.OnInformationFragmentInteractionListener,
-                                                                     //PhotoCameraFragment.OnPhotoCameraFragmentInteractionListener,
-                                                                     MultipleSelectFragment.OnFragmentInteractionListener,
-                                                                     SelectOneFragment.OnOneOptionSelectedListener {
+public class TakeSampleActivity extends Activity implements StepFragmentInteractionListener {
 
 
     private TextView lb_nro_paso;
@@ -46,17 +35,12 @@ public class TakeSampleActivity extends Activity implements InformationFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_take_sample);
 
+        workflow = new Workflow();
         sample = new Sample();
 
         getFragmentManager().addOnBackStackChangedListener(new MyOnBackStackChangedListener());
 
         lb_nro_paso = (TextView) findViewById(R.id.lb_nro_paso);
-        Gson gson = new Gson();
-
-        for (Sample aSample : DAO_Factory.getSampleDAO(getApplicationContext()).list()) {
-
-            Toast.makeText(this, gson.toJson(aSample), Toast.LENGTH_LONG).show();
-        }
     }
 
     @Override
@@ -72,7 +56,6 @@ public class TakeSampleActivity extends Activity implements InformationFragment.
             if (!workflow.isEnd()) {
                 Step step = workflow.nextStep();
 
-
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
                 Fragment fragment;
@@ -80,7 +63,7 @@ public class TakeSampleActivity extends Activity implements InformationFragment.
                 // TODO Apply a pattern
                 if (InformationStep.class.isInstance(step)) {
                     InformationStep informationStep = (InformationStep) step;
-                    fragment = InformationFragment.newInstance(informationStep.getTextToShow());
+                    fragment = InformationFragment.newInstance(informationStep);
                 }/* else if (PhotoStep.class.isInstance(step)) {
                     PhotoStep photoStep = (PhotoStep) step;
                     fragment = PhotoCameraFragment.newInstance(photoStep.getInstructionsToShow(), photoStep.getPathToImageToOverlay());
@@ -138,38 +121,14 @@ public class TakeSampleActivity extends Activity implements InformationFragment.
         return super.onKeyDown(keyCode, event);
     }
 
-   // @Override
-    public void  onPhotoCameraFragmentInteraction(Uri uri) {
-        Log.e("TakeSampleActivity", "onPhotoCameraFragmentInteraction");
-        nextStep();
-    }
-
-    @Override
-    public void onInformationReaded() {
-        Log.e("TakeSampleActivity", "onInformationReaded");
-        nextStep();
-    }
-
     private void refreshStepStateOnScreen() {
         lb_nro_paso.setText(String.valueOf(workflow.getStepPosition()+1) + "/" + String.valueOf(workflow.getStepCount()));
     }
 
 
     @Override
-    public void onOptionsSelected(MultipleSelectStepResult multipleSelectStepResult) {
-
-/*
-        for (SelectOption option : aOptionsToShow) {
-            Log.e("onOptionsSelected", option.getTextToShow() +":" + String.valueOf(option.isSelected()));
-        }
-*/
-        nextStep();
-    }
-
-    @Override
-    public void onOneOptionSelected(SelectOneStepResult selectOneStepResult) {
-        // add the step result to the sample
-        sample.addStepResult(selectOneStepResult);
+    public void onStepFinished(StepResult stepResult) {
+        sample.addStepResult(stepResult);
 
         // go to the next step
         nextStep();

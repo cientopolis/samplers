@@ -1,4 +1,4 @@
-package org.cientopolis.samplers.modelo;
+package org.cientopolis.samplers.model;
 
 import java.util.ArrayList;
 
@@ -20,5 +20,17 @@ public class MultipleSelectStep extends Step {
 
     public ArrayList<SelectOption> getOptionsToSelect() {
         return optionsToSelect;
+    }
+
+    public ArrayList<SelectOption> getSelectedOptions() {
+
+        ArrayList<SelectOption> options = new ArrayList<>();
+
+        for (SelectOption option: optionsToSelect) {
+            if (option.isSelected()) {
+                options.add(option);
+            }
+        }
+        return options;
     }
 }

@@ -5,10 +5,10 @@ import android.os.Bundle;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import org.cientopolis.samplers.modelo.SelectOption;
-import org.cientopolis.samplers.modelo.MultipleSelectStep;
-import org.cientopolis.samplers.modelo.SelectOneStep;
-import org.cientopolis.samplers.modelo.Workflow;
+import org.cientopolis.samplers.model.SelectOption;
+import org.cientopolis.samplers.model.MultipleSelectStep;
+import org.cientopolis.samplers.model.SelectOneStep;
+import org.cientopolis.samplers.model.Workflow;
 import org.cientopolis.samplers.ui.take_sample.TakeSampleActivity;
 
 import okhttp3.MediaType;
@@ -33,7 +33,7 @@ public class MyTakeSampleActivity extends TakeSampleActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        workflow = new Workflow();
+        //workflow = new Workflow();
 
         ArrayList<SelectOption> optionsToSelect = new ArrayList<SelectOption>();
         optionsToSelect.add(new SelectOption(1,"Arboles", false));
@@ -49,7 +49,7 @@ public class MyTakeSampleActivity extends TakeSampleActivity {
         optionsToSelect2.add(new SelectOption(4,"Opcion 4",false));
         workflow.addStep(new SelectOneStep(optionsToSelect2));
 
-
+/*
         File fileSample;
         try {
             File fileDir = new File(getApplicationContext().getFilesDir(),"samples");
@@ -66,7 +66,7 @@ public class MyTakeSampleActivity extends TakeSampleActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     private String post(String url, File json) throws IOException {

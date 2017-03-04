@@ -1,4 +1,4 @@
-package org.cientopolis.samplers.modelo;
+package org.cientopolis.samplers.model;
 
 import java.util.ArrayList;
 
@@ -23,6 +23,15 @@ public class SelectOneStep extends Step {
     }
 
     public SelectOption getSelectedOption() {
-        return null;
+        SelectOption selectedOption = null;
+
+        for (SelectOption option: optionsToSelect) {
+            if (option.isSelected()) {
+                selectedOption = option;
+                break;
+            }
+        }
+
+        return selectedOption;
     }
 }

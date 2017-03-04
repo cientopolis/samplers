@@ -1,4 +1,4 @@
-package org.cientopolis.samplers.modelo;
+package org.cientopolis.samplers.model;
 
 import java.io.Serializable;
 

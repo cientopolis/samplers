@@ -3,7 +3,7 @@ package org.cientopolis.samplers.persistence;
 import android.content.Context;
 import android.util.Log;
 import com.google.gson.Gson;
-import org.cientopolis.samplers.modelo.Sample;
+import org.cientopolis.samplers.model.Sample;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -15,14 +15,14 @@ import java.util.List;
  * Created by Xavier on 09/02/2017.
  */
 
-public class SampleDAOImpl implements DAO<Sample, Long> {
+class SampleDAOImpl implements DAO<Sample, Long> {
 
     private static final  String SAMPLES_DIR = "samples";
     private static final  String SAMPLES_PREFIX = "sample_";
 
     private Context myContext;
 
-    public SampleDAOImpl(Context context) {
+    SampleDAOImpl(Context context) {
         myContext = context;
     }
 
@@ -34,8 +34,7 @@ public class SampleDAOImpl implements DAO<Sample, Long> {
 
         if (!fileDir.exists()) {
             if (!fileDir.mkdirs()) {
-                Exception e = new Exception("cant create samples dir");
-                throw e;
+                throw new Exception("cant create samples dir");
             }
         }
 
@@ -99,6 +98,7 @@ public class SampleDAOImpl implements DAO<Sample, Long> {
 
     @Override
     public boolean delete(Sample object) {
+        // // TODO: 28/02/2017 implement delete sample
         return false;
     }
 

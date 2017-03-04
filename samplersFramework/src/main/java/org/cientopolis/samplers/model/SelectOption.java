@@ -1,4 +1,4 @@
-package org.cientopolis.samplers.modelo;
+package org.cientopolis.samplers.model;
 
 import java.io.Serializable;
 
@@ -10,6 +10,7 @@ public class SelectOption implements Serializable {
 
     private int id;
     private String textToShow;
+    // // TODO: 02/03/2017 this shouldn't be here, its a view state
     private boolean selected;
 
     public SelectOption(int aId, String aTextToShow, boolean aSelected) {

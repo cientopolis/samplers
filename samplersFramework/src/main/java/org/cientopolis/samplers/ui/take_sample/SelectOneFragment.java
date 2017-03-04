@@ -11,29 +11,28 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import org.cientopolis.samplers.R;
-import org.cientopolis.samplers.modelo.SelectOneStep;
-import org.cientopolis.samplers.modelo.SelectOption;
-import org.cientopolis.samplers.modelo.SelectOneStepResult;
-
-import java.util.ArrayList;
+import org.cientopolis.samplers.model.SelectOneStep;
+import org.cientopolis.samplers.model.SelectOption;
+import org.cientopolis.samplers.model.SelectOneStepResult;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link OnOneOptionSelectedListener} interface
+ * {@link StepFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the {@link SelectOneFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
 public class SelectOneFragment extends Fragment {
 
-    private static final String ARG_PARAM1 = "param_options";
+    private static final String ARG_STEP = "param_options";
 
 
     private SelectOneStep step;
-    private OnOneOptionSelectedListener mListener;
+    private StepFragmentInteractionListener mListener;
 
     public SelectOneFragment() {
         // Required empty public constructor
@@ -49,7 +48,7 @@ public class SelectOneFragment extends Fragment {
     public static SelectOneFragment newInstance(SelectOneStep step) {
         SelectOneFragment fragment = new SelectOneFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_PARAM1, step);
+        args.putSerializable(ARG_STEP, step);
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,7 +57,7 @@ public class SelectOneFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            this.step = (SelectOneStep) getArguments().getSerializable(ARG_PARAM1);
+            this.step = (SelectOneStep) getArguments().getSerializable(ARG_STEP);
         }
     }
 
@@ -78,6 +77,7 @@ public class SelectOneFragment extends Fragment {
             for (SelectOption option : step.getOptionsToSelect()) {
                 radioButton = new RadioButton(getActivity());
                 radioButton.setText(option.getTextToShow());
+                // // TODO: 02/03/2017 Parametrize style
                 radioButton.setTextSize(20);
                 radioButton.setTag(option);
                 radioButton.setChecked(option.isSelected());
@@ -116,7 +116,7 @@ public class SelectOneFragment extends Fragment {
                 if (validate()) {
                     SelectOneStepResult selectOneStepResult = new SelectOneStepResult(step.getSelectedOption());
 
-                    mListener.onOneOptionSelected(selectOneStepResult);
+                    mListener.onStepFinished(selectOneStepResult);
                 }
 
             }
@@ -124,19 +124,26 @@ public class SelectOneFragment extends Fragment {
     }
 
     private boolean validate() {
-        // TODO validate that the user select one option
-        return true;
+        boolean ok = true;
+        
+        if (step.getSelectedOption() == null) {
+            ok = false;
+            // TODO: 02/03/2017 Unify messages to show
+            Toast.makeText(getActivity(), getResources().getString(R.string.error_must_select_an_option), Toast.LENGTH_LONG).show();
+        }
+        
+        return ok;
     }
 
     @Override
     public void onAttach(Activity context) {
         Log.e("SelectOneFragment", "entra onAttach");
         super.onAttach(context);
-        if (context instanceof OnOneOptionSelectedListener) {
-            mListener = (OnOneOptionSelectedListener) context;
+        if (context instanceof StepFragmentInteractionListener) {
+            mListener = (StepFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnOneOptionSelectedListener");
+                    + " must implement StepFragmentInteractionListener");
         }
     }
 
@@ -146,17 +153,5 @@ public class SelectOneFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnOneOptionSelectedListener {
-        void onOneOptionSelected(SelectOneStepResult selectOneStepResult);
-    }
+
 }
