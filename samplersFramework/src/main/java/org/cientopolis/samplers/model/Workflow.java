@@ -1,4 +1,4 @@
-package org.cientopolis.samplers.modelo;
+package org.cientopolis.samplers.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 public class Workflow {
 
     private List<Step> steps;
-    private int actualStep = -1;
+    private int stepIndex = -1;
 
     public Workflow() {
         steps = new ArrayList<Step>();
@@ -27,8 +27,8 @@ public class Workflow {
         Step step = null;
 
         if (! isEnd()) {
-            actualStep++;
-            step = steps.get(actualStep);
+            stepIndex++;
+            step = steps.get(stepIndex);
         }
 
         return step;
@@ -38,8 +38,8 @@ public class Workflow {
         Step step = null;
 
         if (! isEnd()) {
-            actualStep--;
-            step = steps.get(actualStep);
+            stepIndex--;
+            step = steps.get(stepIndex);
         }
 
         return step;
@@ -52,21 +52,21 @@ public class Workflow {
     // from 0 to count()-1
     public int getStepPosition() {
 
-        return actualStep;
+        return stepIndex;
     }
 
     // from 0 to count()-1
     public void setStepPosition(int aPosition) {
         if ((aPosition >= 0) &&(aPosition < steps.size()))
-            actualStep = aPosition;
+            stepIndex = aPosition;
     }
 
 
     public boolean isBegining() {
-        return actualStep <= 0;
+        return stepIndex <= 0;
     }
 
     public boolean isEnd() {
-        return actualStep == (steps.size()-1);
+        return stepIndex == (steps.size()-1);
     }
 }

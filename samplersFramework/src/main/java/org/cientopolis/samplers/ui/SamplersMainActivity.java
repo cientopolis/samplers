@@ -8,7 +8,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 import org.cientopolis.samplers.R;
+import org.cientopolis.samplers.ui.samples_list.SamplesListActivity;
 import org.cientopolis.samplers.ui.take_sample.TakeSampleActivity;
 
 
@@ -39,7 +41,13 @@ public class SamplersMainActivity extends Activity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+        // // TODO: 27/02/2017 Refactor: use case statement
         if (id == R.id.action_settings) {
+            Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show();
+            return true;
+        }
+        else if (id == R.id.action_samples) {
+            startSamplesListActivity();
             return true;
         }
 
@@ -55,6 +63,11 @@ public class SamplersMainActivity extends Activity {
     protected void startTakeSampleActivity() {
         //Intent intent = new Intent(this, TakeSampleActivity.class);
         //startActivity(intent);
+    }
+
+    protected void startSamplesListActivity() {
+        Intent intent = new Intent(this, SamplesListActivity.class);
+        startActivity(intent);
     }
 
 }

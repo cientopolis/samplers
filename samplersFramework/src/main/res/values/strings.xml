@@ -1,13 +1,18 @@
 <resources>
     <string name="app_name">Registro Regional de Gatos</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Configuracion</string>
+    <string name="action_samples">Muestras</string>
     <string name="title_activity_take_sample">Tomar Muestra</string>
 
     <!-- Main Activity -->
     <string name="txt_wellcome_message">Bienvenidos al registro regional de gatos</string>
     <string name="bt_take_sample">Tomar Muestra</string>
 
+    <!-- Take Sample Activity -->
 
+    <!-- Step Fragments -->
+    <string name="error_must_select_an_option">Debe seleccionar una opción</string>
+    <string name="error_must_select_an_option_at_least">Debe seleccionar una opción por lo menos</string>
     <string name="bt_next">Siguiente</string>
 
     <!-- Step Params -->

@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 24
-    buildToolsVersion "24.0.3"
+    buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "org.cientopolis.sampleapplication"
@@ -31,4 +31,5 @@ dependencies {
     compile 'com.android.support:design:24.2.1'
     testCompile 'junit:junit:4.12'
     compile project(path: ':samplersFramework')
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
 }
