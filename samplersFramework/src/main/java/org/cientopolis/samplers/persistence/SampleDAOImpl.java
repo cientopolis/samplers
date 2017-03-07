@@ -19,6 +19,7 @@ class SampleDAOImpl implements DAO<Sample, Long> {
 
     private static final  String SAMPLES_DIR = "samples";
     private static final  String SAMPLES_PREFIX = "sample_";
+    private static final  String SAMPLES_EXTENSION = ".json";
 
     private Context myContext;
 
@@ -26,6 +27,14 @@ class SampleDAOImpl implements DAO<Sample, Long> {
         myContext = context;
     }
 
+
+    private String getSampleDirFileName(Long id) {
+        return SAMPLES_PREFIX + String.valueOf(id);
+    }
+
+    private String getSampleFileName(Long id) {
+        return SAMPLES_PREFIX + String.valueOf(id) + SAMPLES_EXTENSION;
+    }
 
     private File getSamplesDir(Context context) throws Exception {
 
@@ -42,19 +51,35 @@ class SampleDAOImpl implements DAO<Sample, Long> {
 
     }
 
-    @Override
-    public Long save(Sample object) {
-        object.setId(object.getStartDateTime().getTime());
+    private File getSampleDir(Context context, Sample sample) throws Exception {
 
-        String filename = SAMPLES_PREFIX + String.valueOf(object.getId());
+        String filename = getSampleDirFileName(sample.getId());
+        File fileDir = new File(getSamplesDir(context),filename);
+
+
+        if (!fileDir.exists()) {
+            if (!fileDir.mkdirs()) {
+                throw new Exception("cant create samples dir");
+            }
+        }
+
+        return fileDir;
+
+    }
+
+    @Override
+    public Long save(Sample sample) {
+        sample.setId(sample.getStartDateTime().getTime());
+
+        String filename = getSampleFileName(sample.getId());
 
         Gson gson = new Gson();
-        String jsonObject = gson.toJson(object);
+        String jsonObject = gson.toJson(sample);
 
         FileOutputStream outputStream;
 
         try {
-            File fileSample = new File(getSamplesDir(myContext),filename);
+            File fileSample = new File(getSampleDir(myContext,sample),filename);
 
             outputStream = new FileOutputStream(fileSample);
             //outputStream = myContext.openFileOutput(fileDir.getAbsolutePath()+"/"+filename, Context.MODE_PRIVATE);
@@ -66,26 +91,19 @@ class SampleDAOImpl implements DAO<Sample, Long> {
             Log.e("SampleDAOImpl", "cant save sample");
         }
 
-        return object.getId();
+        return sample.getId();
     }
 
     @Override
     public Sample find(Long key) {
-        String filename = SAMPLES_PREFIX + String.valueOf(key);
+        String filename = getSampleFileName(key);
         Sample sample = null;
 
-        //StringBuilder text = new StringBuilder();
         try {
             File fileSample = new File(getSamplesDir(myContext),filename);
 
             BufferedReader br = new BufferedReader(new FileReader(fileSample));
-/*            String line;
 
-            while ((line = br.readLine()) != null) {
-                text.append(line);
-            }
-            br.close();
-*/
             Gson gson = new Gson();
             sample = gson.fromJson(br,Sample.class);
 
@@ -104,25 +122,33 @@ class SampleDAOImpl implements DAO<Sample, Long> {
 
     @Override
     public List<Sample> list() {
-        List<Sample> result = new ArrayList<Sample>();
+        List<Sample> result = new ArrayList<>();
 
         Sample sample;
+        File dirSample;
         File fileSample;
         BufferedReader br;
         Gson gson = new Gson();
 
         try {
             File fileDir = getSamplesDir(myContext);
-            String[] samples = fileDir.list();
+            String[] samplesDirs = fileDir.list();
 
-            for (String sampleName: samples) {
-                fileSample = new File(fileDir, sampleName);
+            for (String sampleName: samplesDirs) {
+                dirSample = new File(fileDir, sampleName);
 
-                br = new BufferedReader(new FileReader(fileSample));
+                String[] files = dirSample.list();
+                for (String fileName: files) {
+                    if (fileName.endsWith(SAMPLES_EXTENSION)) {
+                        fileSample = new File(dirSample, fileName);
 
-                sample = gson.fromJson(br, Sample.class);
+                        br = new BufferedReader(new FileReader(fileSample));
 
-                result.add(sample);
+                        sample = gson.fromJson(br, Sample.class);
+
+                        result.add(sample);
+                    }
+                }
             }
 
         } catch (Exception e) {
