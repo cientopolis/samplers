@@ -5,4 +5,5 @@ package org.cientopolis.samplers.network;
  */
 
 public class SendFileAsyncTask {
+    /**/
 }
