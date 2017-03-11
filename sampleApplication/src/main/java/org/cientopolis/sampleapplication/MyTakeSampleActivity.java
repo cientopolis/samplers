@@ -3,6 +3,7 @@ package org.cientopolis.sampleapplication;
 import android.os.Bundle;
 import java.util.ArrayList;
 import org.cientopolis.samplers.model.InformationStep;
+import org.cientopolis.samplers.model.PhotoStep;
 import org.cientopolis.samplers.model.SelectOption;
 import org.cientopolis.samplers.model.MultipleSelectStep;
 import org.cientopolis.samplers.model.SelectOneStep;
@@ -23,6 +24,9 @@ public class MyTakeSampleActivity extends TakeSampleActivity {
 
         // InformationStep
         workflow.addStep(new InformationStep("Informacion de prueba para ver que se muestra bien"));
+
+        // PhotoStep
+        workflow.addStep(new PhotoStep("Instrucciones para mostrar",""));
 
         // MultipleSelectStep
         ArrayList<SelectOption> optionsToSelect = new ArrayList<SelectOption>();
