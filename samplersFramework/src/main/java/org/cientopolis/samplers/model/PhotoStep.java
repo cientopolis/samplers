@@ -10,7 +10,7 @@ public class PhotoStep extends Step {
 
     public PhotoStep(String anInstructionsToShow, String aPathToImageToOverlay) {
         instructionsToShow = anInstructionsToShow;
-        pathToImageToOverlay = aPathToImageToOverlay;
+        pathToImageToOverlay = aPathToImageToOverlay; //comment here!
     }
 
     public String getInstructionsToShow() {
