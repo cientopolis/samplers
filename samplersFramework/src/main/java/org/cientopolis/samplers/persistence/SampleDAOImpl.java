@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  * Created by Xavier on 09/02/2017.
  */
 
-class SampleDAOImpl implements DAO<Sample, Long> {
+class SampleDAOImpl implements SampleDAO {
 
     private static final  String SAMPLES_DIR = "samples";
     private static final  String SAMPLES_PREFIX = "sample_";
@@ -36,14 +37,25 @@ class SampleDAOImpl implements DAO<Sample, Long> {
         return SAMPLES_PREFIX + String.valueOf(id) + SAMPLES_EXTENSION;
     }
 
-    private File getSamplesDir(Context context) throws Exception {
+    @Override
+    public File getSamplesDir() {
+        File samplesDir = null;
+        try {
+            samplesDir = getSamplesDir(myContext);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return samplesDir;
+    }
+
+    private File getSamplesDir(Context context) throws IOException {
 
         File fileDir = new File(context.getFilesDir(),SAMPLES_DIR);
 
 
         if (!fileDir.exists()) {
             if (!fileDir.mkdirs()) {
-                throw new Exception("cant create samples dir");
+                throw new IOException("cant create samples dir");
             }
         }
 
@@ -51,7 +63,7 @@ class SampleDAOImpl implements DAO<Sample, Long> {
 
     }
 
-    private File getSampleDir(Context context, Sample sample) throws Exception {
+    private File getSampleDir(Context context, Sample sample) throws IOException {
 
         String filename = getSampleDirFileName(sample.getId());
         File fileDir = new File(getSamplesDir(context),filename);
@@ -59,7 +71,7 @@ class SampleDAOImpl implements DAO<Sample, Long> {
 
         if (!fileDir.exists()) {
             if (!fileDir.mkdirs()) {
-                throw new Exception("cant create samples dir");
+                throw new IOException("cant create samples dir");
             }
         }
 
@@ -157,5 +169,16 @@ class SampleDAOImpl implements DAO<Sample, Long> {
 
 
         return result;
+    }
+
+    @Override
+    public File getSampleDir(Sample sample) {
+        File sampleDir = null;
+        try {
+            sampleDir = getSampleDir(myContext,sample);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sampleDir;
     }
 }

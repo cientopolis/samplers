@@ -1,7 +1,9 @@
 package org.cientopolis.samplers.network;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.File;
 
@@ -18,34 +20,41 @@ import okhttp3.Response;
 
 public class SendFileAsyncTask extends AsyncTask<File,Void,Void> {
 
+
+    private Context context;
+    private static final String MEDIA_TYPE = "application/zip";
+
+
     private OkHttpClient client = new OkHttpClient();
+
+    public SendFileAsyncTask(Context context) {
+        this.context = context;
+    }
+
 
     @Override
     protected Void doInBackground(File... params) {
-
-        MediaType JSON = MediaType.parse("application/pdf; charset=utf-8");
-        String url = "http://192.168.0.107/service/upload.php";
 
         try {
             for (File file: params) {
 
                 RequestBody body = new MultipartBody.Builder()
                         .setType(MultipartBody.FORM)
-                        .addFormDataPart("fileToUpload", file.getName(),
-                                RequestBody.create(MediaType.parse("text/csv"), file))
+                        .addFormDataPart(NetworkConfiguration.getPARAM_NAME(), file.getName(),
+                                RequestBody.create(MediaType.parse(MEDIA_TYPE), file))
                         .build();
 
                 Request request = new Request.Builder()
-                        .url(url)
+                        .url(NetworkConfiguration.getURL())
                         .post(body)
                         .build();
 
                 Log.e("request", "request:" + request.toString());
 
                 Response response = client.newCall(request).execute();
-                String respuesta = response.body().string();
+                String stringResponse = response.body().string();
 
-                Log.e("SendFile", "ok:" + respuesta);
+                Log.e("SendFile", "ok:" + stringResponse);
             }
 
         } catch (Exception e) {
@@ -53,5 +62,11 @@ public class SendFileAsyncTask extends AsyncTask<File,Void,Void> {
         }
 
         return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void aVoid) {
+        // TODO: 14/03/2017 use listeners to show finish status
+        Toast.makeText(context, "Mestra enviada!!", Toast.LENGTH_LONG).show();
     }
 }
