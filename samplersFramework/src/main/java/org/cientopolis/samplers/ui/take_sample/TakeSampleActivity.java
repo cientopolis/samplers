@@ -13,6 +13,7 @@ import android.widget.Toast;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.InformationStep;
 import org.cientopolis.samplers.model.MultipleSelectStep;
+import org.cientopolis.samplers.model.PhotoStep;
 import org.cientopolis.samplers.model.Sample;
 import org.cientopolis.samplers.model.SelectOneStep;
 import org.cientopolis.samplers.model.Step;
@@ -63,10 +64,9 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
                 // TODO Apply a pattern
                 if (InformationStep.class.isInstance(step)) {
                     fragment = StepFragment.newInstance(InformationFragment.class, step);
-                }/* else if (PhotoStep.class.isInstance(step)) {
-                    PhotoStep photoStep = (PhotoStep) step;
-                    fragment = PhotoCameraFragment.newInstance(photoStep.getInstructionsToShow(), photoStep.getPathToImageToOverlay());
-                }*/ else if (MultipleSelectStep.class.isInstance(step)) {
+                } else if (PhotoStep.class.isInstance(step)) {
+                    fragment = StepFragment.newInstance(PhotoFragment.class, step);
+                }else if (MultipleSelectStep.class.isInstance(step)) {
                     fragment = StepFragment.newInstance(MultipleSelectFragment.class, step);
                 } else if (SelectOneStep.class.isInstance(step)) {
                     fragment = StepFragment.newInstance(SelectOneFragment.class, step);
