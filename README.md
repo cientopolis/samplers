@@ -43,7 +43,7 @@ Samplers is a framework to build mobile citizen science applications.
 1. Create a JSON file named **SamplersConfig.json**
     - Format and options available are [here](#samplersconfigjson-format-and-options)
     - To check for sintax problems you can use [this JSON validador](https://jsonformatter.curiousconcept.com/)
-    - You can use [this example **SamplersConfig.json** file](https://github.com/cientopolis/samplers/blob/master/SamplersConfig.json) (don't forget to change the **app_path** and **package_name** on **project** section with the application path and package name of your application)
+    - You can use [this example **SamplersConfig.json** file](https://github.com/cientopolis/samplers/blob/master/SamplersConfig.json) (don't forget to change the **app_path** and **package_name** on **project** section with the application path and package name of your application, and the **networkConfiguration** to successfully send samples)
   
 2. Copy your created JSON file **SamplersConfig.json** to the root directory of your Android Studio project
 
@@ -100,7 +100,11 @@ Samplers is a framework to build mobile citizen science applications.
     
     "aplication": {
     "title" : "Samplers Hello World App",
-    "wellcomeMessage" : "Wellcome to your first Samplers App!"
+    "wellcomeMessage" : "Wellcome to your first Samplers App!",
+    "networkConfiguration" : {
+        url: "http://192.168.1.10/samplers/upload.php",
+        paramName: "sample"
+        }
     } ,
     
     "workflow": {
