@@ -4,19 +4,16 @@ Samplers is a framework to build mobile citizen science applications.
 # UNDER DEVELOPMENT
 
 ## Steps to use the framework
-1. Create a JSON file named **SamplersConfig.json**
-  - Format and options available are [here](#samplersconfigjson-format-and-options)
-  - To check for sintax problems you can use [this JSON validador](https://jsonformatter.curiousconcept.com/)
-  - You can use [this example **SamplersConfig.json** file](https://github.com/cientopolis/samplers/blob/master/SamplersConfig.json)
-  
-2. Create a new empty Android Studio project (without any activity)
+
+### Install
+1. Create a new empty Android Studio project (without any activity)
   - The Minimun SDK Version must be **API17: Android 4.2 (Jelly Bean)** 
 
-3. Import the framework library into your Android Studio project
+2. Import the framework library into your Android Studio project
   - Download the latest **samplersFramework.arr** from [here](https://github.com/cientopolis/samplers)
   - Import the library into the project: **File -> New -> New Module -> Import .JAR/.AAR Package**
 
-4. Add the necessary dependencies
+3. Add the necessary dependencies
   - On your application build.gradle
   ```gradle
   dependencies {
@@ -32,37 +29,54 @@ Samplers is a framework to build mobile citizen science applications.
   }
   ```
 
-5. Copy your created JSON file **SamplersConfig.json** to the root directory of your Android Studio project
+### Instantiate
 
-6. Copy the **samplers.gradle** file to the root directory of your Android Studio project
+#### Manually
+1. Create a class instance of TakeSampleActivity
 
-7. Edit the **samplers.gradle** file and set the **app_path** and **package_name** variables with the application path and package name of your application
+2. Create a Main Activity
+  - You can create a class instance of SamplersMainActivity
+  - You can create your own Main Activity
 
-8. Run the **Task samplers_config** from the Gradle panel (it will create MyMainSamplersActivity and MyTakeSampleActivity in your project)
+#### Using gradle class generator
+1. Create a JSON file named **SamplersConfig.json**
+  - Format and options available are [here](#samplersconfigjson-format-and-options)
+  - To check for sintax problems you can use [this JSON validador](https://jsonformatter.curiousconcept.com/)
+  - You can use [this example **SamplersConfig.json** file](https://github.com/cientopolis/samplers/blob/master/SamplersConfig.json) (don't forget to change the **app_path** and **package_name** on **project** section with the application path and package name of your application)
+  
+2. Copy your created JSON file **SamplersConfig.json** to the root directory of your Android Studio project
 
-9. Add the activities MyMainSamplersActivity and MyTakeSampleActivity to the **AndroidManifest.xml** 
-```xml
-    <activity
-        android:name="MyMainSamplersActivity"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
-    
-    <activity
-        android:name="MyTakeSampleActivity"
-        android:label="@string/title_activity_take_sample"
-        android:theme="@style/AppTheme">            
-    </activity>    
-```
-10. Run your application
+3. Copy the **samplers.gradle** file to the root directory of your Android Studio project
 
-11. Enjoy!
+4. Run the **Task samplers_config** from the Gradle panel (it will create MyMainSamplersActivity and MyTakeSampleActivity in your project)
+
+5. Add the activities MyMainSamplersActivity and MyTakeSampleActivity to the **AndroidManifest.xml** 
+  ```xml
+      <activity
+          android:name="MyMainSamplersActivity"
+          android:label="@string/app_name"
+          android:theme="@style/AppTheme">
+          <intent-filter>
+              <action android:name="android.intent.action.MAIN" />
+              <category android:name="android.intent.category.LAUNCHER" />
+          </intent-filter>
+      </activity>
+
+      <activity
+          android:name="MyTakeSampleActivity"
+          android:label="@string/title_activity_take_sample"
+          android:theme="@style/AppTheme">            
+      </activity>    
+  ```
+6. Run your application
+
+7. Enjoy!
 
 ## SamplersConfig.json format and options
+- project
+  - app_path
+  - package_name
+  
 - aplication
   - title
   - wellcomeMessage
@@ -78,6 +92,10 @@ Samplers is a framework to build mobile citizen science applications.
 - Example:
   ```json
   {
+    "project": {
+    "app_path" : "app/src/main/java/com/example/myApplication/",
+    "package_name" : "com.example.myApplication"
+    } ,
     "aplication": {
     "title" : "Samplers Hello World App",
     "wellcomeMessage" : "Wellcome to your first Samplers App!"
