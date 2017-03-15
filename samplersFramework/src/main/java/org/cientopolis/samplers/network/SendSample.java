@@ -24,7 +24,9 @@ public class SendSample {
         File sampleDir = DAO_Factory.getSampleDAO(context).getSampleDir(sample);
         if (sampleDir != null) {
             try {
-                File zipFile = new File(samplesDir,"sample.zip");
+
+                String zipFileName = "sample_"+String.valueOf(sample.getId())+".zip";
+                File zipFile = new File(samplesDir,zipFileName);
 
                 Log.e("onSampleClick", "try to zip...");
                 ZipUtilities.zipFilesInDirectory(sampleDir,zipFile.getAbsolutePath());
