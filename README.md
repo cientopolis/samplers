@@ -102,8 +102,8 @@ Samplers is a framework to build mobile citizen science applications.
     "title" : "Samplers Hello World App",
     "wellcomeMessage" : "Wellcome to your first Samplers App!",
     "networkConfiguration" : {
-        url: "http://192.168.1.10/samplers/upload.php",
-        paramName: "sample"
+        "url": "http://192.168.1.10/samplers/upload.php",
+        "paramName": "sample"
         }
     } ,
     
