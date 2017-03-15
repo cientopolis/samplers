@@ -1,14 +1,10 @@
 package org.cientopolis.samplers.ui.take_sample;
 
-import android.content.ContextWrapper;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -24,25 +20,25 @@ import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.PhotoStep;
 import org.cientopolis.samplers.model.PhotoStepResult;
 import org.cientopolis.samplers.model.StepResult;
+import org.cientopolis.samplers.persistence.MultimediaIOManagement;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
  * Created by lilauth on 3/9/17.
  */
 
+// TODO: 15/03/2017 Refactor: create a inner class per implementation callback
 public class PhotoFragment extends StepFragment implements SurfaceHolder.Callback, Camera.PictureCallback{
 
     private ViewGroup photo_layout;
     private ViewGroup preview_layout;
-    private SurfaceView surfaceView;
     private SurfaceHolder surfaceHolder;
     private Camera camera;
     private ImageView photo_preview;
-    private Uri imageURI;
+    //private Uri imageURI;
+    private String imageFileName;
 
     public PhotoFragment() {
         // Required empty public constructor
@@ -60,8 +56,7 @@ public class PhotoFragment extends StepFragment implements SurfaceHolder.Callbac
         preview_layout = (ViewGroup) rootView.findViewById(R.id.preview_layout);
 
 
-
-        surfaceView = (SurfaceView) rootView.findViewById(R.id.surfaceView2);
+        SurfaceView surfaceView = (SurfaceView) rootView.findViewById(R.id.surfaceView2);
         surfaceHolder = surfaceView.getHolder();
 
         surfaceHolder.addCallback(this);
@@ -89,16 +84,18 @@ public class PhotoFragment extends StepFragment implements SurfaceHolder.Callbac
     @Override
     protected StepResult getStepResult() {
 
-        return new PhotoStepResult(imageURI.toString());
+        return new PhotoStepResult(imageFileName);
     }
 
     /*implements Camera.PictureCallback*/
     @Override
     public void onPictureTaken(byte[] data, Camera camera) {
+        File file = null;
         try {
             //private File savePhoto;
-            File file = savePicture(data);
-            imageURI = Uri.fromFile(file);
+            file = MultimediaIOManagement.saveTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
+            //imageURI = Uri.fromFile(file);
+            imageFileName = file.getName();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -106,7 +103,8 @@ public class PhotoFragment extends StepFragment implements SurfaceHolder.Callbac
         }
 
         //refreshCamera();
-        showPreviewLayout();
+        // TODO: 15/03/2017 check if no errors with file == null
+        showPreviewLayout(Uri.fromFile(file));
 
     }
 
@@ -174,28 +172,8 @@ public class PhotoFragment extends StepFragment implements SurfaceHolder.Callbac
         camera = null;
     }
 
-    /*helpers*/
-    private File savePicture(byte[] data) throws IOException {
-        ContextWrapper cw = new ContextWrapper(getActivity().getApplicationContext());
 
-        //private app directory
-        //File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-        File directory = new File(getActivity().getApplicationContext().getFilesDir(),"tmp");
-        directory.mkdirs();
-        // El nombre del archivo armado con la fecha/hora
-        String filename = String.format("%d.jpg", System.currentTimeMillis());
-        // file creation
-        File file = new File(directory,filename);
-        // file output stream (to write on the file)
-        FileOutputStream fos =  new FileOutputStream(file);
-        // save output stream and close
-        fos.write(data);
-        fos.close();
-
-        return file;
-    }
-
-    private void showPreviewLayout () {
+    private void showPreviewLayout (Uri imageURI) {
         // hide the camera layout
         photo_layout.setVisibility(View.INVISIBLE);
         // FIXME close camera here and open up again on new picture capture

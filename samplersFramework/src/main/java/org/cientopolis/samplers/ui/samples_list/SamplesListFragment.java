@@ -8,16 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.Sample;
-import org.cientopolis.samplers.network.SendFileAsyncTask;
 import org.cientopolis.samplers.network.SendSample;
 import org.cientopolis.samplers.persistence.DAO_Factory;
-import org.cientopolis.samplers.persistence.ZipUtilities;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -38,8 +32,10 @@ public class SamplesListFragment extends Fragment implements SamplesListAdapter.
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        if (samples == null)
+        if (samples == null) {
             samples = DAO_Factory.getSampleDAO(getActivity().getApplicationContext()).list();
+            Log.e("SamplesListFragment", "samples: "+String.valueOf(samples.size()));
+        }
 
         // Inflate the layout for this fragment
         View rootView =   inflater.inflate(R.layout.fragment_samples_list, container, false);
