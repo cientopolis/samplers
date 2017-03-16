@@ -49,8 +49,13 @@ Samplers is a framework to build mobile citizen science applications.
 
 3. Copy the **samplers.gradle** file to the root directory of your Android Studio project
 
-4. Run the **Task samplers_config** from the Gradle panel (it will create MyMainSamplersActivity and MyTakeSampleActivity in your project)
-
+4. Link samplers.gradle with your application build.gradle (it will create MyMainSamplersActivity and MyTakeSampleActivity in your project)
+    - On your **application** build.gradle add this line at the end
+        ```gradle
+        apply from: '../samplers.gradle'
+        ```
+    - Save and Sync when asked
+    
 5. Add the activities MyMainSamplersActivity and MyTakeSampleActivity to the **AndroidManifest.xml** 
     ```xml
         <activity
