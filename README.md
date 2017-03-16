@@ -81,6 +81,9 @@ Samplers is a framework to build mobile citizen science applications.
 - aplication
   - title
   - wellcomeMessage
+  - networkConfiguration
+        - url
+        - paramName
   
 - workflow
   - actionLabel
@@ -102,8 +105,8 @@ Samplers is a framework to build mobile citizen science applications.
     "title" : "Samplers Hello World App",
     "wellcomeMessage" : "Wellcome to your first Samplers App!",
     "networkConfiguration" : {
-        "url": "http://192.168.1.10/samplers/upload.php",
-        "paramName": "sample"
+        "url" : "http://192.168.1.10/samplers/upload.php",
+        "paramName" : "sample"
         }
     } ,
     
@@ -111,15 +114,57 @@ Samplers is a framework to build mobile citizen science applications.
     "actionLabel" : "Take a sample",
       "tasks": [
       {
+        "type" : "Information",
+        "text" : "Please, follow the instructions"
+      },
+      {
       "type": "MultipleSelect",
       "title" : "Select what you see",
-      "options" : ["Trees","Trash","Water","Animals"]
+      "options" : [
+                    {
+                     "id":1, 
+                     "text":"Trees"
+                    },
+                    {
+                     "id":2, 
+                     "text":"Trash"
+                    },
+                    {
+                     "id":3, 
+                     "text":"Water"
+                    },
+                    {
+                     "id":4, 
+                     "text":"Animals"
+                    }
+                   ]
       },
 
       {
       "type": "SelectOne",
       "title" : "Select one",
-      "options" : ["Option 1","Option 2","Option 3","Option 4"]
+      "options" : [
+                    {
+                     "id":1, 
+                     "text":"Option 1"
+                    },
+                    {
+                     "id":2, 
+                     "text":"Option 2"
+                    },
+                    {
+                     "id":3, 
+                     "text":"Option 3"
+                    },
+                    {
+                     "id":4, 
+                     "text":"Option 4"
+                    }
+                   ]      
+      },
+      {
+        "type" : "Photo",
+        "text" : "Take a photo of your cat"
       }
       ]
     }
