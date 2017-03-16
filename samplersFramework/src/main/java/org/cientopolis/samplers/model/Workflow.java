@@ -37,7 +37,7 @@ public class Workflow {
     public Step previuosStep() {
         Step step = null;
 
-        if (! isEnd()) {
+        if (! isBegining()) {
             stepIndex--;
             step = steps.get(stepIndex);
         }
