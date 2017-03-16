@@ -6,18 +6,19 @@ package org.cientopolis.samplers.model;
 public class PhotoStep extends Step {
 
     private String instructionsToShow;
-    private String pathToImageToOverlay;
+    // TODO: 15/03/2017 Add functionality to support this
+    private String imageToOverlay;
 
-    public PhotoStep(String anInstructionsToShow, String aPathToImageToOverlay) {
+    public PhotoStep(String anInstructionsToShow, String anImageToOverlay) {
         instructionsToShow = anInstructionsToShow;
-        pathToImageToOverlay = aPathToImageToOverlay;
+        imageToOverlay = anImageToOverlay; //comment here!
     }
 
     public String getInstructionsToShow() {
         return instructionsToShow;
     }
 
-    public String getPathToImageToOverlay() {
-        return pathToImageToOverlay;
+    public String getImageToOverlay() {
+        return imageToOverlay;
     }
 }
