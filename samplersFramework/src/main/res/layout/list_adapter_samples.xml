@@ -12,6 +12,7 @@
         android:textSize="18sp"
         android:paddingLeft="5dp"
         android:paddingBottom="15dp"
+        android:layout_marginLeft="20dp"
         android:textStyle="bold"
         />
 
@@ -24,6 +25,7 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center_horizontal"
+        android:layout_marginLeft="20dp"
         />
 
 
@@ -31,6 +33,7 @@
         android:id="@+id/img_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_camera_black_36dp" />
+        android:src="@drawable/ic_cloud_upload_black_36dp"
+        android:layout_marginLeft="20dp"/>
 
 </LinearLayout>

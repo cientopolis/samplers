@@ -7,13 +7,14 @@ package org.cientopolis.samplers.model;
  */
 
 public class PhotoStepResult extends StepResult {
-    private String pathToImage;
+    private String imageFileName;
 
-    public PhotoStepResult(String pathToImage) {
-        this.pathToImage = pathToImage;
+    public PhotoStepResult(String imageFileName) {
+        this.imageFileName = imageFileName;
     }
 
-    public String getPathToImage() {
-        return pathToImage;
+    public String getImageFileName() {
+        return imageFileName;
     }
+
 }

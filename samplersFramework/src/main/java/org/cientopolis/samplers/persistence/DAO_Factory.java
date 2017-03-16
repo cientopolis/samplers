@@ -10,7 +10,7 @@ import org.cientopolis.samplers.model.Sample;
 
 public abstract class DAO_Factory {
 
-    public static DAO<Sample, Long> getSampleDAO(Context context) {
+    public static SampleDAO getSampleDAO(Context context) {
         return new SampleDAOImpl(context);
     }
 }

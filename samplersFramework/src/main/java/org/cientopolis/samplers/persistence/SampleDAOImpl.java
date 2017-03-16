@@ -3,11 +3,16 @@ package org.cientopolis.samplers.persistence;
 import android.content.Context;
 import android.util.Log;
 import com.google.gson.Gson;
+
+import org.cientopolis.samplers.model.PhotoStepResult;
 import org.cientopolis.samplers.model.Sample;
+import org.cientopolis.samplers.model.StepResult;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +20,7 @@ import java.util.List;
  * Created by Xavier on 09/02/2017.
  */
 
-class SampleDAOImpl implements DAO<Sample, Long> {
+class SampleDAOImpl implements SampleDAO {
 
     private static final  String SAMPLES_DIR = "samples";
     private static final  String SAMPLES_PREFIX = "sample_";
@@ -36,14 +41,25 @@ class SampleDAOImpl implements DAO<Sample, Long> {
         return SAMPLES_PREFIX + String.valueOf(id) + SAMPLES_EXTENSION;
     }
 
-    private File getSamplesDir(Context context) throws Exception {
+    @Override
+    public File getSamplesDir() {
+        File samplesDir = null;
+        try {
+            samplesDir = getSamplesDir(myContext);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return samplesDir;
+    }
+
+    private File getSamplesDir(Context context) throws IOException {
 
         File fileDir = new File(context.getFilesDir(),SAMPLES_DIR);
 
 
         if (!fileDir.exists()) {
             if (!fileDir.mkdirs()) {
-                throw new Exception("cant create samples dir");
+                throw new IOException("cant create samples dir");
             }
         }
 
@@ -51,7 +67,7 @@ class SampleDAOImpl implements DAO<Sample, Long> {
 
     }
 
-    private File getSampleDir(Context context, Sample sample) throws Exception {
+    private File getSampleDir(Context context, Sample sample) throws IOException {
 
         String filename = getSampleDirFileName(sample.getId());
         File fileDir = new File(getSamplesDir(context),filename);
@@ -59,7 +75,7 @@ class SampleDAOImpl implements DAO<Sample, Long> {
 
         if (!fileDir.exists()) {
             if (!fileDir.mkdirs()) {
-                throw new Exception("cant create samples dir");
+                throw new IOException("cant create samples dir");
             }
         }
 
@@ -79,7 +95,21 @@ class SampleDAOImpl implements DAO<Sample, Long> {
         FileOutputStream outputStream;
 
         try {
-            File fileSample = new File(getSampleDir(myContext,sample),filename);
+            // Create the sample directory
+            File sampleDir = getSampleDir(myContext,sample);
+
+            // Create the sample file
+            File fileSample = new File(sampleDir,filename);
+
+            // Move the photos to the sample directory
+            List<StepResult> results = sample.getStepResults();
+            for (StepResult stepResult: results) {
+                if (PhotoStepResult.class.isInstance(stepResult)) {
+                    if (!movePhotoToSampleDirectory((PhotoStepResult) stepResult,sampleDir)) {
+                        throw new Exception("Cant move photo file");
+                    }
+                }
+            }
 
             outputStream = new FileOutputStream(fileSample);
             //outputStream = myContext.openFileOutput(fileDir.getAbsolutePath()+"/"+filename, Context.MODE_PRIVATE);
@@ -92,6 +122,30 @@ class SampleDAOImpl implements DAO<Sample, Long> {
         }
 
         return sample.getId();
+    }
+
+    private boolean movePhotoToSampleDirectory(PhotoStepResult photoStepResult, File sampleDirectory) {
+        boolean ok;
+
+        File photoTempDir = MultimediaIOManagement.getTempDir(myContext);
+        File photoFileFrom = new File(photoTempDir, photoStepResult.getImageFileName());
+
+        if (photoFileFrom.exists()) {
+            String fileName = photoFileFrom.getName();
+            File photoFileTo = new File(sampleDirectory, fileName);
+
+            // Move the file
+            ok = photoFileFrom.renameTo(photoFileTo);
+
+            if (!ok)
+                Log.e("SampleDAOImpl", "renameTo failed");
+        }
+        else {
+            ok = true; // Assume already moved
+            Log.e("SampleDAOImpl", "photo file dont exists: " + photoFileFrom.getAbsolutePath());
+        }
+
+        return ok;
     }
 
     @Override
@@ -157,5 +211,16 @@ class SampleDAOImpl implements DAO<Sample, Long> {
 
 
         return result;
+    }
+
+    @Override
+    public File getSampleDir(Sample sample) {
+        File sampleDir = null;
+        try {
+            sampleDir = getSampleDir(myContext,sample);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return sampleDir;
     }
 }

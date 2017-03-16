@@ -7,23 +7,27 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.Sample;
+
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Xavier on 27/02/2017.
+ * A simple Adapter to show the sample list on a ListView
  */
-
 public class SamplesListAdapter extends BaseAdapter{
 
     private List<Sample> samples;
     private Context myContext;
+    private SamplesListAdapterListener listener;
 
-    public SamplesListAdapter(Context context, List<Sample> samples) {
+    public SamplesListAdapter(Context context, List<Sample> samples, SamplesListAdapterListener listener) {
         this.samples = samples;
         this.myContext = context;
+        this.listener = listener;
     }
 
     @Override
@@ -63,7 +67,7 @@ public class SamplesListAdapter extends BaseAdapter{
             resultView.setTag(viewHolder);
         }
         else {
-            // Reusa una View ya creada
+            // Reuse a created view
             resultView = convertView;
             viewHolder = (SamplesListAdapterViewHolder) resultView.getTag();
         }
@@ -78,9 +82,13 @@ public class SamplesListAdapter extends BaseAdapter{
         }
         */
 
-        viewHolder.lb_id.setText(String.valueOf(samples.get(position).getId()));
+        Sample sample = samples.get(position);
+
+        viewHolder.lb_id.setText(String.valueOf(sample.getId()));
         // // TODO: 27/02/2017 See date/time formats to display
-        viewHolder.lb_datetime.setText(samples.get(position).getStartDateTime().toString());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm", Locale.US);
+        viewHolder.lb_datetime.setText(sdf.format(sample.getStartDateTime()));
+        viewHolder.img_status.setOnClickListener(new SampleClickListener(sample));
 
         /*
         if (fechas.get(position).isPagadoOK()) {
@@ -90,12 +98,6 @@ public class SamplesListAdapter extends BaseAdapter{
             viewHolder.img_ok.setImageResource(R.drawable.ic_clear_red_36dp);
         }
 
-        if (fechas.get(position).isPagadoFueraTermino()) {
-            viewHolder.lb_fecha.setTextColor(COLOR_TEXTO_PAGO_FUERA_TERMINO);
-        }
-        else {
-            viewHolder.lb_fecha.setTextColor(COLOR_TEXTO_PAGO_OK);
-        }
         */
 
         return resultView;
@@ -106,4 +108,26 @@ public class SamplesListAdapter extends BaseAdapter{
         TextView lb_datetime;
         ImageView img_status;
     }
+
+    private class SampleClickListener implements  View.OnClickListener{
+
+        private Sample mySample;
+
+        public SampleClickListener(Sample sample) {
+            mySample = sample;
+        }
+
+        @Override
+        public void onClick(View view) {
+            listener.onSampleClick(mySample);
+        }
+    }
+
+
+    public interface SamplesListAdapterListener {
+        public void onSampleClick(Sample sample);
+    }
+
 }
+
+
