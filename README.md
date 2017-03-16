@@ -11,7 +11,7 @@ Samplers is a framework to build mobile citizen science applications.
     - The Minimun SDK Version must be **API17: Android 4.2 (Jelly Bean)** 
 
 2. Import the framework library into your Android Studio project
-    - Download the latest **samplersFramework.arr** from [here](https://github.com/cientopolis/samplers)
+    - Download the latest **samplersFramework.arr** from [here](https://github.com/cientopolis/samplers/releases/download/v0.1/samplersFramework.aar)
     - Import the library into the project: **File -> New -> New Module -> Import .JAR/.AAR Package**
 
 3. Add the necessary dependencies
