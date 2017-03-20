@@ -15,7 +15,7 @@ Samplers is a framework to build mobile citizen science applications.
     - Import the library into the project: **File -> New -> New Module -> Import .JAR/.AAR Package**
 
 3. Add the necessary dependencies
-    - On your application build.gradle
+    - On your **application build.gradle**
       ```gradle
       dependencies {
         // here the standards dependencies created by Android Studio
@@ -47,10 +47,10 @@ Samplers is a framework to build mobile citizen science applications.
   
 2. Copy your created JSON file **SamplersConfig.json** to the root directory of your Android Studio project
 
-3. Copy the **samplers.gradle** file to the root directory of your Android Studio project
+3. Copy the [**samplers.gradle**](https://github.com/cientopolis/samplers/blob/master/samplers.gradle) file to the root directory of your Android Studio project
 
-4. Link samplers.gradle with your application build.gradle (it will create MyMainSamplersActivity and MyTakeSampleActivity in your project)
-    - On your **application** build.gradle add this line at the end
+4. Link samplers.gradle with your **application build.gradle** (it will create MyMainSamplersActivity and MyTakeSampleActivity in your project)
+    - On your **application build.gradle** add this line at the end
         ```gradle
         apply from: '../samplers.gradle'
         ```
@@ -74,9 +74,12 @@ Samplers is a framework to build mobile citizen science applications.
             android:theme="@style/AppTheme">            
         </activity>    
     ```
-6. Run your application
 
-7. Enjoy!
+6. Delete (or customize) the auto-generated **style.xml** file in the **res/values** directory
+
+7. Run your application
+
+8. Enjoy!
 
 ## SamplersConfig.json format and options
 - project
