@@ -26,7 +26,7 @@ Samplers is a framework to build mobile citizen science applications.
         compile 'com.android.support:design:24.2.1' 
 
         // the framework dependency
-        compile project(":SamplersFramework")
+        compile project(":samplersFramework")
       }
       ```
 
