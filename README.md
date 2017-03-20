@@ -47,7 +47,7 @@ Samplers is a framework to build mobile citizen science applications.
   
 2. Copy your created JSON file **SamplersConfig.json** to the root directory of your Android Studio project
 
-3. Copy the [**samplers.gradle**](https://github.com/cientopolis/samplers/blob/master/samplers.gradle) file to the root directory of your Android Studio project
+3. Copy the [**samplers.gradle**](https://github.com/cientopolis/samplers/releases/download/v0.1/samplers.gradle) file to the root directory of your Android Studio project
 
 4. Link samplers.gradle with your **application build.gradle** (it will create MyMainSamplersActivity and MyTakeSampleActivity in your project)
     - On your **application build.gradle** add this line at the end
