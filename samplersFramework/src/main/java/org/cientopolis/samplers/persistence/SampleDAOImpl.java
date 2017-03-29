@@ -168,10 +168,28 @@ class SampleDAOImpl implements SampleDAO {
         return sample;
     }
 
+
     @Override
-    public boolean delete(Sample object) {
-        // // TODO: 28/02/2017 implement delete sample
-        return false;
+    public boolean delete(Sample sample) {
+        Boolean ok = false;
+        try {
+            File sampleDir = getSampleDir(myContext,sample);
+            //deletes all contents before deleting folder
+            deleteRecursive(sampleDir);
+            ok = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.e("SampleDAOImpl", "delete sample complete + ok = "+String.valueOf(ok));
+        return ok;
+    }
+    //helper function
+    private void deleteRecursive(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles())
+                deleteRecursive(child);
+
+        fileOrDirectory.delete();
     }
 
     @Override

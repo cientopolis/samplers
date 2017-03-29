@@ -12,6 +12,8 @@ import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.Sample;
 import org.cientopolis.samplers.network.SendSample;
 import org.cientopolis.samplers.persistence.DAO_Factory;
+import org.cientopolis.samplers.persistence.SampleDAO;
+
 import java.util.List;
 
 /**
@@ -20,6 +22,7 @@ import java.util.List;
 public class SamplesListFragment extends Fragment implements SamplesListAdapter.SamplesListAdapterListener{
 
     private List<Sample> samples;
+    private SamplesListAdapter adapter;
 
     public SamplesListFragment() {
         // Required empty public constructor
@@ -40,7 +43,7 @@ public class SamplesListFragment extends Fragment implements SamplesListAdapter.
         // Inflate the layout for this fragment
         View rootView =   inflater.inflate(R.layout.fragment_samples_list, container, false);
 
-        SamplesListAdapter adapter = new SamplesListAdapter(getActivity(),samples, this);
+        adapter = new SamplesListAdapter(getActivity(),samples, this);
         ListView list_samples = (ListView) rootView.findViewById(R.id.list_samples);
         list_samples.setAdapter(adapter);
 
@@ -48,9 +51,18 @@ public class SamplesListFragment extends Fragment implements SamplesListAdapter.
     }
 
     @Override
-    public void onSampleClick(Sample sample) {
+    public void onUploadSampleClick(Sample sample) {
 
         SendSample.sendSample(sample, getActivity().getApplicationContext());
+
+    }
+
+    @Override
+    public void onDeleteSampleClick(Sample mySample) {
+
+        DAO_Factory.getSampleDAO(getActivity().getApplicationContext()).delete(mySample);
+        samples.remove(mySample);
+        adapter.notifyDataSetChanged();
 
     }
 }
