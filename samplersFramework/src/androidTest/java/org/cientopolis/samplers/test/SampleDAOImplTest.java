@@ -2,6 +2,7 @@ package org.cientopolis.samplers.test;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+
 import org.cientopolis.samplers.model.MultipleSelectStep;
 import org.cientopolis.samplers.model.MultipleSelectStepResult;
 import org.cientopolis.samplers.model.Sample;
@@ -10,16 +11,18 @@ import org.cientopolis.samplers.model.SelectOneStepResult;
 import org.cientopolis.samplers.model.SelectOption;
 import org.cientopolis.samplers.persistence.DAO_Factory;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.equalToIgnoringCase;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.Matchers.is;
-
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,11 +64,8 @@ public class SampleDAOImplTest {
 
     @After
     public void tearDown() throws Exception {
-        /*delete all samples*/
-        List<Sample> samples = DAO_Factory.getSampleDAO(InstrumentationRegistry.getContext()).list();
-        for(Sample sample : samples){
-            DAO_Factory.getSampleDAO(InstrumentationRegistry.getContext()).delete(sample);
-        }
+        /*delete test sample*/
+        DAO_Factory.getSampleDAO(InstrumentationRegistry.getContext()).delete(sample);
         assertThat(DAO_Factory.getSampleDAO(InstrumentationRegistry.getContext()).list().size(), is(0));
     }
 
@@ -73,26 +73,37 @@ public class SampleDAOImplTest {
 
     @Test
     public void getSamplesDir() throws Exception {
+        File samplesDirectory = DAO_Factory.getSampleDAO(InstrumentationRegistry.getContext()).getSamplesDir();
+        assertThat(samplesDirectory.getName(), equalToIgnoringCase("samples"));
 
     }
 
     @Test
     public void save() throws Exception {
         // Save the sample localy
+        List<Sample> list = DAO_Factory.getSampleDAO(InstrumentationRegistry.getContext()).list();
         id = DAO_Factory.getSampleDAO(InstrumentationRegistry.getContext()).save(this.sample);
         //assert if theres one or more samples
-        assertThat(DAO_Factory.getSampleDAO(InstrumentationRegistry.getContext()).list().size(), greaterThanOrEqualTo(1));
+        DAO_Factory.getSampleDAO(InstrumentationRegistry.getContext()).find(id);
+        assertThat(DAO_Factory.getSampleDAO(InstrumentationRegistry.getContext()).list().size(), greaterThanOrEqualTo(list.size()+1));
 
     }
 
     @Test
     public void find() throws Exception {
-
+        if(id == 0) {
+            id = DAO_Factory.getSampleDAO(InstrumentationRegistry.getContext()).save(sample);
+        }
+        assertThat(DAO_Factory.getSampleDAO(InstrumentationRegistry.getContext()).find(id).getId(), equalTo(id));
     }
 
     @Test
     public void getSampleDir() throws Exception {
-
+        if(id == 0) {
+            id = DAO_Factory.getSampleDAO(InstrumentationRegistry.getContext()).save(sample);
+        }
+        String sampleDirectoryName = "sample_"+String.valueOf(id);
+        assertThat(DAO_Factory.getSampleDAO(InstrumentationRegistry.getContext()).getSampleDir(sample).getName(), equalToIgnoringCase(sampleDirectoryName));
     }
 
 }

@@ -150,16 +150,23 @@ class SampleDAOImpl implements SampleDAO {
 
     @Override
     public Sample find(Long key) {
-        String filename = getSampleFileName(key);
+        String sampleDirectoryName = getSampleDirFileName(key);
         Sample sample = null;
 
         try {
-            File fileSample = new File(getSamplesDir(myContext),filename);
-
-            BufferedReader br = new BufferedReader(new FileReader(fileSample));
-
-            Gson gson = new Gson();
-            sample = gson.fromJson(br,Sample.class);
+            //recovers sample directory
+            File sampleDirectory = new File(getSamplesDir(myContext),sampleDirectoryName);
+            //list directory
+            String[] files = sampleDirectory.list();
+            for (String fileName: files) {
+                //iterates the directory until it finds a file with .json extension
+                if (fileName.endsWith(SAMPLES_EXTENSION)) {
+                    File sampleFile = new File(sampleDirectory, fileName);
+                    BufferedReader br = new BufferedReader(new FileReader(sampleFile));
+                    Gson gson = new Gson();
+                    sample = gson.fromJson(br, Sample.class);
+                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
