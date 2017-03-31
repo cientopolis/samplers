@@ -99,7 +99,7 @@ public class PhotoFragment extends StepFragment implements SurfaceHolder.Callbac
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getActivity().getApplicationContext(), "Error:" + e.toString(), Toast.LENGTH_LONG).show();
+            //Toast.makeText(getActivity().getApplicationContext(), "Error:" + e.toString(), Toast.LENGTH_LONG).show();
         }
 
         //refreshCamera();
