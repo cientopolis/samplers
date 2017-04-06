@@ -1,14 +1,9 @@
 package org.cientopolis.samplers.ui.take_sample;
 
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -18,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.PhotoStep;
@@ -27,16 +21,14 @@ import org.cientopolis.samplers.model.StepResult;
 import org.cientopolis.samplers.persistence.MultimediaIOManagement;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Created by lilauth on 3/9/17.
  */
 
 // TODO: 15/03/2017 Refactor: create a inner class per implementation callback
-public class PhotoFragment extends StepFragment implements SurfaceHolder.Callback, Camera.PictureCallback{
+public class PhotoFragment extends StepFragment{
 
     private ViewGroup photo_layout;
     private ViewGroup preview_layout;
@@ -44,6 +36,8 @@ public class PhotoFragment extends StepFragment implements SurfaceHolder.Callbac
     private ImageView photo_preview;
     //private Uri imageURI;
     private String imageFileName;
+    SurfaceHolder surfaceHolder;
+
 
     public PhotoFragment() {
         // Required empty public constructor
@@ -62,12 +56,16 @@ public class PhotoFragment extends StepFragment implements SurfaceHolder.Callbac
 
         SurfaceView surfaceView = (SurfaceView) rootView.findViewById(R.id.surfaceView2);
 
-        SurfaceHolder surfaceHolder = surfaceView.getHolder();
-        surfaceHolder.addCallback(this);
+
+        surfaceHolder = surfaceView.getHolder();
+        surfaceHolder.addCallback(new SurfaceCallbacksHelper());
         surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         Button b_takePicture = (Button) rootView.findViewById(R.id.b_take_picture);
         b_takePicture.setOnClickListener(new TakePictureClick());
+
+        Button b_back = (Button) rootView.findViewById(R.id.bt_retake_photo);
+        b_back.setOnClickListener(new BackFromPictureClick());
 
         TextView textView = (TextView) rootView.findViewById(R.id.lb_instructions);
         textView.setText(getStep().getInstructionsToShow());
@@ -90,79 +88,64 @@ public class PhotoFragment extends StepFragment implements SurfaceHolder.Callbac
         return new PhotoStepResult(imageFileName);
     }
 
-    /*implements Camera.PictureCallback*/
-    @Override
-    public void onPictureTaken(byte[] data, Camera camera) {
-        File file = null;
-        try {
-            //private File savePhoto;
-            file = MultimediaIOManagement.saveTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
-            //imageURI = Uri.fromFile(file);
-            imageFileName = file.getName();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            //Toast.makeText(getActivity().getApplicationContext(), "Error:" + e.toString(), Toast.LENGTH_LONG).show();
-        }
-        Log.e("Image URI",Uri.fromFile(file).toString());
-        //refreshCamera();
-        // TODO: 15/03/2017 check if no errors with file == null
-        showPreviewLayout(Uri.fromFile(file), file.getAbsolutePath());
-
-    }
-
-
-    /*implements SurfaceHolder.Callback*/
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
+    private boolean openCamera(){
         try {
             camera = Camera.open();
-        }
-
-        catch (RuntimeException e) {
+            return true;
+        } catch (RuntimeException e) {
             System.err.println(e);
-            return;
-        }
+            return false;
+         }
+    }
 
+    private void releaseCamera(){
+        if (camera != null) {
+            camera.stopPreview();
+            camera.release();
+            camera = null;
+        }
+    }
+
+    private boolean startPreview(){
         try {
             setCameraDisplayOrientation(0, camera);
-            camera.setPreviewDisplay(holder);
+            camera.setPreviewDisplay(surfaceHolder);
             camera.startPreview();
-        }
-
-        catch (Exception e) {
+            return true;
+        } catch (Exception e) {
             System.err.println(e);
-            return;
-        }
-
-    }
-
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        if (holder.getSurface() == null) {
-            return;
-        }
-
-        try {
-            camera.stopPreview();
-        }
-
-        catch (Exception e) {
-        }
-
-        try {
-            camera.setPreviewDisplay(holder);
-            camera.startPreview();
-        }
-        catch (Exception e) {
+            return false;
         }
     }
 
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-        camera.stopPreview();
-        camera.release();
-        camera = null;
+    private void setCameraDisplayOrientation(int cameraId, Camera camera) {
+        android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
+        android.hardware.Camera.getCameraInfo(cameraId, info);
+        int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360; // compensate the mirror
+        } else { // back-facing
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        camera.setDisplayOrientation(result);
     }
 
     private int getOrientation(String imagePath){
@@ -229,46 +212,12 @@ public class PhotoFragment extends StepFragment implements SurfaceHolder.Callbac
         photo_preview.setRotation(rotation);
         photo_preview.refreshDrawableState();
         //Glide.with(getActivity().getApplicationContext()).load(imageURI.toString()).into(photo_preview);
-        /*
-        photo_preview.setImageURI(imageURI);
-        photo_preview.refreshDrawableState();
-        */
-    }
-
-    private void setCameraDisplayOrientation(int cameraId, android.hardware.Camera camera) {
-        android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
-        android.hardware.Camera.getCameraInfo(cameraId, info);
-        int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
-        int degrees = 0;
-        switch (rotation) {
-            case Surface.ROTATION_0:
-                degrees = 0;
-                break;
-            case Surface.ROTATION_90:
-                degrees = 90;
-                break;
-            case Surface.ROTATION_180:
-                degrees = 180;
-                break;
-            case Surface.ROTATION_270:
-                degrees = 270;
-                break;
-        }
-
-        int result;
-        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            result = (info.orientation + degrees) % 360;
-            result = (360 - result) % 360; // compensate the mirror
-        } else { // back-facing
-            result = (info.orientation - degrees + 360) % 360;
-        }
-        camera.setDisplayOrientation(result);
     }
 
 
-    public void captureImage() throws IOException {
-        // take picture and calls onPictureTaken()
-        camera.takePicture(null, null, this);
+    public void captureImage() throws IOException{
+        //take picture and calls onPictureTaken()
+        camera.takePicture(null, null, new CameraCallbaksHelper());
     }
 
     private class TakePictureClick implements View.OnClickListener {
@@ -277,10 +226,81 @@ public class PhotoFragment extends StepFragment implements SurfaceHolder.Callbac
         public void onClick(View v) {
             try {
                 captureImage();
-                //mListener.onPhotoCameraFragmentInteraction(imageURI);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    /*private helper classes*/
+    private class BackFromPictureClick implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            //reassign the camera
+            photo_layout.setVisibility(View.VISIBLE);
+            preview_layout.setVisibility(View.INVISIBLE);
+            if(openCamera()) {
+                startPreview();
+            }
+        }
+    }
+
+    /*surface holder callbacks*/
+    private class SurfaceCallbacksHelper implements SurfaceHolder.Callback{
+
+        @Override
+        public void surfaceCreated(SurfaceHolder holder) {
+            //Surface holder = this.surfaceHolder
+            if(openCamera()) {
+                startPreview();
+            }
+        }
+
+        @Override
+        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            if (holder.getSurface() == null) {
+                return;
+            }
+
+            try {
+                camera.stopPreview();
+            }
+
+            catch (Exception e) {
+            }
+
+            try {
+                camera.setPreviewDisplay(holder);
+                camera.startPreview();
+            }
+            catch (Exception e) {
+            }
+        }
+
+        @Override
+        public void surfaceDestroyed(SurfaceHolder holder) {
+            //release camera happens when picture is taken
+        }
+    }
+    /*Camera callbacks helper*/
+    private class CameraCallbaksHelper implements Camera.PictureCallback{
+
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+            File file = null;
+            try {
+                //private File savePhoto;
+                file = MultimediaIOManagement.saveTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
+                imageFileName = file.getName();
+                releaseCamera();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Log.e("Image URI",Uri.fromFile(file).toString());
+            // TODO: 15/03/2017 check if no errors with file == null
+            showPreviewLayout(Uri.fromFile(file), file.getAbsolutePath());
         }
     }
 
