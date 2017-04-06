@@ -35,6 +35,7 @@ task samplers_config {
     // Project constants
     def app_path = json.project.app_path
     def package_name = json.project.package_name
+    def manifest_path = "app/src/main/"
 
     // MAIN ACTIVITY
     File main_activity_file = new File(app_path+"MyMainSamplersActivity.java")
@@ -51,6 +52,7 @@ task samplers_config {
         main_activity_file.text += "protected void onCreate(Bundle savedInstanceState) { \n"
         main_activity_file.text += "    super.onCreate(savedInstanceState); \n"
 
+        // Network Configuration
         main_activity_file.text += "    NetworkConfiguration.setURL(\"" + json.aplication.networkConfiguration.url + "\"); \n"
         main_activity_file.text += "    NetworkConfiguration.setPARAM_NAME(\"" + json.aplication.networkConfiguration.paramName + "\"); \n"
 
@@ -67,6 +69,23 @@ task samplers_config {
 
 
         main_activity_file.text += "} \n"
+
+
+        // add the activity to the manifest file
+
+        def main_activity_manifest = "<activity\n" +
+                "        android:name=\"MyMainSamplersActivity\"\n" +
+                "        android:label=\"@string/app_name\"\n" +
+                "        android:theme=\"@style/AppTheme\">\n" +
+                "        <intent-filter>\n" +
+                "            <action android:name=\"android.intent.action.MAIN\" />\n" +
+                "            <category android:name=\"android.intent.category.LAUNCHER\" />\n" +
+                "        </intent-filter>\n" +
+                "    </activity>"
+
+        File manifest_file = new File(manifest_path+"AndroidManifest.xml")
+        manifest_file.text = manifest_file.text.replace("</application>", main_activity_manifest + "</application>")
+
     }
     else {
         println "MyMainSamplersActivity.java already exists."
