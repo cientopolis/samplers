@@ -78,6 +78,9 @@ task samplers_config {
                         break
 
                     case "MultipleSelect":
+                        // title
+                        main_activity_file.text += "    String multipleSelectTitle"+i+" = \""+task.title+"\"; \n"
+
                         // Opciones para el multi select
                         main_activity_file.text += "    ArrayList<SelectOption> optionsToSelect"+i+" = new ArrayList<SelectOption>(); \n"
 
@@ -87,10 +90,13 @@ task samplers_config {
                             // TODO poner en el archivo de Strings y tomarlo de ahi
                             //optionsToSelect.add(new MultipleSelectOption(getResources().getString(R.string.step_3_param_1), false));
                         }
-                        main_activity_file.text += "    workflow.addStep(new MultipleSelectStep(optionsToSelect"+i+")); \n"
+                        main_activity_file.text += "    workflow.addStep(new MultipleSelectStep(optionsToSelect"+i+",multipleSelectTitle"+i+")); \n"
                         break
 
                     case "SelectOne":
+                        // title
+                        main_activity_file.text += "    String selectOneTitle"+i+" = \""+task.title+"\"; \n"
+
                         // Opciones para el select one
                         main_activity_file.text += "    ArrayList<SelectOption> optionsToSelectOne"+i+" = new ArrayList<SelectOption>(); \n"
 
@@ -101,7 +107,7 @@ task samplers_config {
                             // optionsToSelect2.add(new MultipleSelectOption(getResources().getString(R.string.step_5_param_1),false));
                         }
 
-                        main_activity_file.text += "    workflow.addStep(new SelectOneStep(optionsToSelectOne"+i+")); \n"
+                        main_activity_file.text += "    workflow.addStep(new SelectOneStep(optionsToSelectOne"+i+",selectOneTitle"+i+")); \n"
                         break
 
                     case "Photo":

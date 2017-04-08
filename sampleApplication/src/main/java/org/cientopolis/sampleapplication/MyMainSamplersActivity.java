@@ -47,7 +47,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         optionsToSelect.add(new SelectOption(2,"Basura", false));
         optionsToSelect.add(new SelectOption(3,"Arroyo", false));
         optionsToSelect.add(new SelectOption(4,"Animales", false));
-        workflow.addStep(new MultipleSelectStep(optionsToSelect));
+        workflow.addStep(new MultipleSelectStep(optionsToSelect, "Seleccione si observa algo de esto"));
 
         // SelectOneStep
         ArrayList<SelectOption> optionsToSelect2 = new ArrayList<SelectOption>();
@@ -55,7 +55,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         optionsToSelect2.add(new SelectOption(2,"Opcion 2",false));
         optionsToSelect2.add(new SelectOption(3,"Opcion 3",false));
         optionsToSelect2.add(new SelectOption(4,"Opcion 4",false));
-        workflow.addStep(new SelectOneStep(optionsToSelect2));
+        workflow.addStep(new SelectOneStep(optionsToSelect2, "Seleccione solo uno"));
 
         return workflow;
     }

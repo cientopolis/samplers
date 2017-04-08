@@ -43,14 +43,14 @@ public class SampleDAOImplTest {
         optionsToSelect.add(new SelectOption(2,"Basura", false));
         optionsToSelect.add(new SelectOption(3,"Arroyo", true));
         optionsToSelect.add(new SelectOption(4,"Animales", false));
-        MultipleSelectStep multipleSelectStep = new MultipleSelectStep(optionsToSelect);
+        MultipleSelectStep multipleSelectStep = new MultipleSelectStep(optionsToSelect,"Seleccione lo que ve");
 
         ArrayList<SelectOption> optionsToOneSelect = new ArrayList<SelectOption>();
         optionsToSelect.add(new SelectOption(1,"option0", false));
         optionsToSelect.add(new SelectOption(2,"option1", false));
         optionsToSelect.add(new SelectOption(3,"option2", true));
         optionsToSelect.add(new SelectOption(4,"option3", false));
-        SelectOneStep selectOneStep = new SelectOneStep(optionsToOneSelect);
+        SelectOneStep selectOneStep = new SelectOneStep(optionsToOneSelect, "Seleccion uno solo");
         /*create step results*/
         MultipleSelectStepResult multipleSelectStepResult = new MultipleSelectStepResult(multipleSelectStep.getSelectedOptions());
         SelectOneStepResult selectOneStepResult = new SelectOneStepResult(selectOneStep.getSelectedOption());

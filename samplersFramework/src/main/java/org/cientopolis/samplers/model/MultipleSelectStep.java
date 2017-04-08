@@ -8,14 +8,17 @@ import java.util.ArrayList;
 public class MultipleSelectStep extends Step {
 
     private ArrayList<SelectOption> optionsToSelect;
+    private String title;
 
     public MultipleSelectStep() {
         optionsToSelect = new ArrayList<SelectOption>();
+        title = "";
     }
 
-    public MultipleSelectStep(ArrayList<SelectOption> anOptionsToSelect) {
+    public MultipleSelectStep(ArrayList<SelectOption> anOptionsToSelect, String title) {
 
-        optionsToSelect = anOptionsToSelect;
+        this.optionsToSelect = anOptionsToSelect;
+        this.title = title;
     }
 
     public ArrayList<SelectOption> getOptionsToSelect() {
@@ -32,5 +35,9 @@ public class MultipleSelectStep extends Step {
             }
         }
         return options;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }
