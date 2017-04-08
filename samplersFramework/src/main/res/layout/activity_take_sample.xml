@@ -30,7 +30,7 @@
 
 
         <TextView
-            android:id="@+id/lb_nro_paso"
+            android:id="@+id/lb_step_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"

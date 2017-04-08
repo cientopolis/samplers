@@ -60,11 +60,67 @@ task samplers_config {
 
         main_activity_file.text += "} \n"
 
-        // take sample
+        // workflow
         main_activity_file.text += "@Override \n"
-        main_activity_file.text += "protected void startTakeSampleActivity(){ \n"
-        main_activity_file.text += "    Intent intent = new Intent(this, MyTakeSampleActivity.class); \n"
-        main_activity_file.text += "    startActivity(intent); \n"
+        main_activity_file.text += "protected Workflow getWorkflow(){ \n"
+        main_activity_file.text += "    Workflow workflow = new Workflow(); \n"
+
+
+            json.workflow.tasks.each { task ->
+                switch (task.type) {
+                    case "Information":
+                        // TODO renombrar la variable optionsToSelect xq si hay dos Task del mismo tipo va a dar error de variable repetida
+                        take_sample_activity_file.text += "    String textToShow = \"" + task.text + "\"; \n"
+
+                        // TODO poner en el archivo de Strings y tomarlo de ahi
+                        take_sample_activity_file.text += "    workflow.addStep(new InformationStep(textToShow)); \n"
+                        break
+
+                    case "MultipleSelect":
+                        // Opciones para el multi select
+                        // TODO renombrar la variable optionsToSelect xq si hay dos Task del mismo tipo va a dar error de variable repetida
+                        take_sample_activity_file.text += "    ArrayList<SelectOption> optionsToSelect = new ArrayList<SelectOption>(); \n"
+
+                        task.options.each { option ->
+                            take_sample_activity_file.text += "    optionsToSelect.add(new SelectOption(" + option.id + ",\"" + option.text + "\", false)); \n"
+
+                            // TODO poner en el archivo de Strings y tomarlo de ahi
+                            //optionsToSelect.add(new MultipleSelectOption(getResources().getString(R.string.step_3_param_1), false));
+                        }
+                        take_sample_activity_file.text += "    workflow.addStep(new MultipleSelectStep(optionsToSelect)); \n"
+                        break
+
+                    case "SelectOne":
+                        // Opciones para el select one
+                        // TODO renombrar la variable optionsToSelect xq si hay dos Task del mismo tipo va a dar error de variable repetida
+                        take_sample_activity_file.text += "    ArrayList<SelectOption> optionsToSelect2 = new ArrayList<SelectOption>(); \n"
+
+                        task.options.each { option ->
+                            take_sample_activity_file.text += "    optionsToSelect2.add(new SelectOption(" + option.id + ",\"" + option.text + "\",false)); \n"
+
+                            // TODO poner en el archivo de Strings y tomarlo de ahi
+                            // optionsToSelect2.add(new MultipleSelectOption(getResources().getString(R.string.step_5_param_1),false));
+                        }
+
+                        take_sample_activity_file.text += "    workflow.addStep(new SelectOneStep(optionsToSelect2)); \n"
+                        break
+
+                    case "Photo":
+                        // TODO renombrar la variable optionsToSelect xq si hay dos Task del mismo tipo va a dar error de variable repetida
+                        take_sample_activity_file.text += "    String photoInstructions = \"" + task.text + "\"; \n"
+
+                        // TODO add functionality
+                        //take_sample_activity_file.text += "    String image = \""+task.image+"\"; \n"
+                        take_sample_activity_file.text += "    String image = \"\"; \n"
+
+                        // TODO poner en el archivo de Strings y tomarlo de ahi
+                        take_sample_activity_file.text += "    workflow.addStep(new PhotoStep(photoInstructions, image)); \n"
+                        break
+                }
+            }
+
+
+        main_activity_file.text += "    return workflow; \n"
         main_activity_file.text += "} \n"
 
 
@@ -106,58 +162,7 @@ task samplers_config {
         take_sample_activity_file.text += "    super.onCreate(savedInstanceState); \n"
 
 
-        json.workflow.tasks.each { task ->
-            switch (task.type) {
-                case "Information":
-                    // TODO renombrar la variable optionsToSelect xq si hay dos Task del mismo tipo va a dar error de variable repetida
-                    take_sample_activity_file.text += "    String textToShow = \"" + task.text + "\"; \n"
 
-                    // TODO poner en el archivo de Strings y tomarlo de ahi
-                    take_sample_activity_file.text += "    workflow.addStep(new InformationStep(textToShow)); \n"
-                    break
-
-                case "MultipleSelect":
-                    // Opciones para el multi select
-                    // TODO renombrar la variable optionsToSelect xq si hay dos Task del mismo tipo va a dar error de variable repetida
-                    take_sample_activity_file.text += "    ArrayList<SelectOption> optionsToSelect = new ArrayList<SelectOption>(); \n"
-
-                    task.options.each { option ->
-                        take_sample_activity_file.text += "    optionsToSelect.add(new SelectOption(" + option.id + ",\"" + option.text + "\", false)); \n"
-
-                        // TODO poner en el archivo de Strings y tomarlo de ahi
-                        //optionsToSelect.add(new MultipleSelectOption(getResources().getString(R.string.step_3_param_1), false));
-                    }
-                    take_sample_activity_file.text += "    workflow.addStep(new MultipleSelectStep(optionsToSelect)); \n"
-                    break
-
-                case "SelectOne":
-                    // Opciones para el select one
-                    // TODO renombrar la variable optionsToSelect xq si hay dos Task del mismo tipo va a dar error de variable repetida
-                    take_sample_activity_file.text += "    ArrayList<SelectOption> optionsToSelect2 = new ArrayList<SelectOption>(); \n"
-
-                    task.options.each { option ->
-                        take_sample_activity_file.text += "    optionsToSelect2.add(new SelectOption(" + option.id + ",\"" + option.text + "\",false)); \n"
-
-                        // TODO poner en el archivo de Strings y tomarlo de ahi
-                        // optionsToSelect2.add(new MultipleSelectOption(getResources().getString(R.string.step_5_param_1),false));
-                    }
-
-                    take_sample_activity_file.text += "    workflow.addStep(new SelectOneStep(optionsToSelect2)); \n"
-                    break
-
-                case "Photo":
-                    // TODO renombrar la variable optionsToSelect xq si hay dos Task del mismo tipo va a dar error de variable repetida
-                    take_sample_activity_file.text += "    String photoInstructions = \"" + task.text + "\"; \n"
-
-                    // TODO add functionality
-                    //take_sample_activity_file.text += "    String image = \""+task.image+"\"; \n"
-                    take_sample_activity_file.text += "    String image = \"\"; \n"
-
-                    // TODO poner en el archivo de Strings y tomarlo de ahi
-                    take_sample_activity_file.text += "    workflow.addStep(new PhotoStep(photoInstructions, image)); \n"
-                    break
-            }
-        }
 
         take_sample_activity_file.text += "} \n"
         take_sample_activity_file.text += "} \n"

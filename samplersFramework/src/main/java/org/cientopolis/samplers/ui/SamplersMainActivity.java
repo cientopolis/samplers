@@ -10,11 +10,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.cientopolis.samplers.R;
+import org.cientopolis.samplers.model.Workflow;
 import org.cientopolis.samplers.ui.samples_list.SamplesListActivity;
 import org.cientopolis.samplers.ui.take_sample.TakeSampleActivity;
 
 
-public class SamplersMainActivity extends Activity {
+public abstract class SamplersMainActivity extends Activity {
     protected TextView lb_main_titulo;
 
     @Override
@@ -61,9 +62,23 @@ public class SamplersMainActivity extends Activity {
     }
 
     protected void startTakeSampleActivity() {
-        //Intent intent = new Intent(this, TakeSampleActivity.class);
-        //startActivity(intent);
+        Intent intent = new Intent(this, getTakeSampleActivityClass());
+
+        Workflow workflow = getWorkflow();
+        intent.putExtra(getTakeSampleActivityWorkflowParamName(), workflow);
+
+        startActivity(intent);
     }
+
+    protected Class getTakeSampleActivityClass() {
+        return TakeSampleActivity.class;
+    }
+
+    protected String getTakeSampleActivityWorkflowParamName() {
+        return TakeSampleActivity.EXTRA_WORKFLOW;
+    }
+
+    protected abstract Workflow getWorkflow();
 
     protected void startSamplesListActivity() {
         Intent intent = new Intent(this, SamplesListActivity.class);

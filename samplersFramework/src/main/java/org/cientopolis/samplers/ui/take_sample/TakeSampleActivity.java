@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -26,8 +27,9 @@ import java.util.Date;
 
 public class TakeSampleActivity extends Activity implements StepFragmentInteractionListener {
 
+    public static final String EXTRA_WORKFLOW = "org.cientopolis.samplers.WORKFLOW";
 
-    private TextView lb_nro_paso;
+    private TextView lb_step_count;
     protected Workflow workflow;
     protected Sample sample;
 
@@ -36,12 +38,19 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_take_sample);
 
-        workflow = new Workflow();
+        // Get the Intent that started this activity and extract the workflow passed as parameter
+        Intent intent = getIntent();
+        workflow = (Workflow) intent.getSerializableExtra(EXTRA_WORKFLOW);
+
+        // if not passed as parameter, then create a new empty workflow
+        if (workflow == null)
+            workflow = new Workflow();
+
         sample = new Sample();
 
         getFragmentManager().addOnBackStackChangedListener(new MyOnBackStackChangedListener());
 
-        lb_nro_paso = (TextView) findViewById(R.id.lb_nro_paso);
+        lb_step_count = (TextView) findViewById(R.id.lb_step_count);
     }
 
     @Override
@@ -118,7 +127,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     }
 
     private void refreshStepStateOnScreen() {
-        lb_nro_paso.setText(String.valueOf(workflow.getStepPosition()+1) + "/" + String.valueOf(workflow.getStepCount()));
+        lb_step_count.setText(String.valueOf(workflow.getStepPosition()+1) + "/" + String.valueOf(workflow.getStepCount()));
     }
 
 
