@@ -15,14 +15,14 @@
         android:layout_centerHorizontal="true"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="¿Observa alguno de estos animales en el agua?"
-        android:id="@+id/textView2" />
+        android:id="@+id/lb_multiple_select_title" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/scrollView"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/textView2"
+        android:layout_below="@+id/lb_multiple_select_title"
         android:layout_above="@+id/bt_next"
 
        >

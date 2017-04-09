@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.MultipleSelectStep;
@@ -33,10 +34,16 @@ public class MultipleSelectFragment extends StepFragment {
 
     @Override
     protected void onCreateViewStepFragment(View rootView, Bundle savedInstanceState) {
+
+        // title
+        TextView lb_multiple_select_title = (TextView) rootView.findViewById(R.id.lb_multiple_select_title);
+        lb_multiple_select_title.setText(getStep().getTitle());
+
+        // layout for the checkboxes
         LinearLayout vertical_layout = (LinearLayout) rootView.findViewById(R.id.vertical_layout);
 
         CheckBox checkBox;
-
+        // Checkboxes
         if (vertical_layout != null) {
             for (SelectOption option : getStep().getOptionsToSelect()) {
                 checkBox = new CheckBox(getActivity());
