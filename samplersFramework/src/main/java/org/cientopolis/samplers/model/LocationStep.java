@@ -5,4 +5,16 @@ package org.cientopolis.samplers.model;
  */
 
 public class LocationStep extends Step {
+
+    private String textToShow;
+
+    public LocationStep(String aTextToShow) {
+
+        textToShow = aTextToShow;
+    }
+
+    public String getTextToShow(){
+
+        return textToShow;
+    }
 }

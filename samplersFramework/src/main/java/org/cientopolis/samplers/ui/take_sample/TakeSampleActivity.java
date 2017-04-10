@@ -12,14 +12,7 @@ import android.view.KeyEvent;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.cientopolis.samplers.R;
-import org.cientopolis.samplers.model.InformationStep;
-import org.cientopolis.samplers.model.MultipleSelectStep;
-import org.cientopolis.samplers.model.PhotoStep;
-import org.cientopolis.samplers.model.Sample;
-import org.cientopolis.samplers.model.SelectOneStep;
-import org.cientopolis.samplers.model.Step;
-import org.cientopolis.samplers.model.StepResult;
-import org.cientopolis.samplers.model.Workflow;
+import org.cientopolis.samplers.model.*;
 import org.cientopolis.samplers.persistence.DAO_Factory;
 
 
@@ -79,6 +72,8 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
                     fragment = StepFragment.newInstance(MultipleSelectFragment.class, step);
                 } else if (SelectOneStep.class.isInstance(step)) {
                     fragment = StepFragment.newInstance(SelectOneFragment.class, step);
+                } else if (LocationStep.class.isInstance(step)) {
+                    fragment = StepFragment.newInstance(LocationFragment.class, step);
                 } else
                     fragment = null;
 

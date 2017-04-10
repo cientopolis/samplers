@@ -120,6 +120,13 @@ task samplers_config {
                         // TODO poner en el archivo de Strings y tomarlo de ahi
                         main_activity_file.text += "    workflow.addStep(new PhotoStep(photoInstructions"+i+", image"+i+")); \n"
                         break
+
+                    case "Location":
+                        main_activity_file.text += "    String textToShowLocation"+i+" = \"" + task.text + "\"; \n"
+
+                        // TODO poner en el archivo de Strings y tomarlo de ahi
+                        main_activity_file.text += "    workflow.addStep(new LocationStep(textToShowLocation"+i+")); \n"
+                        break
                 }
             }
 
