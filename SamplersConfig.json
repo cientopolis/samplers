@@ -10,7 +10,8 @@
 		"networkConfiguration" : {
 			"url" : "http://192.168.1.10/samplers/upload.php",
 			"paramName" : "sample"
-		}
+		},
+		"googleMaps_API_KEY" : "AIzaSyBSdAX453WDiPJmPotF5akUQNQw_W_MzJ4"
 	} ,
 
 	"workflow": {
@@ -19,6 +20,10 @@
 			{
 				"type" : "Information",
 				"text" : "Please, follow the instructions"
+			},
+			{
+				"type" : "Location",
+				"text" : "Please, positionate the sample on the map"
 			},
 			{
 				"type": "MultipleSelect",
