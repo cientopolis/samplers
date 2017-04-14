@@ -16,6 +16,8 @@ task samplers_config {
     // APLICATION
     println json.aplication.title
     println json.aplication.wellcomeMessage
+    println json.aplication.networkConfiguration.url
+    println json.aplication.networkConfiguration.paramName
 
     // WORKFLOW
     println json.workflow.actionLabel
@@ -24,8 +26,7 @@ task samplers_config {
 
     json.workflow.tasks.each { task ->
         println "   " + task.type
-        print "   " + task.title
-        println " : " + task.options
+        println "   " + task.title
 
         task.options.each { option ->
             println "       " + option
@@ -36,6 +37,12 @@ task samplers_config {
     def app_path = json.project.app_path
     def package_name = json.project.package_name
     def manifest_path = "app/src/main/"
+    def googleMaps_API_KEY = ""
+
+    if (json.aplication.googleMaps_API_KEY != null)
+        googleMaps_API_KEY = "<meta-data android:name=\"com.google.android.geo.API_KEY\" android:value=\""+json.aplication.googleMaps_API_KEY+"\"/> \n"
+    else
+        println "No google maps API KEY found"
 
     // MAIN ACTIVITY
     File main_activity_file = new File(app_path+"MyMainSamplersActivity.java")
@@ -68,67 +75,67 @@ task samplers_config {
         main_activity_file.text += "    Workflow workflow = new Workflow(); \n"
 
 
-            json.workflow.tasks.eachWithIndex { task, i ->
-                switch (task.type) {
-                    case "Information":
-                        main_activity_file.text += "    String textToShow"+i+" = \"" + task.text + "\"; \n"
+        json.workflow.tasks.eachWithIndex { task, i ->
+            switch (task.type) {
+                case "Information":
+                    main_activity_file.text += "    String textToShow"+i+" = \"" + task.text + "\"; \n"
+
+                    // TODO poner en el archivo de Strings y tomarlo de ahi
+                    main_activity_file.text += "    workflow.addStep(new InformationStep(textToShow"+i+")); \n"
+                    break
+
+                case "MultipleSelect":
+                    // title
+                    main_activity_file.text += "    String multipleSelectTitle"+i+" = \""+task.title+"\"; \n"
+
+                    // Opciones para el multi select
+                    main_activity_file.text += "    ArrayList<SelectOption> optionsToSelect"+i+" = new ArrayList<SelectOption>(); \n"
+
+                    task.options.each { option ->
+                        main_activity_file.text += "    optionsToSelect"+i+".add(new SelectOption(" + option.id + ",\"" + option.text + "\", false)); \n"
 
                         // TODO poner en el archivo de Strings y tomarlo de ahi
-                        main_activity_file.text += "    workflow.addStep(new InformationStep(textToShow"+i+")); \n"
-                        break
+                        //optionsToSelect.add(new MultipleSelectOption(getResources().getString(R.string.step_3_param_1), false));
+                    }
+                    main_activity_file.text += "    workflow.addStep(new MultipleSelectStep(optionsToSelect"+i+",multipleSelectTitle"+i+")); \n"
+                    break
 
-                    case "MultipleSelect":
-                        // title
-                        main_activity_file.text += "    String multipleSelectTitle"+i+" = \""+task.title+"\"; \n"
+                case "SelectOne":
+                    // title
+                    main_activity_file.text += "    String selectOneTitle"+i+" = \""+task.title+"\"; \n"
 
-                        // Opciones para el multi select
-                        main_activity_file.text += "    ArrayList<SelectOption> optionsToSelect"+i+" = new ArrayList<SelectOption>(); \n"
+                    // Opciones para el select one
+                    main_activity_file.text += "    ArrayList<SelectOption> optionsToSelectOne"+i+" = new ArrayList<SelectOption>(); \n"
 
-                        task.options.each { option ->
-                            main_activity_file.text += "    optionsToSelect"+i+".add(new SelectOption(" + option.id + ",\"" + option.text + "\", false)); \n"
-
-                            // TODO poner en el archivo de Strings y tomarlo de ahi
-                            //optionsToSelect.add(new MultipleSelectOption(getResources().getString(R.string.step_3_param_1), false));
-                        }
-                        main_activity_file.text += "    workflow.addStep(new MultipleSelectStep(optionsToSelect"+i+",multipleSelectTitle"+i+")); \n"
-                        break
-
-                    case "SelectOne":
-                        // title
-                        main_activity_file.text += "    String selectOneTitle"+i+" = \""+task.title+"\"; \n"
-
-                        // Opciones para el select one
-                        main_activity_file.text += "    ArrayList<SelectOption> optionsToSelectOne"+i+" = new ArrayList<SelectOption>(); \n"
-
-                        task.options.each { option ->
-                            main_activity_file.text += "    optionsToSelectOne"+i+".add(new SelectOption(" + option.id + ",\"" + option.text + "\",false)); \n"
-
-                            // TODO poner en el archivo de Strings y tomarlo de ahi
-                            // optionsToSelect2.add(new MultipleSelectOption(getResources().getString(R.string.step_5_param_1),false));
-                        }
-
-                        main_activity_file.text += "    workflow.addStep(new SelectOneStep(optionsToSelectOne"+i+",selectOneTitle"+i+")); \n"
-                        break
-
-                    case "Photo":
-                        main_activity_file.text += "    String photoInstructions"+i+" = \"" + task.text + "\"; \n"
-
-                        // TODO add functionality
-                        //take_sample_activity_file.text += "    String image"+i+" = \""+task.image+"\"; \n"
-                        main_activity_file.text += "    String image"+i+" = \"\"; \n"
+                    task.options.each { option ->
+                        main_activity_file.text += "    optionsToSelectOne"+i+".add(new SelectOption(" + option.id + ",\"" + option.text + "\",false)); \n"
 
                         // TODO poner en el archivo de Strings y tomarlo de ahi
-                        main_activity_file.text += "    workflow.addStep(new PhotoStep(photoInstructions"+i+", image"+i+")); \n"
-                        break
+                        // optionsToSelect2.add(new MultipleSelectOption(getResources().getString(R.string.step_5_param_1),false));
+                    }
 
-                    case "Location":
-                        main_activity_file.text += "    String textToShowLocation"+i+" = \"" + task.text + "\"; \n"
+                    main_activity_file.text += "    workflow.addStep(new SelectOneStep(optionsToSelectOne"+i+",selectOneTitle"+i+")); \n"
+                    break
 
-                        // TODO poner en el archivo de Strings y tomarlo de ahi
-                        main_activity_file.text += "    workflow.addStep(new LocationStep(textToShowLocation"+i+")); \n"
-                        break
-                }
+                case "Photo":
+                    main_activity_file.text += "    String photoInstructions"+i+" = \"" + task.text + "\"; \n"
+
+                    // TODO add functionality
+                    //take_sample_activity_file.text += "    String image"+i+" = \""+task.image+"\"; \n"
+                    main_activity_file.text += "    String image"+i+" = \"\"; \n"
+
+                    // TODO poner en el archivo de Strings y tomarlo de ahi
+                    main_activity_file.text += "    workflow.addStep(new PhotoStep(photoInstructions"+i+", image"+i+")); \n"
+                    break
+
+                case "Location":
+                    main_activity_file.text += "    String textToShowLocation"+i+" = \"" + task.text + "\"; \n"
+
+                    // TODO poner en el archivo de Strings y tomarlo de ahi
+                    main_activity_file.text += "    workflow.addStep(new LocationStep(textToShowLocation"+i+")); \n"
+                    break
             }
+        }
 
 
         main_activity_file.text += "    return workflow; \n"
@@ -136,7 +143,6 @@ task samplers_config {
 
 
         main_activity_file.text += "} \n"
-
 
         // add the activity to the manifest file
 
@@ -148,11 +154,12 @@ task samplers_config {
                 "            <action android:name=\"android.intent.action.MAIN\" />\n" +
                 "            <category android:name=\"android.intent.category.LAUNCHER\" />\n" +
                 "        </intent-filter>\n" +
-                "    </activity>"
+                "    </activity>\n"
 
         File manifest_file = new File(manifest_path+"AndroidManifest.xml")
-        manifest_file.text = manifest_file.text.replace("</application>", main_activity_manifest + "</application>")
+        manifest_file.text = manifest_file.text.replace("</application>", googleMaps_API_KEY + main_activity_manifest + "</application>")
 
+        println "MyMainSamplersActivity.java created."
     }
     else {
         println "MyMainSamplersActivity.java already exists."

@@ -98,7 +98,7 @@ public class LocationFragment extends StepFragment {
     public void onDestroy() {
         super.onDestroy();
         mMapView.onDestroy();
-    }
+}
 
 
     @Override
@@ -205,8 +205,8 @@ public class LocationFragment extends StepFragment {
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 if (mMarker == null) {
                     mMarker = mGoogleMap.addMarker(new MarkerOptions().position(latLng)
-                            .title("Marker Title")
-                            .snippet("Marker Description")
+                            //.title("Marker Titlezzzz")
+                            //.snippet("Marker Descriptionzzz")
                             .draggable(true));
 
                 }
@@ -238,17 +238,6 @@ public class LocationFragment extends StepFragment {
 
             mGoogleMap = googleMap;
             mGoogleMap.setOnMarkerDragListener(new MarkerDragListener());
-
-            // For showing a move to my location button
-            //mGoogleMap.setMyLocationEnabled(true);
-
-            // For dropping a marker at a point on the Map
-            //LatLng sydney = new LatLng(-34, 151);
-            //googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker Title").snippet("Marker Description"));
-
-            // For zooming automatically to the location of the marker
-            //CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(12).build();
-            //googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         }
     }
