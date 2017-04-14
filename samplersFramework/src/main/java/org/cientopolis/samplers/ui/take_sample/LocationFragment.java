@@ -2,6 +2,7 @@ package org.cientopolis.samplers.ui.take_sample;
 
 import android.content.Context;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +17,15 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.LocationStep;
@@ -37,6 +47,10 @@ public class LocationFragment extends StepFragment {
     private Location mLocation = null;
     private TextView lb_latitude;
     private TextView lb_longitude;
+
+    private MapView mMapView;
+    private GoogleMap mGoogleMap;
+    private Marker mMarker;
 
 
     @Override
@@ -68,6 +82,24 @@ public class LocationFragment extends StepFragment {
         super.onStop();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mMapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mMapView.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mMapView.onDestroy();
+    }
+
 
     @Override
     protected int getLayoutResource() {
@@ -85,6 +117,19 @@ public class LocationFragment extends StepFragment {
         Button bt_get_position = (Button) rootView.findViewById(R.id.bt_get_position);
         bt_get_position.setOnClickListener(new GetPositionClickListener());
 
+        mMapView = (MapView) rootView.findViewById(R.id.mapView);
+        mMapView.onCreate(savedInstanceState);
+
+        //mMapView.onResume(); // needed to get the map to display immediately
+        // dont needed, its called on onResume() of the fragment
+
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        mMapView.getMapAsync(new MapReadyCallbacks());
     }
 
     @Override
@@ -108,6 +153,12 @@ public class LocationFragment extends StepFragment {
     @Override
     protected StepResult getStepResult() {
         return new LocationStepResult(mLocation.getLatitude(), mLocation.getLongitude());
+    }
+
+
+    private void updateLocationOnScreen(){
+        lb_latitude.setText(String.valueOf(mLocation.getLatitude()));
+        lb_longitude.setText(String.valueOf(mLocation.getLongitude()));
     }
 
     private class GoogleApiConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -146,11 +197,26 @@ public class LocationFragment extends StepFragment {
             if (location != null) {
                 mLocation = location;
 
-                lb_latitude.setText(String.valueOf(location.getLatitude()));
-                lb_longitude.setText(String.valueOf(location.getLongitude()));
+                updateLocationOnScreen();
 
-                Log.e("LocationFragment", "Latitude: "+String.valueOf(location.getLatitude()));
-                Log.e("LocationFragment", "Longitude: "+String.valueOf(location.getLongitude()));
+                Log.e("MyLocationListener", "Latitude: "+String.valueOf(location.getLatitude()));
+                Log.e("MyLocationListener", "Longitude: "+String.valueOf(location.getLongitude()));
+
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                if (mMarker == null) {
+                    mMarker = mGoogleMap.addMarker(new MarkerOptions().position(latLng)
+                            .title("Marker Title")
+                            .snippet("Marker Description")
+                            .draggable(true));
+
+                }
+                else {
+                    mMarker.setPosition(latLng);
+                }
+
+                // For zooming automatically to the location of the marker
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();
+                mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
             mGoogleApiClient.disconnect();
         }
@@ -165,4 +231,50 @@ public class LocationFragment extends StepFragment {
     }
 
 
+    private class MapReadyCallbacks  implements OnMapReadyCallback {
+
+        @Override
+        public void onMapReady(GoogleMap googleMap) {
+
+            mGoogleMap = googleMap;
+            mGoogleMap.setOnMarkerDragListener(new MarkerDragListener());
+
+            // For showing a move to my location button
+            //mGoogleMap.setMyLocationEnabled(true);
+
+            // For dropping a marker at a point on the Map
+            //LatLng sydney = new LatLng(-34, 151);
+            //googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker Title").snippet("Marker Description"));
+
+            // For zooming automatically to the location of the marker
+            //CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(12).build();
+            //googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+        }
+    }
+
+    private class MarkerDragListener implements GoogleMap.OnMarkerDragListener {
+
+        @Override
+        public void onMarkerDragStart(Marker marker) {
+
+        }
+
+        @Override
+        public void onMarkerDrag(Marker marker) {
+
+        }
+
+        @Override
+        public void onMarkerDragEnd(Marker marker) {
+            mLocation = new Location(LocationManager.PASSIVE_PROVIDER);
+            mLocation.setLatitude(marker.getPosition().latitude);
+            mLocation.setLongitude(marker.getPosition().longitude);
+
+            updateLocationOnScreen();
+
+            Log.e("MarkerDragListener", "Latitude: "+String.valueOf(mLocation.getLatitude()));
+            Log.e("MarkerDragListener", "Longitude: "+String.valueOf(mLocation.getLongitude()));
+        }
+    }
 }
