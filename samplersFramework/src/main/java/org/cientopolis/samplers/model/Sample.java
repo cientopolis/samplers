@@ -1,5 +1,6 @@
 package org.cientopolis.samplers.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
  * Created by Xavier on 07/02/2017.
  */
 
-public class Sample {
+public class Sample implements Serializable {
 
     private Long id;
     private List<StepResult> stepResults;
