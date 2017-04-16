@@ -42,6 +42,8 @@ import org.cientopolis.samplers.model.StepResult;
 
 public class LocationFragment extends StepFragment {
 
+    private static final String KEY_LOCATION = "org.cientopolis.samplers.LOCATION";
+
     private GoogleApiClient mGoogleApiClient;
     private GoogleApiConnectionCallbacks googleApiConnectionCallbacks;
     private Location mLocation = null;
@@ -68,38 +70,63 @@ public class LocationFragment extends StepFragment {
                     .build();
         }
 
+        if (savedInstanceState != null) {
+            mLocation = savedInstanceState.getParcelable(KEY_LOCATION);
+        }
+
     }
 
     @Override
     public void onStart () {
         //mGoogleApiClient.connect();
         super.onStart();
+        if (mMapView != null)
+            mMapView.onStart();
     }
 
     @Override
     public void onStop () {
         //mGoogleApiClient.disconnect();
         super.onStop();
+        if (mMapView != null)
+            mMapView.onStop();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mMapView.onResume();
+        if (mMapView != null)
+            mMapView.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mMapView.onPause();
+        if (mMapView != null)
+            mMapView.onPause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mMapView.onDestroy();
+        if (mMapView != null)
+            mMapView.onDestroy();
 }
 
+    @Override
+    public void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(KEY_LOCATION,mLocation);
+        if (mMapView != null)
+            mMapView.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onLowMemory () {
+        super.onLowMemory();
+        if (mMapView != null)
+            mMapView.onLowMemory();
+    }
 
     @Override
     protected int getLayoutResource() {
@@ -130,6 +157,9 @@ public class LocationFragment extends StepFragment {
         }
 
         mMapView.getMapAsync(new MapReadyCallbacks());
+
+        if (mLocation != null)
+            updateLocationOnScreen();
     }
 
     @Override
@@ -202,6 +232,8 @@ public class LocationFragment extends StepFragment {
                 Log.e("MyLocationListener", "Latitude: "+String.valueOf(location.getLatitude()));
                 Log.e("MyLocationListener", "Longitude: "+String.valueOf(location.getLongitude()));
 
+                addMarker(location);
+                /*
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 if (mMarker == null) {
                     mMarker = mGoogleMap.addMarker(new MarkerOptions().position(latLng)
@@ -217,9 +249,28 @@ public class LocationFragment extends StepFragment {
                 // For zooming automatically to the location of the marker
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();
                 mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                */
             }
             mGoogleApiClient.disconnect();
         }
+    }
+
+    private void addMarker(Location location){
+        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        if (mMarker == null) {
+            mMarker = mGoogleMap.addMarker(new MarkerOptions().position(latLng)
+                    //.title("Marker Titlezzzz")
+                    //.snippet("Marker Descriptionzzz")
+                    .draggable(true));
+
+        }
+        else {
+            mMarker.setPosition(latLng);
+        }
+
+        // For zooming automatically to the location of the marker
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();
+        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     private class GetPositionClickListener implements View.OnClickListener{
@@ -238,6 +289,9 @@ public class LocationFragment extends StepFragment {
 
             mGoogleMap = googleMap;
             mGoogleMap.setOnMarkerDragListener(new MarkerDragListener());
+
+            if (mLocation != null)
+                addMarker(mLocation);
 
         }
     }
