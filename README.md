@@ -63,7 +63,7 @@ Instantiation could be done manually or using gradle class generator.
   
 2. Copy your created JSON file **SamplersConfig.json** to the root directory of your Android Studio project
 
-3. Copy the [**samplers.gradle**](https://github.com/cientopolis/samplers/releases/download/v0.1/samplers.gradle) file to the root directory of your Android Studio project
+3. Download the latest [**samplers.gradle**](https://github.com/cientopolis/samplers/releases/) file and copy it to the root directory of your Android Studio project
 
 4. Link samplers.gradle with your **application build.gradle** (it will create MyMainSamplersActivity in your project)
     - On your **application build.gradle** add this line at the end
