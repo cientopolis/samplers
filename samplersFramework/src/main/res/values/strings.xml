@@ -11,31 +11,22 @@
     <!-- Take Sample Activity -->
 
     <!-- Step Fragments -->
-    <string name="error_must_select_an_option">Debe seleccionar una opción</string>
-    <string name="error_must_select_an_option_at_least">Debe seleccionar una opción por lo menos</string>
     <string name="bt_next">Siguiente</string>
 
-    <!-- Step Params -->
-    <string name="step_1_param_1">Registro regional de gatos. Gracias por ayudarnos. Vamos a pedirle que saque una serie de dos fotos a su gato. Siga las instrucciones que le aparecerán en pantalla.</string>
+    <!-- SelectOne Fragments -->
+    <string name="error_must_select_an_option">Debe seleccionar una opción</string>
 
-    <string name="step_2_param_1">Tome una foto de cuerpo completo a su gato.</string>
-    <string name="step_2_param_2">Tome una foto de cuerpo completo a su gato.</string>
+    <!-- MultipleSelect Fragments -->
+    <string name="error_must_select_an_option_at_least">Debe seleccionar una opción por lo menos</string>
 
-    <string name="step_3_param_1">Ranas/Sapos</string>
-    <string name="step_3_param_2">Peces</string>
-    <string name="step_3_param_3">Tortugas</string>
-    <string name="step_3_param_4">Aves acuáticas</string>
 
-    <string name="step_4_param_1">Tome una foto a la cabeza de su gato.</string>
-    <string name="step_4_param_2">""</string>
+    <!-- Photo Fragments -->
+    <string name="bt_retake_photo">Volver a tomar foto</string>
 
-    <string name="step_5_param_1">Mucho, junto</string>
-    <string name="step_5_param_2">Mucho, disperso</string>
-    <string name="step_5_param_3">Poco</string>
-    <string name="step_5_param_4">No hay ganado</string>
+    <!-- Location Fragments -->
+    <string name="lb_latitude">Latitud:</string>
+    <string name="lb_longitude">Longitud:</string>
+    <string name="error_must_take_location">Debe tomar la posición</string>
 
-    <string name="step_6_param_1">Muchas gracias por su colaboracion!</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

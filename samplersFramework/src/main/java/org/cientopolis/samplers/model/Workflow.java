@@ -1,12 +1,13 @@
 package org.cientopolis.samplers.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Xavier on 06/06/2016.
  */
-public class Workflow {
+public class Workflow implements Serializable {
 
     private List<Step> steps;
     private int stepIndex = -1;

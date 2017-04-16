@@ -1,21 +1,28 @@
 package org.cientopolis.samplers.model;
 
+import org.cientopolis.samplers.ui.take_sample.MultipleSelectFragment;
+
+
 import java.util.ArrayList;
 
 /**
  * Created by Xavier on 12/06/2016.
  */
-public class MultipleSelectStep extends Step {
+public class MultipleSelectStep extends BaseStep {
 
     private ArrayList<SelectOption> optionsToSelect;
+    private String title;
+
 
     public MultipleSelectStep() {
-        optionsToSelect = new ArrayList<SelectOption>();
+
+        this(new ArrayList<SelectOption>(), "");
     }
 
-    public MultipleSelectStep(ArrayList<SelectOption> anOptionsToSelect) {
-
-        optionsToSelect = anOptionsToSelect;
+    public MultipleSelectStep(ArrayList<SelectOption> anOptionsToSelect, String title) {
+        stepFragmentClass = MultipleSelectFragment.class;
+        this.optionsToSelect = anOptionsToSelect;
+        this.title = title;
     }
 
     public ArrayList<SelectOption> getOptionsToSelect() {
@@ -33,4 +40,10 @@ public class MultipleSelectStep extends Step {
         }
         return options;
     }
+
+    public String getTitle() {
+        return title;
+    }
+
+
 }

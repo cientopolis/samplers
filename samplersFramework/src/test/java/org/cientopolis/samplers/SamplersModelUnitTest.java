@@ -44,7 +44,7 @@ public class SamplersModelUnitTest {
         SelectOption selectedOption2 = new SelectOption(4,"Option 4", true);
         optionsToSelect.add(selectedOption2);
         // MultipleSelectStep
-        multipleSelectStep = new MultipleSelectStep(optionsToSelect);
+        multipleSelectStep = new MultipleSelectStep(optionsToSelect,"Seleccione lo que ve");
         //
         assertEquals(2, multipleSelectStep.getSelectedOptions().size());
     }
@@ -66,7 +66,7 @@ public class SamplersModelUnitTest {
         SelectOption selectedOption2 = new SelectOption(4,"Option 4", true);
         optionsToSelect.add(selectedOption2);
 
-        SelectOneStep selectOneStep = new SelectOneStep(optionsToSelect);
+        SelectOneStep selectOneStep = new SelectOneStep(optionsToSelect, "Seleccione uno solo");
         //returns the first selected
         assertEquals("Option 3", selectOneStep.getSelectedOption().getTextToShow());
     }

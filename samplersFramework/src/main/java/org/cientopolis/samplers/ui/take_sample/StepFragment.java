@@ -2,6 +2,7 @@ package org.cientopolis.samplers.ui.take_sample;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,8 +39,8 @@ public abstract class StepFragment extends Fragment {
      * @param step A subclass of Step
      * @return A new instance of the subclass of StepFragment provided.
      */
-    public static <T extends StepFragment> StepFragment newInstance(Class<T> type, Step step) {
-        StepFragment fragment = null;
+    public static <T extends StepFragment> T newInstance(Class<T> type, Step step) {
+        T fragment = null;
         try {
             fragment = type.newInstance();
             Bundle args = new Bundle();
@@ -54,18 +55,20 @@ public abstract class StepFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.e("StepFragment", "entra onCreate");
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             this.step = (Step) getArguments().getSerializable(ARG_STEP);
         }
     }
 
-    @Override
-    public void onAttach(Activity context) {
-        // TODO: 04/03/2017 analyze, sometimes this method is not called, depending on the api version, its called the onAttach(Context) instead
-        Log.e("MultipleSelectFragment", "entra onAttach");
-        super.onAttach(context);
+    private void myOnAttach(Context context) {
+        /*
+        * ATENTION:
+        * this method is called twice on API 23-25 because both onAttach(Activity) and onAttach(Context) are executed
+        * Don't put creation code here (e.g. new SomeClass())
+        */
+
         if (context instanceof StepFragmentInteractionListener) {
             mListener = (StepFragmentInteractionListener) context;
             Log.e("MultipleSelectFragment", "mListener asignado");
@@ -74,6 +77,21 @@ public abstract class StepFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement StepFragmentInteractionListener");
         }
+    }
+
+    @SuppressWarnings("deprecation") // This method is needed when running on API Levels < 23
+    @Override
+    public void onAttach(Activity activity) {
+        Log.e("StepFragment", "onAttach(Activity)");
+        super.onAttach(activity);
+        myOnAttach(activity);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        Log.e("StepFragment", "onAttach(Context)");
+        super.onAttach(context);
+        myOnAttach(context);
     }
 
     @Override
@@ -88,18 +106,18 @@ public abstract class StepFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(getLayoutResource(), container, false);
 
+        // Set the "Next Button" onClick listener
         Button bt_next = (Button) rootView.findViewById(R.id.bt_next);
         if (bt_next != null)
             bt_next.setOnClickListener(new NextClickListener());
+        else
+            throw new RuntimeException("Layout must include a Button with id: bt_next");
 
-        // TODO: 04/03/2017 Analize if it must throw an exception or what
-        //else
-        //    throw new Exception("Layout must include a Button with id: bt_next");
-
+        // Call onCreateView callback of the subclass
         onCreateViewStepFragment(rootView, savedInstanceState);
 
+        // return the inflated layout
         return rootView;
-
     }
 
     /**

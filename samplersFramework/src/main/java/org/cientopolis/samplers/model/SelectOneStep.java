@@ -1,21 +1,28 @@
 package org.cientopolis.samplers.model;
 
+import org.cientopolis.samplers.ui.take_sample.SelectOneFragment;
+
+
 import java.util.ArrayList;
 
 /**
  * Created by Xavier on 27/06/2016.
  */
-public class SelectOneStep extends Step {
+public class SelectOneStep extends BaseStep {
 
     private ArrayList<SelectOption> optionsToSelect;
+    private String title;
+
 
     public SelectOneStep() {
-        optionsToSelect = new ArrayList<SelectOption>();
+
+        this(new ArrayList<SelectOption>(),"");
     }
 
-    public SelectOneStep(ArrayList<SelectOption> anOptionsToSelect) {
-
+    public SelectOneStep(ArrayList<SelectOption> anOptionsToSelect, String title) {
+        stepFragmentClass = SelectOneFragment.class;
         optionsToSelect = anOptionsToSelect;
+        this.title = title;
     }
 
     public ArrayList<SelectOption> getOptionsToSelect() {
@@ -34,4 +41,10 @@ public class SelectOneStep extends Step {
 
         return selectedOption;
     }
+
+    public String getTitle() {
+        return title;
+    }
+
+
 }

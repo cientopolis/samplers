@@ -63,6 +63,7 @@ public class SamplesListAdapter extends BaseAdapter{
             viewHolder.lb_id = (TextView) resultView.findViewById(R.id.lb_id);
             viewHolder.lb_datetime = (TextView) resultView.findViewById(R.id.lb_datetime);
             viewHolder.img_status = (ImageView) resultView.findViewById(R.id.img_status);
+            viewHolder.delete_sample = (ImageView) resultView.findViewById(R.id.delete_sample);
 
             resultView.setTag(viewHolder);
         }
@@ -88,7 +89,8 @@ public class SamplesListAdapter extends BaseAdapter{
         // // TODO: 27/02/2017 See date/time formats to display
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm", Locale.US);
         viewHolder.lb_datetime.setText(sdf.format(sample.getStartDateTime()));
-        viewHolder.img_status.setOnClickListener(new SampleClickListener(sample));
+        viewHolder.img_status.setOnClickListener(new UploadSampleClickListener(sample));
+        viewHolder.delete_sample.setOnClickListener(new DeleteSampleClickListener(sample));
 
         /*
         if (fechas.get(position).isPagadoOK()) {
@@ -107,25 +109,43 @@ public class SamplesListAdapter extends BaseAdapter{
         TextView lb_id;
         TextView lb_datetime;
         ImageView img_status;
+        ImageView delete_sample;
     }
 
-    private class SampleClickListener implements  View.OnClickListener{
+    private class UploadSampleClickListener implements  View.OnClickListener{
 
         private Sample mySample;
 
-        public SampleClickListener(Sample sample) {
+        public UploadSampleClickListener(Sample sample) {
             mySample = sample;
         }
 
         @Override
         public void onClick(View view) {
-            listener.onSampleClick(mySample);
+            listener.onUploadSampleClick(mySample);
         }
     }
 
 
+    private class DeleteSampleClickListener implements  View.OnClickListener{
+
+        private Sample mySample;
+
+        public DeleteSampleClickListener(Sample sample) {
+            mySample = sample;
+        }
+
+        @Override
+        public void onClick(View v) {
+            listener.onDeleteSampleClick(mySample);
+        }
+    }
+
     public interface SamplesListAdapterListener {
-        public void onSampleClick(Sample sample);
+        public void onUploadSampleClick(Sample sample);
+
+
+        public void onDeleteSampleClick(Sample mySample);
     }
 
 }

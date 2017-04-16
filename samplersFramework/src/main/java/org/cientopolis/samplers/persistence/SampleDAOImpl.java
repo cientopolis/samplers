@@ -150,16 +150,23 @@ class SampleDAOImpl implements SampleDAO {
 
     @Override
     public Sample find(Long key) {
-        String filename = getSampleFileName(key);
+        String sampleDirectoryName = getSampleDirFileName(key);
         Sample sample = null;
 
         try {
-            File fileSample = new File(getSamplesDir(myContext),filename);
-
-            BufferedReader br = new BufferedReader(new FileReader(fileSample));
-
-            Gson gson = new Gson();
-            sample = gson.fromJson(br,Sample.class);
+            //recovers sample directory
+            File sampleDirectory = new File(getSamplesDir(myContext),sampleDirectoryName);
+            //list directory
+            String[] files = sampleDirectory.list();
+            for (String fileName: files) {
+                //iterates the directory until it finds a file with .json extension
+                if (fileName.endsWith(SAMPLES_EXTENSION)) {
+                    File sampleFile = new File(sampleDirectory, fileName);
+                    BufferedReader br = new BufferedReader(new FileReader(sampleFile));
+                    Gson gson = new Gson();
+                    sample = gson.fromJson(br, Sample.class);
+                }
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -168,10 +175,28 @@ class SampleDAOImpl implements SampleDAO {
         return sample;
     }
 
+
     @Override
-    public boolean delete(Sample object) {
-        // // TODO: 28/02/2017 implement delete sample
-        return false;
+    public boolean delete(Sample sample) {
+        Boolean ok = false;
+        try {
+            File sampleDir = getSampleDir(myContext,sample);
+            //deletes all contents before deleting folder
+            deleteRecursive(sampleDir);
+            ok = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.e("SampleDAOImpl", "delete sample complete + ok = "+String.valueOf(ok));
+        return ok;
+    }
+    //helper function
+    private void deleteRecursive(File fileOrDirectory) {
+        if (fileOrDirectory.isDirectory())
+            for (File child : fileOrDirectory.listFiles())
+                deleteRecursive(child);
+
+        fileOrDirectory.delete();
     }
 
     @Override

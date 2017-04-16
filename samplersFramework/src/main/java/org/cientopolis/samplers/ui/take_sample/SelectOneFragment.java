@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.SelectOneStep;
@@ -33,6 +34,11 @@ public class SelectOneFragment extends StepFragment {
 
     @Override
     protected void onCreateViewStepFragment(View rootView, Bundle savedInstanceState) {
+
+        // title
+        TextView lb_select_one_title = (TextView) rootView.findViewById(R.id.lb_select_one_title);
+        lb_select_one_title.setText(getStep().getTitle());
+
         // The radio group that will contain the radio buttons with the options to select
         RadioGroup radio_group = (RadioGroup) rootView.findViewById(R.id.radio_group);
 

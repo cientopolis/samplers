@@ -16,6 +16,8 @@ task samplers_config {
     // APLICATION
     println json.aplication.title
     println json.aplication.wellcomeMessage
+    println json.aplication.networkConfiguration.url
+    println json.aplication.networkConfiguration.paramName
 
     // WORKFLOW
     println json.workflow.actionLabel
@@ -24,8 +26,7 @@ task samplers_config {
 
     json.workflow.tasks.each { task ->
         println "   " + task.type
-        print "   " + task.title
-        println " : " + task.options
+        println "   " + task.title
 
         task.options.each { option ->
             println "       " + option
@@ -35,6 +36,13 @@ task samplers_config {
     // Project constants
     def app_path = json.project.app_path
     def package_name = json.project.package_name
+    def manifest_path = "app/src/main/"
+    def googleMaps_API_KEY = ""
+
+    if (json.aplication.googleMaps_API_KEY != null)
+        googleMaps_API_KEY = "<meta-data android:name=\"com.google.android.geo.API_KEY\" android:value=\""+json.aplication.googleMaps_API_KEY+"\"/> \n"
+    else
+        println "No google maps API KEY found"
 
     // MAIN ACTIVITY
     File main_activity_file = new File(app_path+"MyMainSamplersActivity.java")
@@ -42,8 +50,10 @@ task samplers_config {
         main_activity_file.text = "package " + package_name + "; \n"
         main_activity_file.text += "import android.os.Bundle; \n"
         main_activity_file.text += "import android.content.Intent; \n"
+        main_activity_file.text += "import java.util.ArrayList; \n"
         main_activity_file.text += "import org.cientopolis.samplers.ui.SamplersMainActivity; \n"
         main_activity_file.text += "import org.cientopolis.samplers.network.NetworkConfiguration; \n"
+        main_activity_file.text += "import org.cientopolis.samplers.model.*; \n"
 
         main_activity_file.text += "public class MyMainSamplersActivity extends SamplersMainActivity { \n"
         // onCreate
@@ -51,6 +61,7 @@ task samplers_config {
         main_activity_file.text += "protected void onCreate(Bundle savedInstanceState) { \n"
         main_activity_file.text += "    super.onCreate(savedInstanceState); \n"
 
+        // Network Configuration
         main_activity_file.text += "    NetworkConfiguration.setURL(\"" + json.aplication.networkConfiguration.url + "\"); \n"
         main_activity_file.text += "    NetworkConfiguration.setPARAM_NAME(\"" + json.aplication.networkConfiguration.paramName + "\"); \n"
 
@@ -58,94 +69,102 @@ task samplers_config {
 
         main_activity_file.text += "} \n"
 
-        // take sample
+        // workflow
         main_activity_file.text += "@Override \n"
-        main_activity_file.text += "protected void startTakeSampleActivity(){ \n"
-        main_activity_file.text += "    Intent intent = new Intent(this, MyTakeSampleActivity.class); \n"
-        main_activity_file.text += "    startActivity(intent); \n"
-        main_activity_file.text += "} \n"
+        main_activity_file.text += "protected Workflow getWorkflow(){ \n"
+        main_activity_file.text += "    Workflow workflow = new Workflow(); \n"
 
 
-        main_activity_file.text += "} \n"
-    }
-    else {
-        println "MyMainSamplersActivity.java already exists."
-    }
-
-    // TAKE SAMPLE ACTIVITY
-    File take_sample_activity_file = new File(app_path+"MyTakeSampleActivity.java")
-    if (!take_sample_activity_file.exists()) {
-        take_sample_activity_file.text = "package " + package_name + "; \n"
-        take_sample_activity_file.text += "import android.os.Bundle; \n"
-        take_sample_activity_file.text += "import org.cientopolis.samplers.ui.take_sample.TakeSampleActivity; \n"
-        take_sample_activity_file.text += "import org.cientopolis.samplers.model.*; \n"
-        take_sample_activity_file.text += "import java.util.ArrayList; \n"
-
-        take_sample_activity_file.text += "public class MyTakeSampleActivity extends TakeSampleActivity { \n"
-        take_sample_activity_file.text += "@Override \n"
-        take_sample_activity_file.text += "protected void onCreate(Bundle savedInstanceState) { \n"
-        take_sample_activity_file.text += "    super.onCreate(savedInstanceState); \n"
-
-
-        json.workflow.tasks.each { task ->
+        json.workflow.tasks.eachWithIndex { task, i ->
             switch (task.type) {
                 case "Information":
-                    // TODO renombrar la variable optionsToSelect xq si hay dos Task del mismo tipo va a dar error de variable repetida
-                    take_sample_activity_file.text += "    String textToShow = \"" + task.text + "\"; \n"
+                    main_activity_file.text += "    String textToShow"+i+" = \"" + task.text + "\"; \n"
 
                     // TODO poner en el archivo de Strings y tomarlo de ahi
-                    take_sample_activity_file.text += "    workflow.addStep(new InformationStep(textToShow)); \n"
+                    main_activity_file.text += "    workflow.addStep(new InformationStep(textToShow"+i+")); \n"
                     break
 
                 case "MultipleSelect":
+                    // title
+                    main_activity_file.text += "    String multipleSelectTitle"+i+" = \""+task.title+"\"; \n"
+
                     // Opciones para el multi select
-                    // TODO renombrar la variable optionsToSelect xq si hay dos Task del mismo tipo va a dar error de variable repetida
-                    take_sample_activity_file.text += "    ArrayList<SelectOption> optionsToSelect = new ArrayList<SelectOption>(); \n"
+                    main_activity_file.text += "    ArrayList<SelectOption> optionsToSelect"+i+" = new ArrayList<SelectOption>(); \n"
 
                     task.options.each { option ->
-                        take_sample_activity_file.text += "    optionsToSelect.add(new SelectOption(" + option.id + ",\"" + option.text + "\", false)); \n"
+                        main_activity_file.text += "    optionsToSelect"+i+".add(new SelectOption(" + option.id + ",\"" + option.text + "\", false)); \n"
 
                         // TODO poner en el archivo de Strings y tomarlo de ahi
                         //optionsToSelect.add(new MultipleSelectOption(getResources().getString(R.string.step_3_param_1), false));
                     }
-                    take_sample_activity_file.text += "    workflow.addStep(new MultipleSelectStep(optionsToSelect)); \n"
+                    main_activity_file.text += "    workflow.addStep(new MultipleSelectStep(optionsToSelect"+i+",multipleSelectTitle"+i+")); \n"
                     break
 
                 case "SelectOne":
+                    // title
+                    main_activity_file.text += "    String selectOneTitle"+i+" = \""+task.title+"\"; \n"
+
                     // Opciones para el select one
-                    // TODO renombrar la variable optionsToSelect xq si hay dos Task del mismo tipo va a dar error de variable repetida
-                    take_sample_activity_file.text += "    ArrayList<SelectOption> optionsToSelect2 = new ArrayList<SelectOption>(); \n"
+                    main_activity_file.text += "    ArrayList<SelectOption> optionsToSelectOne"+i+" = new ArrayList<SelectOption>(); \n"
 
                     task.options.each { option ->
-                        take_sample_activity_file.text += "    optionsToSelect2.add(new SelectOption(" + option.id + ",\"" + option.text + "\",false)); \n"
+                        main_activity_file.text += "    optionsToSelectOne"+i+".add(new SelectOption(" + option.id + ",\"" + option.text + "\",false)); \n"
 
                         // TODO poner en el archivo de Strings y tomarlo de ahi
                         // optionsToSelect2.add(new MultipleSelectOption(getResources().getString(R.string.step_5_param_1),false));
                     }
 
-                    take_sample_activity_file.text += "    workflow.addStep(new SelectOneStep(optionsToSelect2)); \n"
+                    main_activity_file.text += "    workflow.addStep(new SelectOneStep(optionsToSelectOne"+i+",selectOneTitle"+i+")); \n"
                     break
 
                 case "Photo":
-                    // TODO renombrar la variable optionsToSelect xq si hay dos Task del mismo tipo va a dar error de variable repetida
-                    take_sample_activity_file.text += "    String photoInstructions = \"" + task.text + "\"; \n"
+                    main_activity_file.text += "    String photoInstructions"+i+" = \"" + task.text + "\"; \n"
 
                     // TODO add functionality
-                    //take_sample_activity_file.text += "    String image = \""+task.image+"\"; \n"
-                    take_sample_activity_file.text += "    String image = \"\"; \n"
+                    //take_sample_activity_file.text += "    String image"+i+" = \""+task.image+"\"; \n"
+                    main_activity_file.text += "    String image"+i+" = \"\"; \n"
 
                     // TODO poner en el archivo de Strings y tomarlo de ahi
-                    take_sample_activity_file.text += "    workflow.addStep(new PhotoStep(photoInstructions, image)); \n"
+                    main_activity_file.text += "    workflow.addStep(new PhotoStep(photoInstructions"+i+", image"+i+")); \n"
+                    break
+
+                case "Location":
+                    main_activity_file.text += "    String textToShowLocation"+i+" = \"" + task.text + "\"; \n"
+
+                    // TODO poner en el archivo de Strings y tomarlo de ahi
+                    main_activity_file.text += "    workflow.addStep(new LocationStep(textToShowLocation"+i+")); \n"
                     break
             }
         }
 
-        take_sample_activity_file.text += "} \n"
-        take_sample_activity_file.text += "} \n"
+
+        main_activity_file.text += "    return workflow; \n"
+        main_activity_file.text += "} \n"
+
+
+        main_activity_file.text += "} \n"
+
+        // add the activity to the manifest file
+
+        def main_activity_manifest = "<activity\n" +
+                "        android:name=\"MyMainSamplersActivity\"\n" +
+                "        android:label=\"@string/app_name\"\n" +
+                "        android:theme=\"@style/AppTheme\">\n" +
+                "        <intent-filter>\n" +
+                "            <action android:name=\"android.intent.action.MAIN\" />\n" +
+                "            <category android:name=\"android.intent.category.LAUNCHER\" />\n" +
+                "        </intent-filter>\n" +
+                "    </activity>\n"
+
+        File manifest_file = new File(manifest_path+"AndroidManifest.xml")
+        manifest_file.text = manifest_file.text.replace("</application>", googleMaps_API_KEY + main_activity_manifest + "</application>")
+
+        println "MyMainSamplersActivity.java created."
     }
     else {
-        println "MyTakeSampleActivity.java already exists."
+        println "MyMainSamplersActivity.java already exists."
     }
+
 
 
     println "SAMPLERS END -----------------------"
