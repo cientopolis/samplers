@@ -31,7 +31,7 @@ Samplers is a framework to build mobile citizen science applications.
       ```
 
 ### Instantiate
-Instantiation could be done manually or using gradle class generator.
+Instantiation can be done manually or using gradle class generator.
 
 #### Manually
 
