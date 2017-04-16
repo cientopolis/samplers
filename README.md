@@ -1,7 +1,7 @@
 # Samplers
 Samplers is a framework to build mobile citizen science applications.
 
-# UNDER DEVELOPMENT
+# UNDER DEVELOPMENT v0.2
 
 ## Steps to use the framework
 
@@ -31,55 +31,53 @@ Samplers is a framework to build mobile citizen science applications.
       ```
 
 ### Instantiate
+Instantiation could be done manually or using gradle class generator.
 
 #### Manually
-1. Create a class instance of TakeSampleActivity
 
-2. Create a Main Activity
-    - You can create a class instance of SamplersMainActivity
-    - You can create your own Main Activity
+1. Create a Main Activity
+    - You can create a class inherited from **SamplersMainActivity**. You will need to:
+        1. Implement the **getWorkflow()** method and return the Workflow to pass to the TakeSampleActivity
+        2. Override the **onCreate()** method and set the NetworkConfiguration:
+            ```java
+            NetworkConfiguration.setURL("http://192.168.1.10/samplers/upload.php");
+            NetworkConfiguration.setPARAM_NAME("sample");
+            ```
+    
+    - You can create your own Main Activity and start the TakeSampleActivity like this:
+        ```java
+        Workflow workflow = new Workflow();
+        // ... populate the workflow as desired
+        
+        Intent intent = new Intent(this, TakeSampleActivity.class);        
+        intent.putExtra(TakeSampleActivity.EXTRA_WORKFLOW, workflow);
+        startActivity(intent);
+        ```
+    You will need to set the NetworkConfiguration like the above example too.
 
 #### Using gradle class generator
 1. Create a JSON file named **SamplersConfig.json**
     - Format and options available are [here](#samplersconfigjson-format-and-options)
     - To check for sintax problems you can use [this JSON validador](https://jsonformatter.curiousconcept.com/)
-    - You can use [this example **SamplersConfig.json** file](https://github.com/cientopolis/samplers/blob/master/SamplersConfig.json) (don't forget to change the **app_path** and **package_name** on **project** section with the application path and package name of your application, and the **networkConfiguration** to successfully send samples)
+    - You can use [this example **SamplersConfig.json** file](https://github.com/cientopolis/samplers/blob/master/SamplersConfig.json) (don't forget to change the **app_path** and **package_name** on **project** section with the application path and package name of your application, the **networkConfiguration** to successfully send samples, and your Google Maps API KEY if you want to use Location and Maps services)
   
 2. Copy your created JSON file **SamplersConfig.json** to the root directory of your Android Studio project
 
 3. Copy the [**samplers.gradle**](https://github.com/cientopolis/samplers/releases/download/v0.1/samplers.gradle) file to the root directory of your Android Studio project
 
-4. Link samplers.gradle with your **application build.gradle** (it will create MyMainSamplersActivity and MyTakeSampleActivity in your project)
+4. Link samplers.gradle with your **application build.gradle** (it will create MyMainSamplersActivity in your project)
     - On your **application build.gradle** add this line at the end
         ```gradle
         apply from: '../samplers.gradle'
         ```
     - Save and Sync when asked
     
-5. Add the activities MyMainSamplersActivity and MyTakeSampleActivity to the **AndroidManifest.xml** 
-    ```xml
-        <activity
-            android:name="MyMainSamplersActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
-        <activity
-            android:name="MyTakeSampleActivity"
-            android:label="@string/title_activity_take_sample"
-            android:theme="@style/AppTheme">            
-        </activity>    
-    ```
+5. Delete (or customize) the auto-generated **style.xml** file in the **res/values** directory
 
-6. Delete (or customize) the auto-generated **style.xml** file in the **res/values** directory
+6. Run your application
 
-7. Run your application
-
-8. Enjoy!
+7. Enjoy!
 
 ## SamplersConfig.json format and options
 - project
@@ -92,6 +90,7 @@ Samplers is a framework to build mobile citizen science applications.
   - networkConfiguration
         - url
         - paramName
+  - googleMaps_API_KEY
   
 - workflow
   - actionLabel
@@ -115,7 +114,8 @@ Samplers is a framework to build mobile citizen science applications.
     "networkConfiguration" : {
         "url" : "http://192.168.1.10/samplers/upload.php",
         "paramName" : "sample"
-        }
+        },
+    "googleMaps_API_KEY" : "your_google_maps_API_KEY"
     } ,
     
     "workflow": {
@@ -124,6 +124,10 @@ Samplers is a framework to build mobile citizen science applications.
       {
         "type" : "Information",
         "text" : "Please, follow the instructions"
+      },
+      {
+        "type" : "Location",
+        "text" : "Please, positionate the sample on the map"
       },
       {
       "type": "MultipleSelect",
