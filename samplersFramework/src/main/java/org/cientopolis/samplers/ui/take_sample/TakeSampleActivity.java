@@ -2,7 +2,6 @@ package org.cientopolis.samplers.ui.take_sample;
 
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
@@ -22,6 +21,8 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
 
     public static final String EXTRA_WORKFLOW = "org.cientopolis.samplers.WORKFLOW";
 
+    private static final String KEY_SAMPLE = "org.cientopolis.samplers.SAMPLE";
+
     private TextView lb_step_count;
     protected Workflow workflow;
     protected Sample sample;
@@ -39,19 +40,48 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
         if (workflow == null)
             workflow = new Workflow();
 
-        sample = new Sample();
 
         getFragmentManager().addOnBackStackChangedListener(new MyOnBackStackChangedListener());
 
         lb_step_count = (TextView) findViewById(R.id.lb_step_count);
+
+        if (savedInstanceState == null) { // First execution
+            sample = new Sample();
+            nextStep();
+        }
+
+        //refreshStepStateOnScreen();
     }
 
     @Override
     protected void onStart () {
         super.onStart();
+        Log.e("TakeSampleActivity", "onStart");
+    }
 
-        nextStep();
+    @Override
+    protected void onStop () {
+        super.onStop();
+        Log.e("TakeSampleActivity", "onStop");
+    }
+
+    @Override
+    public void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(KEY_SAMPLE, sample);
+
+        Log.e("TakeSampleActivity", "onSaveInstanceState");
+    }
+
+    @Override
+    public void onRestoreInstanceState (Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null)
+            sample = (Sample) savedInstanceState.getSerializable(KEY_SAMPLE);
+
         refreshStepStateOnScreen();
+
+        Log.e("TakeSampleActivity", "onRestoreInstanceState");
     }
 
     private void nextStep() {
@@ -61,21 +91,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-                Fragment fragment;
-
-                // TODO Apply a pattern
-                if (InformationStep.class.isInstance(step)) {
-                    fragment = StepFragment.newInstance(InformationFragment.class, step);
-                } else if (PhotoStep.class.isInstance(step)) {
-                    fragment = StepFragment.newInstance(PhotoFragment.class, step);
-                }else if (MultipleSelectStep.class.isInstance(step)) {
-                    fragment = StepFragment.newInstance(MultipleSelectFragment.class, step);
-                } else if (SelectOneStep.class.isInstance(step)) {
-                    fragment = StepFragment.newInstance(SelectOneFragment.class, step);
-                } else if (LocationStep.class.isInstance(step)) {
-                    fragment = StepFragment.newInstance(LocationFragment.class, step);
-                } else
-                    fragment = null;
+                StepFragment fragment = StepFragment.newInstance(step.getStepFragmentClass(), step);
 
                 if (fragment != null) {
 
@@ -87,6 +103,8 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
                     }
                     transaction.commit();
                 }
+
+                refreshStepStateOnScreen();
 
             } else {
                 // Finish...

@@ -39,8 +39,8 @@ public abstract class StepFragment extends Fragment {
      * @param step A subclass of Step
      * @return A new instance of the subclass of StepFragment provided.
      */
-    public static <T extends StepFragment> StepFragment newInstance(Class<T> type, Step step) {
-        StepFragment fragment = null;
+    public static <T extends StepFragment> T newInstance(Class<T> type, Step step) {
+        T fragment = null;
         try {
             fragment = type.newInstance();
             Bundle args = new Bundle();
