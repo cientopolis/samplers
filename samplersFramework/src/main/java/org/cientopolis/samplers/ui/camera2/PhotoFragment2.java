@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -68,15 +67,13 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class PhotoFragment2 extends StepFragment implements View.OnClickListener {
+public class PhotoFragment2 extends StepFragment implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
     /*textual copy from example*/
     /**
      * Conversion from screen rotation to JPEG orientation.
      */
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
-    private static final int REQUEST_CAMERA_PERMISSION = 1;
-    private static final String FRAGMENT_DIALOG = "dialog";
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -84,11 +81,6 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
-
-    /**
-     * Tag for the {@link Log}.
-     */
-    private static final String TAG = "Camera2BasicFragment";
 
     /**
      * Camera state: Showing camera preview.
@@ -404,7 +396,7 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
         } else if (notBigEnough.size() > 0) {
             return Collections.max(notBigEnough, new CompareSizesByArea());
         } else {
-            Log.e(TAG, "Couldn't find any suitable preview size");
+            Log.e("camera2", "Couldn't find any suitable preview size");
             return choices[0];
         }
     }
@@ -495,7 +487,7 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
                         }
                         break;
                     default:
-                        Log.e(TAG, "Display rotation is invalid: " + displayRotation);
+                        Log.e("camera2", "Display rotation is invalid: " + displayRotation);
                 }
 
                 Point displaySize = new Point();
@@ -565,7 +557,9 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
             if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
                 throw new RuntimeException("Time out waiting to lock camera opening.");
             }
-            if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+
+
+            if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
                 // here to request the missing permissions, and then overriding
@@ -573,10 +567,15 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
                 //                                          int[] grantResults)
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
+
+                // FragmentCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},REQUEST_CAMERA_PERMISSION);
+                Log.e("security","error");
                 return;
             }
             manager.openCamera(mCameraId, mStateCallback, mBackgroundHandler);
-        } catch (CameraAccessException e) {
+
+        }
+       catch (CameraAccessException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while trying to lock camera opening.", e);
@@ -798,7 +797,7 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
                                                @NonNull CaptureRequest request,
                                                @NonNull TotalCaptureResult result) {
                     showToast("Saved: " + mFile);
-                    Log.d(TAG, mFile.toString());
+                    Log.d("camera2", mFile.toString());
                     unlockFocus();
                 }
             };
@@ -847,7 +846,6 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
 
     @Override
     public void onClick(View view) {
-
                 takePicture();
 
     }

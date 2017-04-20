@@ -1,5 +1,6 @@
 package org.cientopolis.samplers.model;
 
+import org.cientopolis.samplers.ui.camera2.PhotoFragment2;
 import org.cientopolis.samplers.ui.take_sample.PhotoFragment;
 
 
@@ -14,7 +15,7 @@ public class PhotoStep extends BaseStep {
 
 
     public PhotoStep(String anInstructionsToShow, String anImageToOverlay) {
-        stepFragmentClass = PhotoFragment.class;
+        stepFragmentClass = PhotoFragment2.class;
         instructionsToShow = anInstructionsToShow;
         imageToOverlay = anImageToOverlay; //comment here!
     }
