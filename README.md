@@ -25,6 +25,11 @@ Samplers is a framework to build mobile citizen science applications.
         // you should use the latest version e.j. 25.+
         compile 'com.android.support:design:24.2.1' 
 
+        // if you will use maps and location services, add this dependencies 
+        // you should use the latest version 
+        compile 'com.google.android.gms:play-services-location:10.2.1'
+        compile 'com.google.android.gms:play-services-maps:10.2.1'
+
         // the framework dependency
         compile project(":samplersFramework")
       }
