@@ -123,21 +123,11 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
 
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        // TODO remove test code
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Log.e("TakeSampleActivity","KEYCODE_BACK");
-            //Fragment f =  getFragmentManager().findFragmentById(R.id.container);
-            /*
-            if (f instanceof OnBackKeyDown) {
-
-                ((OnBackKeyDown) f).onBackKeyDown();
-                //return true;
-            }*/
-        }
-        return super.onKeyDown(keyCode, event);
+    private void previuosStep() {
+        workflow.previuosStep();
+        refreshStepStateOnScreen();
     }
+
 
     private void refreshStepStateOnScreen() {
         lb_step_count.setText(String.valueOf(workflow.getStepPosition()+1) + "/" + String.valueOf(workflow.getStepCount()));
@@ -152,6 +142,18 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
         nextStep();
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Log.e("TakeSampleActivity","KEYCODE_BACK");
+
+            previuosStep();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+
     private class MyOnBackStackChangedListener implements FragmentManager.OnBackStackChangedListener {
 
         @Override
@@ -162,9 +164,9 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
             //proximoPaso = getSupportFragmentManager().getBackStackEntryCount()+1;
 
 
-            workflow.setStepPosition(getFragmentManager().getBackStackEntryCount());
+            //workflow.setStepPosition(getFragmentManager().getBackStackEntryCount());
 
-            refreshStepStateOnScreen();
+            //refreshStepStateOnScreen();
         }
     }
 }

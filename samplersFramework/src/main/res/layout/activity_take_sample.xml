@@ -11,11 +11,12 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/activityBar_height"
-        android:paddingBottom="@dimen/activityBar_vertical_padding"
-        android:paddingLeft="@dimen/activityBar_horizontal_padding"
-        android:paddingRight="@dimen/activityBar_horizontal_padding"
-        android:paddingTop="@dimen/activityBar_vertical_padding"
+        android:layout_height="@dimen/tsa_activity_bar_height"
+        android:paddingBottom="@dimen/tsa_activity_bar_vertical_padding"
+        android:paddingTop="@dimen/tsa_activity_bar_vertical_padding"
+        android:paddingLeft="@dimen/tsa_activity_bar_horizontal_padding"
+        android:paddingRight="@dimen/tsa_activity_bar_horizontal_padding"
+
         android:background="@color/activityBar_background"
         >
 
@@ -24,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/title_activity_take_sample"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="@dimen/tsa_step_title_text_size"
             android:textColor="@color/activityBar_text"
             android:textStyle="bold" />
 
@@ -34,15 +35,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="8dp"
             android:textColor="@color/activityBar_text"
-            android:textSize="35sp"
-            android:textStyle="bold"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textSize="@dimen/tsa_step_count_text_size"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 
