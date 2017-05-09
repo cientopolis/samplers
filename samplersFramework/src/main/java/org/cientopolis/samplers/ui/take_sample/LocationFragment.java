@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -191,7 +193,7 @@ public class LocationFragment extends StepFragment {
         lb_longitude.setText(String.valueOf(mLocation.getLongitude()));
     }
 
-    private class GoogleApiConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    private class GoogleApiConnectionCallbacks implements ConnectionCallbacks, OnConnectionFailedListener {
 
         @Override
         public void onConnected(@Nullable Bundle bundle) {

@@ -21,7 +21,7 @@ public abstract class SamplersMainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_samplers_main);
 
         lb_main_titulo = (TextView) findViewById(R.id.lb_main_titulo);
     }
