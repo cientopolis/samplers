@@ -226,8 +226,7 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
      * This a callback object for the {@link ImageReader}. "onImageAvailable" will be called when a
      * still image is ready to be saved.
      */
-    private final ImageReader.OnImageAvailableListener onImageAvailableListener
-            = new ImageReader.OnImageAvailableListener() {
+    private final ImageReader.OnImageAvailableListener onImageAvailableListener = new ImageReader.OnImageAvailableListener() {
 
         @Override
         public void onImageAvailable(ImageReader reader) {
@@ -442,9 +441,8 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
         Activity activity = getActivity();
         CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
         try {
-            for (String cameraId : manager.getCameraIdList()) {
-                CameraCharacteristics characteristics
-                        = manager.getCameraCharacteristics(cameraId);
+            for (String cam : manager.getCameraIdList()) {
+                CameraCharacteristics characteristics = manager.getCameraCharacteristics(cam);
 
                 // We don't use a front facing camera in this sample.
                 Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
@@ -459,13 +457,9 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
                 }
 
                 // For still image captures, we use the largest available size.
-                Size largest = Collections.max(
-                        Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
-                        new CompareSizesByArea());
-                imageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(),
-                        ImageFormat.JPEG, /*maxImages*/2);
-                imageReader.setOnImageAvailableListener(
-                        onImageAvailableListener, backgroundHandler);
+                Size largest = Collections.max(Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)), new CompareSizesByArea());
+                imageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(), ImageFormat.JPEG, /*maxImages*/2);
+                imageReader.setOnImageAvailableListener(onImageAvailableListener, backgroundHandler);
 
                 // Find out if we need to swap dimension to get the preview size relative to sensor
                 // coordinate.
@@ -533,7 +527,7 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
                 Boolean available = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
                 flashSupported = available == null ? false : available;
 
-                cameraId = cameraId;
+                cameraId = cam;
                 return;
             }
         } catch (CameraAccessException e) {
@@ -552,7 +546,7 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
     private void openCamera(int width, int height) {
 
         if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            requestCameraPermission();
+            requestCameraPermission(); //if the user does not accept, the app stops
             return;
         }
 
@@ -595,21 +589,18 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final Fragment parent = getParentFragment();
-            return new AlertDialog.Builder(getActivity())
-                    .setMessage(R.string.request_permission)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @TargetApi(Build.VERSION_CODES.M)
+            //final Fragment parent = getParentFragment();
+            return new AlertDialog.Builder(getActivity()).setMessage(R.string.request_permission).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+                    { //onClick listener accept
+
                         @RequiresApi(api = Build.VERSION_CODES.M)
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            getActivity().requestPermissions(
-                                    new String[]{Manifest.permission.CAMERA},
-                                    REQUEST_CAMERA_PERMISSION);
+                            getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
                         }
                     })
-                    .setNegativeButton(android.R.string.cancel,
-                            new DialogInterface.OnClickListener() {
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
+                    { //onClick listener cancel
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     Activity activity = getActivity();
@@ -776,12 +767,10 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
     private void lockFocus() {
         try {
             // This is how to tell the camera to lock focus.
-            previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-                    CameraMetadata.CONTROL_AF_TRIGGER_START);
+            previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
             // Tell #captureCallback to wait for the lock.
             cameraState = STATE_WAITING_LOCK;
-            cameraCaptureSession.capture(previewRequestBuilder.build(), captureCallback,
-                    backgroundHandler);
+            cameraCaptureSession.capture(previewRequestBuilder.build(), captureCallback, backgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -794,12 +783,10 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
     private void runPrecaptureSequence() {
         try {
             // This is how to tell the camera to trigger.
-            previewRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
-                    CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
+            previewRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER, CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START);
             // Tell #captureCallback to wait for the precapture sequence to be set.
             cameraState = STATE_WAITING_PRECAPTURE;
-            cameraCaptureSession.capture(previewRequestBuilder.build(), captureCallback,
-                    backgroundHandler);
+            cameraCaptureSession.capture(previewRequestBuilder.build(), captureCallback, backgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
