@@ -32,6 +32,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
@@ -41,6 +42,7 @@ import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -66,7 +68,7 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class PhotoFragment2 extends StepFragment implements View.OnClickListener{
+public class PhotoFragment2 extends StepFragment{
 
     /*textual copy from example*/
     private static final int REQUEST_CAMERA_PERMISSION = 1;
@@ -83,144 +85,35 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
     }
 
     /**
-     * Camera state: Showing camera preview.
+     * Camera states:
      */
-    private static final int STATE_PREVIEW = 0;
+    private static final int STATE_PREVIEW = 0; //Showing camera preview.
+    private static final int STATE_WAITING_LOCK = 1; //Waiting for the focus to be locked.
+    private static final int STATE_WAITING_PRECAPTURE = 2; //Waiting for the exposure to be precapture state.
+    private static final int STATE_WAITING_NON_PRECAPTURE = 3; //Waiting for the exposure state to be something other than precapture.
+    private static final int STATE_PICTURE_TAKEN = 4; //Picture was taken.
 
-    /**
-     * Camera state: Waiting for the focus to be locked.
-     */
-    private static final int STATE_WAITING_LOCK = 1;
+    private static final int MAX_PREVIEW_WIDTH = 1920; //Max preview width that is guaranteed by Camera2 API
+    private static final int MAX_PREVIEW_HEIGHT = 1080; //Max preview height that is guaranteed by Camera2 API
 
-    /**
-     * Camera state: Waiting for the exposure to be precapture state.
-     */
-    private static final int STATE_WAITING_PRECAPTURE = 2;
+    private ViewGroup photo_layout;
+    private ViewGroup preview_layout;
 
-    /**
-     * Camera state: Waiting for the exposure state to be something other than precapture.
-     */
-    private static final int STATE_WAITING_NON_PRECAPTURE = 3;
+    private String cameraId; //ID of the current {@link CameraDevice}.
+    private AutoFitTextureView autoFitTextureView; //An {@link AutoFitTextureView} for camera preview.
 
-    /**
-     * Camera state: Picture was taken.
-     */
-    private static final int STATE_PICTURE_TAKEN = 4;
+    private CameraCaptureSession cameraCaptureSession; //A {@link CameraCaptureSession } for camera preview.
+    private CameraDevice cameraDevice; //A reference to the opened {@link CameraDevice}.
 
-    /**
-     * Max preview width that is guaranteed by Camera2 API
-     */
-    private static final int MAX_PREVIEW_WIDTH = 1920;
+    private Size previewSize; //The {@link android.util.Size} of camera preview.
 
-    /**
-     * Max preview height that is guaranteed by Camera2 API
-     */
-    private static final int MAX_PREVIEW_HEIGHT = 1080;
+    private CDStateCallback stateCallback = new CDStateCallback();
 
-    /**
-     * {@link TextureView.SurfaceTextureListener} handles several lifecycle events on a
-     * {@link TextureView}.
-     */
-    private final TextureView.SurfaceTextureListener surfaceTextureListener = new TextureView.SurfaceTextureListener() {
+    private HandlerThread backgroundThread; //An additional thread for running tasks that shouldn't block the UI.
+    private Handler backgroundHandler; //A {@link Handler} for running tasks in the background.
 
-        @Override
-        public void onSurfaceTextureAvailable(SurfaceTexture texture, int width, int height) {
-            openCamera(width, height);
-        }
-
-        @Override
-        public void onSurfaceTextureSizeChanged(SurfaceTexture texture, int width, int height) {
-            configureTransform(width, height);
-        }
-
-        @Override
-        public boolean onSurfaceTextureDestroyed(SurfaceTexture texture) {
-            return true;
-        }
-
-        @Override
-        public void onSurfaceTextureUpdated(SurfaceTexture texture) {
-        }
-
-    };
-
-    /**
-     * ID of the current {@link CameraDevice}.
-     */
-    private String cameraId;
-
-    /**
-     * An {@link AutoFitTextureView} for camera preview.
-     */
-    private AutoFitTextureView autoFitTextureView;
-
-    /**
-     * A {@link CameraCaptureSession } for camera preview.
-     */
-    private CameraCaptureSession cameraCaptureSession;
-
-    /**
-     * A reference to the opened {@link CameraDevice}.
-     */
-    private CameraDevice cameraDevice;
-
-    /**
-     * The {@link android.util.Size} of camera preview.
-     */
-    private Size previewSize;
-
-    /**
-     * {@link CameraDevice.StateCallback} is called when {@link CameraDevice} changes its state.
-     */
-    private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
-
-        @Override
-        public void onOpened(@NonNull CameraDevice cameraDevice) {
-            // This method is called when the camera is opened.  We start camera preview here.
-            cameraOpenCloseLock.release();
-            PhotoFragment2.this.cameraDevice = cameraDevice;
-            createCameraPreviewSession();
-        }
-
-        @Override
-        public void onDisconnected(@NonNull CameraDevice cameraDevice) {
-            cameraOpenCloseLock.release();
-            cameraDevice.close();
-            PhotoFragment2.this.cameraDevice = null;
-        }
-
-        @Override
-        public void onError(@NonNull CameraDevice cameraDevice, int error) {
-            cameraOpenCloseLock.release();
-            cameraDevice.close();
-            PhotoFragment2.this.cameraDevice = null;
-            Activity activity = getActivity();
-            if (null != activity) {
-                activity.finish();
-            }
-        }
-
-    };
-
-    /**
-     * An additional thread for running tasks that shouldn't block the UI.
-     */
-    private HandlerThread backgroundThread;
-
-    /**
-     * A {@link Handler} for running tasks in the background.
-     */
-    private Handler backgroundHandler;
-
-    /**
-     * An {@link ImageReader} that handles still image capture.
-     */
-    private ImageReader imageReader;
-
-    /**
-     * This is the output file for our picture.
-     */
-    private File file;
+    private ImageReader imageReader; //An {@link ImageReader} that handles still image capture.
+    private File file; //This is the output file for our picture.
 
     /**
      * This a callback object for the {@link ImageReader}. "onImageAvailable" will be called when a
@@ -235,15 +128,9 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
 
     };
 
-    /**
-     * {@link CaptureRequest.Builder} for the camera preview
-     */
-    private CaptureRequest.Builder previewRequestBuilder;
 
-    /**
-     * {@link CaptureRequest} generated by {@link #previewRequestBuilder}
-     */
-    private CaptureRequest previewRequest;
+    private CaptureRequest.Builder previewRequestBuilder; //{@link CaptureRequest.Builder} for the camera preview
+    private CaptureRequest previewRequest; //{@link CaptureRequest} generated by {@link #previewRequestBuilder}
 
     /**
      * The current state of camera state for taking pictures.
@@ -252,20 +139,9 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
      */
     private int cameraState = STATE_PREVIEW;
 
-    /**
-     * A {@link Semaphore} to prevent the app from exiting before closing the camera.
-     */
-    private Semaphore cameraOpenCloseLock = new Semaphore(1);
-
-    /**
-     * Whether the current camera device supports Flash or not.
-     */
-    private boolean flashSupported;
-
-    /**
-     * Orientation of the camera sensor
-     */
-    private int sensorOrientation;
+    private Semaphore cameraOpenCloseLock = new Semaphore(1); //A {@link Semaphore} to prevent the app from exiting before closing the camera.
+    private boolean flashSupported; //Whether the current camera device supports Flash or not.
+    private int sensorOrientation; //Orientation of the camera sensor
 
     /**
      * A {@link CameraCaptureSession.CaptureCallback} that handles events related to JPEG capture.
@@ -367,8 +243,7 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
      * @param aspectRatio       The aspect ratio
      * @return The optimal {@code Size}, or an arbitrary one if none were big enough
      */
-    private static Size chooseOptimalSize(Size[] choices, int textureViewWidth,
-                                          int textureViewHeight, int maxWidth, int maxHeight, Size aspectRatio) {
+    private static Size chooseOptimalSize(Size[] choices, int textureViewWidth, int textureViewHeight, int maxWidth, int maxHeight, Size aspectRatio) {
 
         // Collect the supported resolutions that are at least as big as the preview Surface
         List<Size> bigEnough = new ArrayList<>();
@@ -419,7 +294,7 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
         if (autoFitTextureView.isAvailable()) {
             openCamera(autoFitTextureView.getWidth(), autoFitTextureView.getHeight());
         } else {
-            autoFitTextureView.setSurfaceTextureListener(surfaceTextureListener);
+            autoFitTextureView.setSurfaceTextureListener(new TVSurfaceTextureListener());
         }
     }
 
@@ -871,12 +746,6 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
         }
     }
 
-    @Override
-    public void onClick(View view) {
-                takePicture();
-
-    }
-
     private void setAutoFlash(CaptureRequest.Builder requestBuilder) {
         if (flashSupported) {
             requestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
@@ -985,8 +854,11 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
     @Override
     protected void onCreateViewStepFragment(View rootView, Bundle savedInstanceState) {
         Button b_take_picture = (Button) rootView.findViewById(R.id.b_take_picture);
-        b_take_picture.setOnClickListener(this);
+        b_take_picture.setOnClickListener(new TakePictureClick());
         autoFitTextureView = (AutoFitTextureView) rootView.findViewById(R.id.textureView);
+        //layouts
+        photo_layout = (ViewGroup) rootView.findViewById(R.id.photo_layout);
+        preview_layout = (ViewGroup) rootView.findViewById(R.id.preview_layout);
     }
 
     @Override
@@ -1002,5 +874,72 @@ public class PhotoFragment2 extends StepFragment implements View.OnClickListener
     @Override
     protected StepResult getStepResult() {
         return null;
+    }
+
+    /*Helper classes*/
+    private class TakePictureClick implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            takePicture();
+        }
+    }
+    /**
+     * {@link TextureView.SurfaceTextureListener} handles several lifecycle events on a
+     * {@link TextureView}.
+     */
+    private class TVSurfaceTextureListener implements TextureView.SurfaceTextureListener {
+
+        @Override
+        public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+            openCamera(width, height);
+        }
+
+        @Override
+        public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+            configureTransform(width, height);
+        }
+
+        @Override
+        public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+            return true;
+        }
+
+        @Override
+        public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+
+        }
+    }
+
+    /**
+     * {@link CameraDevice.StateCallback} is called when {@link CameraDevice} changes its state.
+     */
+    private class CDStateCallback extends CameraDevice.StateCallback{
+
+        @Override
+        public void onOpened(@NonNull CameraDevice camera) {
+            // This method is called when the camera is opened.  We start camera preview here.
+            cameraOpenCloseLock.release();
+            PhotoFragment2.this.cameraDevice = cameraDevice;
+            createCameraPreviewSession();
+        }
+
+        @Override
+        public void onDisconnected(@NonNull CameraDevice camera) {
+            cameraOpenCloseLock.release();
+            cameraDevice.close();
+            PhotoFragment2.this.cameraDevice = null;
+        }
+
+        @Override
+        public void onError(@NonNull CameraDevice cameraDevice, int error) {
+            cameraOpenCloseLock.release();
+            cameraDevice.close();
+            PhotoFragment2.this.cameraDevice = null;
+            Activity activity = getActivity();
+            if (null != activity) {
+                activity.finish();
+            }
+        }
     }
 }
