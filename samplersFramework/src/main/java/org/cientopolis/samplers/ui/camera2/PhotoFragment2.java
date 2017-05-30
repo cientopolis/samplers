@@ -50,7 +50,6 @@ import android.widget.Toast;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.PhotoStep;
 import org.cientopolis.samplers.model.PhotoStepResult;
-import org.cientopolis.samplers.model.Step;
 import org.cientopolis.samplers.model.StepResult;
 import org.cientopolis.samplers.persistence.MultimediaIOManagement;
 import org.cientopolis.samplers.ui.take_sample.StepFragment;
@@ -98,6 +97,9 @@ public class PhotoFragment2 extends StepFragment{
 
     private static final int MAX_PREVIEW_WIDTH = 1920; //Max preview width that is guaranteed by Camera2 API
     private static final int MAX_PREVIEW_HEIGHT = 1080; //Max preview height that is guaranteed by Camera2 API
+
+    Uri imageURI;
+    String absoluteImagePath;
 
     private ViewGroup photo_layout;
     private ViewGroup preview_layout;
@@ -150,7 +152,7 @@ public class PhotoFragment2 extends StepFragment{
     /**
      * A {@link CameraCaptureSession.CaptureCallback} that handles events related to JPEG capture.
      */
-    private CameraCaptureSession.CaptureCallback captureCallback = new CameraCapSession();
+    private CameraCaptureSession.CaptureCallback captureCallback;
 
     /**
      * Shows a {@link Toast} on the UI thread.
@@ -518,6 +520,7 @@ public class PhotoFragment2 extends StepFragment{
 
                                 // Finally, we start displaying the camera preview.
                                 previewRequest = previewRequestBuilder.build();
+                                captureCallback = new CameraCapCallback();
                                 cameraCaptureSession.setRepeatingRequest(previewRequest, captureCallback, backgroundHandler);
                             } catch (CameraAccessException e) {
                                 e.printStackTrace();
@@ -578,7 +581,7 @@ public class PhotoFragment2 extends StepFragment{
             previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_START);
             // Tell #captureCallback to wait for the lock.
             cameraState = STATE_WAITING_LOCK;
-
+            captureCallback = new CameraCapCallback();
             cameraCaptureSession.capture(previewRequestBuilder.build(), captureCallback, backgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
@@ -625,7 +628,7 @@ public class PhotoFragment2 extends StepFragment{
             int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, getOrientation(rotation));
 
-            CameraCaptureSession.CaptureCallback CaptureCallback = new CameraCaptureSession.CaptureCallback() {
+            /* CameraCaptureSession.CaptureCallback mCaptureCallback */ captureCallback = new CameraCaptureSession.CaptureCallback() {
 
                 @Override
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session,
@@ -637,7 +640,7 @@ public class PhotoFragment2 extends StepFragment{
             };
 
             cameraCaptureSession.stopRepeating();
-            cameraCaptureSession.capture(captureBuilder.build(), CaptureCallback, null);
+            cameraCaptureSession.capture(captureBuilder.build(), captureCallback, null);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -696,22 +699,41 @@ public class PhotoFragment2 extends StepFragment{
         return rotation;
     }
 
-    private void showPreviewLayout (Uri imageURI, String absoluteImagePath) {
-        closeCamera();
-        previewRequestBuilder
+    private void showPreviewLayout () {
         // hide the camera layout
-        photo_layout.setVisibility(View.INVISIBLE);
-        // FIXME close camera here and open up again on new picture capture
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                photo_layout.setVisibility(View.INVISIBLE);
+                // FIXME close camera here and open up again on new picture capture
 
-        // Shows the preview layout
-        preview_layout.setVisibility(View.VISIBLE);
-        //get rotation in degrees for image
-        int rotation = getOrientation(absoluteImagePath);
-        // load image on the ui control
-        photo_preview.setImageURI(imageURI);
-        photo_preview.setRotation(rotation);
-        photo_preview.refreshDrawableState();
+                // Shows the preview layout
+                preview_layout.setVisibility(View.VISIBLE);
+                //get rotation in degrees for image
+                int rotation = getOrientation(absoluteImagePath);
+                // load image on the ui control
+                photo_preview.setImageURI(imageURI);
+                photo_preview.setRotation(rotation);
+                photo_preview.refreshDrawableState();
+            }
+        });
+
+
         //Glide.with(getActivity().getApplicationContext()).load(imageURI.toString()).into(photo_preview);
+    }
+
+    private void hidePreviewLayout () {
+        // hide the preview layout
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                photo_layout.setVisibility(View.VISIBLE);
+                // FIXME close camera here and open up again on new picture capture
+
+                // Shows the preview layout
+                preview_layout.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
     /**
@@ -719,9 +741,11 @@ public class PhotoFragment2 extends StepFragment{
      * finished.
      */
     private void unlockFocus() {
-        //closeCamera();
+        closeCamera();
         //show picture and preview layout
-        showPreviewLayout(Uri.fromFile(imageFile), imageFile.getAbsolutePath());
+        imageURI = Uri.fromFile(imageFile);
+        absoluteImagePath = imageFile.getAbsolutePath();
+        showPreviewLayout();
        /** try {
             // Reset the auto-focus trigger
             previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER, CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
@@ -838,6 +862,9 @@ public class PhotoFragment2 extends StepFragment{
         preview_layout = (ViewGroup) rootView.findViewById(R.id.preview_layout);
         //picture preview
         photo_preview = (ImageView) rootView.findViewById(R.id.photo_preview);
+
+        Button b_back = (Button) rootView.findViewById(R.id.bt_retake_photo);
+        b_back.setOnClickListener(new BackFromPreviewClick());
     }
 
     @Override
@@ -864,6 +891,21 @@ public class PhotoFragment2 extends StepFragment{
             takePicture();
         }
     }
+
+    private class BackFromPreviewClick implements View.OnClickListener{
+        @Override
+        public void onClick(View v) {
+            hidePreviewLayout();
+            startBackgroundThread();
+            //
+            if (autoFitTextureView.isAvailable()) {
+                openCamera(autoFitTextureView.getWidth(), autoFitTextureView.getHeight());
+            } else {
+                autoFitTextureView.setSurfaceTextureListener(new TVSurfaceTextureListener());
+            }
+        }
+    }
+
     /**
      * {@link TextureView.SurfaceTextureListener} handles several lifecycle events on a
      * {@link TextureView}.
@@ -923,7 +965,7 @@ public class PhotoFragment2 extends StepFragment{
         }
     }
 
-    private class CameraCapSession extends CameraCaptureSession.CaptureCallback {
+    private class CameraCapCallback extends CameraCaptureSession.CaptureCallback {
 
         private void process(CaptureResult result) {
             switch (cameraState) {
