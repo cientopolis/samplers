@@ -28,5 +28,7 @@
     <string name="lb_longitude">Longitud:</string>
     <string name="error_must_take_location">Debe tomar la posición</string>
 
+    <string name="request_permission">This sample needs camera permission.</string>
+
 
 </resources>

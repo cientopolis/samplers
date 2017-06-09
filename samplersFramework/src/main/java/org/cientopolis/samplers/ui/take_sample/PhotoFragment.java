@@ -27,7 +27,6 @@ import java.io.IOException;
  * Created by lilauth on 3/9/17.
  */
 
-// TODO: 15/03/2017 Refactor: create a inner class per implementation callback
 public class PhotoFragment extends StepFragment{
 
     private ViewGroup photo_layout;
