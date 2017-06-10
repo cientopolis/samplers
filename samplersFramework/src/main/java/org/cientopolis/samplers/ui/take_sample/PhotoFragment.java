@@ -33,9 +33,16 @@ public class PhotoFragment extends StepFragment{
     private ViewGroup preview_layout;
     private Camera camera;
     private ImageView photo_preview;
-    //private Uri imageURI;
+    private Uri imageURI;
     private String imageFileName;
     SurfaceHolder surfaceHolder;
+
+    private int fragmentState = 1;
+    //fragment state = 1, camera open and previewing
+    //fragment state = 2 preview photo, valid imageFile
+
+    private static final String KEY_STATE = "org.cientopolis.samplers.PhotoFragmentState";
+    private static final String KEY_PHOTOFILEURI = "org.cientopolis.samplers.PhotoFileUri";
 
 
     public PhotoFragment() {
@@ -85,6 +92,36 @@ public class PhotoFragment extends StepFragment{
     protected StepResult getStepResult() {
 
         return new PhotoStepResult(imageFileName);
+    }
+
+    @Override
+    public void onSaveInstanceState (Bundle outState) {
+        if(fragmentState == 1) {
+            //camera is streameing. So, we released the camera and stop the streaming
+            releaseCamera();
+        }
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(KEY_STATE,fragmentState);
+        outState.putParcelable(KEY_PHOTOFILEURI, imageURI);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            fragmentState = (int) savedInstanceState.getSerializable(KEY_STATE);
+            imageURI = savedInstanceState.getParcelable(KEY_PHOTOFILEURI);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(fragmentState == 1) {
+            if (openCamera()){startPreview();}
+        }else{
+           showPreviewLayout(imageURI, imageURI.getPath());
+        }
     }
 
     private boolean openCamera(){
@@ -198,6 +235,7 @@ public class PhotoFragment extends StepFragment{
 
 
     private void showPreviewLayout (Uri imageURI, String absoluteImagePath) {
+        fragmentState = 2;
         // hide the camera layout
         photo_layout.setVisibility(View.INVISIBLE);
         // FIXME close camera here and open up again on new picture capture
@@ -251,8 +289,10 @@ public class PhotoFragment extends StepFragment{
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             //Surface holder = this.surfaceHolder
-            if(openCamera()) {
-                startPreview();
+            if(fragmentState == 1) {
+                if (openCamera()) {
+                    startPreview();
+                }
             }
         }
 
@@ -292,6 +332,7 @@ public class PhotoFragment extends StepFragment{
                 //private File savePhoto;
                 file = MultimediaIOManagement.saveTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
                 imageFileName = file.getName();
+                imageURI = Uri.fromFile(file);
                 releaseCamera();
 
             } catch (Exception e) {
@@ -299,6 +340,7 @@ public class PhotoFragment extends StepFragment{
             }
             Log.e("Image URI",Uri.fromFile(file).toString());
             // TODO: 15/03/2017 check if no errors with file == null
+
             showPreviewLayout(Uri.fromFile(file), file.getAbsolutePath());
         }
     }
