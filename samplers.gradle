@@ -2,12 +2,19 @@
 
 import groovy.json.JsonSlurper
 
+buildscript {
+    dependencies {
+        classpath files("../samplersclassgenerator.jar")
+    }
+}
+
 task samplers_config {
-    println "SAMPLERS START ---------------------"
+    println "SAMPLERS START -----------------------------------------------------------------------"
 
     def inputFile = new File("SamplersConfig.json")
     def json = new JsonSlurper().parseText(inputFile.text)
 
+    println "START Printing the JSon file (for debugging purposes) -----------------------"
     // Print the JSon file for debugging purposes
     // PROJECT
     println json.project.app_path
@@ -15,7 +22,7 @@ task samplers_config {
 
     // APLICATION
     println json.aplication.title
-    println json.aplication.wellcomeMessage
+    println json.aplication.welcomeMessage
     println json.aplication.networkConfiguration.url
     println json.aplication.networkConfiguration.paramName
 
@@ -32,140 +39,77 @@ task samplers_config {
             println "       " + option
         }
     }
+    println "END Printing the JSon file ----------------------------"
 
     // Project constants
     def app_path = json.project.app_path
     def package_name = json.project.package_name
     def manifest_path = "app/src/main/"
-    def googleMaps_API_KEY = ""
+    def strings_path = "app/src/main/res/values/"
 
-    if (json.aplication.googleMaps_API_KEY != null)
-        googleMaps_API_KEY = "<meta-data android:name=\"com.google.android.geo.API_KEY\" android:value=\""+json.aplication.googleMaps_API_KEY+"\"/> \n"
-    else
-        println "No google maps API KEY found"
-
-    // MAIN ACTIVITY
+    // Check if exists MAIN ACTIVITY
     File main_activity_file = new File(app_path+"MyMainSamplersActivity.java")
     if (!main_activity_file.exists()) {
-        main_activity_file.text = "package " + package_name + "; \n"
-        main_activity_file.text += "import android.os.Bundle; \n"
-        main_activity_file.text += "import android.content.Intent; \n"
-        main_activity_file.text += "import java.util.ArrayList; \n"
-        main_activity_file.text += "import org.cientopolis.samplers.ui.SamplersMainActivity; \n"
-        main_activity_file.text += "import org.cientopolis.samplers.network.NetworkConfiguration; \n"
-        main_activity_file.text += "import org.cientopolis.samplers.model.*; \n"
-
-        main_activity_file.text += "public class MyMainSamplersActivity extends SamplersMainActivity { \n"
-        // onCreate
-        main_activity_file.text += "@Override \n"
-        main_activity_file.text += "protected void onCreate(Bundle savedInstanceState) { \n"
-        main_activity_file.text += "    super.onCreate(savedInstanceState); \n"
-
-        // Network Configuration
-        main_activity_file.text += "    NetworkConfiguration.setURL(\"" + json.aplication.networkConfiguration.url + "\"); \n"
-        main_activity_file.text += "    NetworkConfiguration.setPARAM_NAME(\"" + json.aplication.networkConfiguration.paramName + "\"); \n"
-
-        main_activity_file.text += "    lb_main_titulo.setText(\"" + json.aplication.wellcomeMessage + "\"); \n"
-
-        main_activity_file.text += "} \n"
-
-        // workflow
-        main_activity_file.text += "@Override \n"
-        main_activity_file.text += "protected Workflow getWorkflow(){ \n"
-        main_activity_file.text += "    Workflow workflow = new Workflow(); \n"
 
 
+        def class_generator = new org.cientopolis.samplers.SamplersClassGenerator(package_name, manifest_path, strings_path);
+
+
+        if (json.aplication.googleMaps_API_KEY != null) {
+            class_generator.setGoogleMaps_API_KEY(json.aplication.googleMaps_API_KEY)
+            println "Google maps API KEY added"
+        } else
+            println "No google maps API KEY found"
+
+        // Workflow
         json.workflow.tasks.eachWithIndex { task, i ->
             switch (task.type) {
                 case "Information":
-                    main_activity_file.text += "    String textToShow"+i+" = \"" + task.text + "\"; \n"
-
-                    // TODO poner en el archivo de Strings y tomarlo de ahi
-                    main_activity_file.text += "    workflow.addStep(new InformationStep(textToShow"+i+")); \n"
+                    class_generator.addStep(new org.cientopolis.samplers.InformationStepClassGenerator(task.text))
                     break
 
                 case "MultipleSelect":
-                    // title
-                    main_activity_file.text += "    String multipleSelectTitle"+i+" = \""+task.title+"\"; \n"
-
-                    // Opciones para el multi select
-                    main_activity_file.text += "    ArrayList<SelectOption> optionsToSelect"+i+" = new ArrayList<SelectOption>(); \n"
+                    org.cientopolis.samplers.MultipleSelectStepClassGenerator stepMutipleSelect = new org.cientopolis.samplers.MultipleSelectStepClassGenerator(task.title)
 
                     task.options.each { option ->
-                        main_activity_file.text += "    optionsToSelect"+i+".add(new SelectOption(" + option.id + ",\"" + option.text + "\", false)); \n"
-
-                        // TODO poner en el archivo de Strings y tomarlo de ahi
-                        //optionsToSelect.add(new MultipleSelectOption(getResources().getString(R.string.step_3_param_1), false));
+                        stepMutipleSelect.addOptionToSelect(option.id, option.text)
                     }
-                    main_activity_file.text += "    workflow.addStep(new MultipleSelectStep(optionsToSelect"+i+",multipleSelectTitle"+i+")); \n"
+
+                    class_generator.addStep(stepMutipleSelect)
                     break
 
                 case "SelectOne":
-                    // title
-                    main_activity_file.text += "    String selectOneTitle"+i+" = \""+task.title+"\"; \n"
-
-                    // Opciones para el select one
-                    main_activity_file.text += "    ArrayList<SelectOption> optionsToSelectOne"+i+" = new ArrayList<SelectOption>(); \n"
+                    org.cientopolis.samplers.SelectOneStepClassGenerator stepSelectOne = new org.cientopolis.samplers.SelectOneStepClassGenerator(task.title)
 
                     task.options.each { option ->
-                        main_activity_file.text += "    optionsToSelectOne"+i+".add(new SelectOption(" + option.id + ",\"" + option.text + "\",false)); \n"
-
-                        // TODO poner en el archivo de Strings y tomarlo de ahi
-                        // optionsToSelect2.add(new MultipleSelectOption(getResources().getString(R.string.step_5_param_1),false));
+                        stepSelectOne.addOptionToSelect(option.id, option.text)
                     }
 
-                    main_activity_file.text += "    workflow.addStep(new SelectOneStep(optionsToSelectOne"+i+",selectOneTitle"+i+")); \n"
+                    class_generator.addStep(stepSelectOne)
                     break
 
                 case "Photo":
-                    main_activity_file.text += "    String photoInstructions"+i+" = \"" + task.text + "\"; \n"
-
-                    // TODO add functionality
-                    //take_sample_activity_file.text += "    String image"+i+" = \""+task.image+"\"; \n"
-                    main_activity_file.text += "    String image"+i+" = \"\"; \n"
-
-                    // TODO poner en el archivo de Strings y tomarlo de ahi
-                    main_activity_file.text += "    workflow.addStep(new PhotoStep(photoInstructions"+i+", image"+i+")); \n"
+                    // TODO add functionality to overlay image
+                    class_generator.addStep(new org.cientopolis.samplers.PhotoStepClassGenerator(task.text, ""))
                     break
 
                 case "Location":
-                    main_activity_file.text += "    String textToShowLocation"+i+" = \"" + task.text + "\"; \n"
-
-                    // TODO poner en el archivo de Strings y tomarlo de ahi
-                    main_activity_file.text += "    workflow.addStep(new LocationStep(textToShowLocation"+i+")); \n"
+                    class_generator.addStep(new org.cientopolis.samplers.LocationStepClassGenerator(task.text))
                     break
             }
         }
 
+        def activity_name = "MyMainSamplersActivity"
+        def welcomeMessage = json.aplication.welcomeMessage
+        def net_config_url = json.aplication.networkConfiguration.url
+        def net_config_paramName = json.aplication.networkConfiguration.paramName
 
-        main_activity_file.text += "    return workflow; \n"
-        main_activity_file.text += "} \n"
-
-
-        main_activity_file.text += "} \n"
-
-        // add the activity to the manifest file
-
-        def main_activity_manifest = "<activity\n" +
-                "        android:name=\"MyMainSamplersActivity\"\n" +
-                "        android:label=\"@string/app_name\"\n" +
-                "        android:theme=\"@style/AppTheme\">\n" +
-                "        <intent-filter>\n" +
-                "            <action android:name=\"android.intent.action.MAIN\" />\n" +
-                "            <category android:name=\"android.intent.category.LAUNCHER\" />\n" +
-                "        </intent-filter>\n" +
-                "    </activity>\n"
-
-        File manifest_file = new File(manifest_path+"AndroidManifest.xml")
-        manifest_file.text = manifest_file.text.replace("</application>", googleMaps_API_KEY + main_activity_manifest + "</application>")
-
-        println "MyMainSamplersActivity.java created."
+        class_generator.generateMainActivity(app_path, activity_name, welcomeMessage, net_config_url, net_config_paramName)
     }
     else {
         println "MyMainSamplersActivity.java already exists."
     }
 
 
-
-    println "SAMPLERS END -----------------------"
+    println "SAMPLERS END -------------------------------------------------------------------------"
 }
