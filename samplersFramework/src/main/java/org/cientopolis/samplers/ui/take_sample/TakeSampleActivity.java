@@ -9,10 +9,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.TextView;
-import android.widget.Toast;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.*;
 import org.cientopolis.samplers.persistence.DAO_Factory;
+import org.cientopolis.samplers.ui.ErrorMessaging;
 
 
 import java.util.Date;
@@ -115,7 +115,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
                 // Save the sample localy
                 DAO_Factory.getSampleDAO(getApplicationContext()).save(sample);
 
-                Toast.makeText(this, "Coool!!", Toast.LENGTH_LONG).show();
+                ErrorMessaging.showInfoMessage(this, getResources().getString(R.string.message_sample_saved));
                 Log.e("TakeSample", "finish");
                 this.finish();
             }

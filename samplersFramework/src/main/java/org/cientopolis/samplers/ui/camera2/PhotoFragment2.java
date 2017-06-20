@@ -45,13 +45,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
-
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.PhotoStep;
 import org.cientopolis.samplers.model.PhotoStepResult;
 import org.cientopolis.samplers.model.StepResult;
 import org.cientopolis.samplers.persistence.MultimediaIOManagement;
+import org.cientopolis.samplers.ui.ErrorMessaging;
 import org.cientopolis.samplers.ui.take_sample.StepFragment;
 
 import java.io.File;
@@ -148,17 +147,17 @@ public class PhotoFragment2 extends StepFragment{
     private int sensorOrientation; //Orientation of the camera sensor
 
     /**
-     * Shows a {@link Toast} on the UI thread.
+     * Shows a message on the UI thread.
      *
      * @param text The message to show
      */
-    private void showToast(final String text) {
+    private void showMessage(final String text) {
         final Activity activity = getActivity();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(activity, text, Toast.LENGTH_SHORT).show();
+                    ErrorMessaging.showValidationErrorMessage(activity, text);
                     Log.e("picture saved: ",text);
                 }
             });
@@ -507,7 +506,7 @@ public class PhotoFragment2 extends StepFragment{
 
         @Override
         public void onConfigureFailed(@NonNull CameraCaptureSession session) {
-            showToast("Failed");
+            showMessage("Failed");
         }
     }
 
@@ -921,7 +920,7 @@ public class PhotoFragment2 extends StepFragment{
                             cameraState = STATE_PICTURE_TAKEN;
                             captureStillPicture(camera);
                         } else {
-                            showToast("run precapture secuence");
+                            showMessage("run precapture secuence");
                         }
                     }
                     break;

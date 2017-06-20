@@ -9,6 +9,7 @@
     <string name="bt_take_sample">Tomar Muestra</string>
 
     <!-- Take Sample Activity -->
+    <string name="message_sample_saved">Muestra guardada</string>
 
     <!-- Step Fragments -->
     <string name="bt_next">Siguiente</string>

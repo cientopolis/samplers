@@ -16,6 +16,14 @@
     <dimen name="tsa_step_count_text_size">30sp</dimen>
     <dimen name="tsa_step_title_text_size">24sp</dimen>
 
+
+    <!-- Information and Error Messaging -->
+    <dimen name="toast_message_padding">15dp</dimen>
+    <dimen name="toast_message_text_size">24sp</dimen>
+    <dimen name="toast_message_image_margin_end">20dp</dimen>
+
+
+
     <!--  -->
 
     <dimen name="text_edit_number_normal">45dp</dimen>

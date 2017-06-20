@@ -7,12 +7,12 @@ import android.widget.CompoundButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.SelectOneStep;
 import org.cientopolis.samplers.model.SelectOption;
 import org.cientopolis.samplers.model.SelectOneStepResult;
 import org.cientopolis.samplers.model.StepResult;
+import org.cientopolis.samplers.ui.ErrorMessaging;
 
 /**
  * A simple {@link StepFragment} subclass.
@@ -85,7 +85,7 @@ public class SelectOneFragment extends StepFragment {
         if (getStep().getSelectedOption() == null) {
             ok = false;
             // TODO: 02/03/2017 Unify messages to show
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_must_select_an_option), Toast.LENGTH_LONG).show();
+            ErrorMessaging.showValidationErrorMessage(getActivity(), getResources().getString(R.string.error_must_select_an_option));
         }
         
         return ok;
