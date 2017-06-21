@@ -3,6 +3,7 @@ package org.cientopolis.sampleapplication;
 import android.os.Bundle;
 
 import org.cientopolis.samplers.model.InformationStep;
+import org.cientopolis.samplers.model.InsertTextStep;
 import org.cientopolis.samplers.model.LocationStep;
 import org.cientopolis.samplers.model.MultipleSelectStep;
 import org.cientopolis.samplers.model.PhotoStep;
@@ -38,6 +39,9 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
 
         // InformationStep
         workflow.addStep(new InformationStep("Informacion de prueba para ver que se muestra bien"));
+
+        // InsertTextStep
+         workflow.addStep(new InsertTextStep("Escriba algo","cualquier cosa",50, InsertTextStep.InputType.TYPE_DATE));
 
         // LocationStep
        // workflow.addStep(new LocationStep("Seleccione la posicion de la muestra"));
