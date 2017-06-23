@@ -6,12 +6,13 @@
 
 
     <TextView
-        android:id="@+id/lb_text_to_show"
+        android:id="@+id/lb_it_text_to_show"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
         android:textAlignment="center"
-        android:textSize="@dimen/if_lb_text_to_show_text_size"
+        android:textSize="@dimen/itf_lb_text_to_show_text_size"
      />
 
     <Button
@@ -25,5 +26,17 @@
         android:layout_marginRight="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="30dp" />
+
+    <EditText
+        android:id="@+id/ed_it_text_to_enter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lb_it_text_to_show"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:textSize="@dimen/itf_ed_text_to_enter_text_size"
+        android:ems="10"
+         />
 
 </RelativeLayout>

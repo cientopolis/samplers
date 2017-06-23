@@ -14,11 +14,14 @@
     tools:context=".ui.SamplersMainActivity">
     <!--android:fitsSystemWindows="true"-->
     <TextView
+        android:id="@+id/lb_main_welcome_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/txt_wellcome_message"
+        android:text="@string/txt_welcome_message"
         android:layout_centerInParent="true"
-        android:id="@+id/lb_main_titulo" />
+        android:textSize="@dimen/main_lb_welcome_message_text_size"
+        android:gravity="center"
+         />
 
 
 
@@ -27,7 +30,7 @@
         android:layout_height="wrap_content"
         android:text="@string/bt_take_sample"
         android:id="@+id/button3"
-        android:layout_below="@+id/lb_main_titulo"
+        android:layout_below="@+id/lb_main_welcome_message"
         android:layout_centerHorizontal="true"
         android:onClick="takeSample" />
 

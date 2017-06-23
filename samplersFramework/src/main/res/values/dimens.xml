@@ -7,6 +7,7 @@
 
 
     <!-- SamplersMain Activity -->
+    <dimen name="main_lb_welcome_message_text_size">26sp</dimen>
 
 
     <!-- TakeSample Activity -->
@@ -15,6 +16,13 @@
     <dimen name="tsa_activity_bar_height">60dp</dimen>
     <dimen name="tsa_step_count_text_size">30sp</dimen>
     <dimen name="tsa_step_title_text_size">24sp</dimen>
+
+    <!-- InsertText Fragment -->
+    <dimen name="if_lb_text_to_show_text_size">26sp</dimen>
+
+    <!-- InsertText Fragment -->
+    <dimen name="itf_lb_text_to_show_text_size">26sp</dimen>
+    <dimen name="itf_ed_text_to_enter_text_size">26sp</dimen>
 
 
     <!-- Information and Error Messaging -->

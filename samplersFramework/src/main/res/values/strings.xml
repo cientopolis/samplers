@@ -5,7 +5,7 @@
     <string name="title_activity_take_sample">Tomar Muestra</string>
 
     <!-- Main Activity -->
-    <string name="txt_wellcome_message">Bienvenidos al registro regional de gatos</string>
+    <string name="txt_welcome_message">Bienvenidos al registro regional de gatos</string>
     <string name="bt_take_sample">Tomar Muestra</string>
 
     <!-- Take Sample Activity -->
@@ -14,22 +14,26 @@
     <!-- Step Fragments -->
     <string name="bt_next">Siguiente</string>
 
-    <!-- SelectOne Fragments -->
+    <!-- SelectOne Fragment -->
     <string name="error_must_select_an_option">Debe seleccionar una opción</string>
 
     <!-- MultipleSelect Fragments -->
     <string name="error_must_select_an_option_at_least">Debe seleccionar una opción por lo menos</string>
 
 
-    <!-- Photo Fragments -->
+    <!-- Photo Fragment -->
     <string name="bt_retake_photo">Volver a tomar foto</string>
+    <string name="request_permission">Esta muestra necesita permisos de acceso a la camara.</string>
 
-    <!-- Location Fragments -->
+    <!-- Location Fragment -->
     <string name="lb_latitude">Latitud:</string>
     <string name="lb_longitude">Longitud:</string>
     <string name="error_must_take_location">Debe tomar la posición</string>
 
-    <string name="request_permission">This sample needs camera permission.</string>
+    <!-- InsertText Fragment -->
+    <string name="error_must_insert_text">Debe ingresar algo</string>
+
+
 
 
 </resources>
