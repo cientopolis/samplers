@@ -29,7 +29,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         NetworkConfiguration.setURL("http://192.168.1.10/samplers/upload.php");
         NetworkConfiguration.setPARAM_NAME("sample");
 
-        lb_main_titulo.setText("Bienvenido a la Aplicacion de Prueba!");
+        lb_main_welcome_message.setText("Bienvenido a la Aplicacion de Prueba!");
     }
 
 
@@ -41,7 +41,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         workflow.addStep(new InformationStep("Informacion de prueba para ver que se muestra bien"));
 
         // InsertTextStep
-         workflow.addStep(new InsertTextStep("Escriba algo","cualquier cosa",50, InsertTextStep.InputType.TYPE_DATE));
+         workflow.addStep(new InsertTextStep("Escriba algo","cualquier cosa",50, InsertTextStep.InputType.TYPE_TEXT, true));
 
         // LocationStep
        // workflow.addStep(new LocationStep("Seleccione la posicion de la muestra"));

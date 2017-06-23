@@ -14,13 +14,15 @@ public class InsertTextStep extends BaseStep {
     private String sampleText;
     private int maxLength;
     private InsertTextStep.InputType inputType;
+    private boolean optional;
 
-    public InsertTextStep(String textToShow, String sampleText, int maxLength, InsertTextStep.InputType inputType) {
+    public InsertTextStep(String textToShow, String sampleText, int maxLength, InsertTextStep.InputType inputType, boolean optional) {
         stepFragmentClass = InsertTextFragment.class;
         this.textToShow = textToShow;
         this.sampleText = sampleText;
         this.maxLength = maxLength;
         this.inputType = inputType;
+        this.optional = optional;
     }
 
     public String getTextToShow(){
@@ -36,6 +38,10 @@ public class InsertTextStep extends BaseStep {
         return maxLength;
     }
 
+    public boolean isOptional() {
+        return optional;
+    }
+
     public InsertTextStep.InputType getInputType() {
         return inputType;
     }
@@ -43,8 +49,6 @@ public class InsertTextStep extends BaseStep {
     public enum InputType {
         TYPE_TEXT,
         TYPE_NUMBER,
-        TYPE_DATE,
-        TYPE_TIME;
-
+        TYPE_DECIMAL;
     }
 }

@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:textAlignment="center"
+        android:textSize="@dimen/if_lb_text_to_show_text_size"
      />
 
     <Button
