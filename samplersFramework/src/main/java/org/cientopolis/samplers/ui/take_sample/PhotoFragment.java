@@ -1,5 +1,8 @@
 package org.cientopolis.samplers.ui.take_sample;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -144,6 +147,7 @@ public class PhotoFragment extends StepFragment{
 
     private boolean startPreview(){
         try {
+            fragmentState = 1;
             setCameraDisplayOrientation(0, camera);
             camera.setPreviewDisplay(surfaceHolder);
             camera.startPreview();
@@ -202,7 +206,7 @@ public class PhotoFragment extends StepFragment{
         //now we have to determine frame orientation
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
         int degrees = 0;
-        if (cameraOrientation == 1){
+        if ((cameraOrientation == 1) || (cameraOrientation == 0)){
             switch (rotation) {
                 case Surface.ROTATION_0: //portrait normal
                     degrees = 90;
@@ -244,9 +248,19 @@ public class PhotoFragment extends StepFragment{
         preview_layout.setVisibility(View.VISIBLE);
         //get rotation in degrees for image
         int rotation = getOrientation(absoluteImagePath);
+        //get rotation in degrees for image
+        //test for preview problem
+        Matrix matrix = new Matrix();
+        matrix.postRotate(rotation);
+        //test for max preview size supported
+
+        Bitmap b = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(absoluteImagePath,null), 1920, 1080, false);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(b , 0, 0, b.getWidth(), b.getHeight(), matrix, true);
+
+        photo_preview.setImageBitmap(rotatedBitmap/*b Bitmap.createScaledBitmap(b, 1920, 1080, false)*/);
         // load image on the ui control
-        photo_preview.setImageURI(imageURI);
-        photo_preview.setRotation(rotation);
+        //photo_preview.setImageURI(imageURI);
+        //photo_preview.setRotation(rotation);
         photo_preview.refreshDrawableState();
         //Glide.with(getActivity().getApplicationContext()).load(imageURI.toString()).into(photo_preview);
     }
