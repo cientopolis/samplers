@@ -1,7 +1,7 @@
 # Samplers
 Samplers is a framework to build mobile citizen science applications.
 
-# UNDER DEVELOPMENT v0.2
+# UNDER DEVELOPMENT v0.3
 
 ## Steps to use the framework
 
@@ -68,7 +68,7 @@ Instantiation can be done manually or using gradle class generator.
   
 2. Copy your created JSON file **SamplersConfig.json** to the root directory of your Android Studio project
 
-3. Download the latest [**samplers.gradle**](https://github.com/cientopolis/samplers/releases/) file and copy it to the root directory of your Android Studio project
+3. Download the latest **samplers.gradle** and **samplersclassgenerator.jar** files from [**realeases**](https://github.com/cientopolis/samplers/releases/) and and copy them to the root directory of your Android Studio project
 
 4. Link samplers.gradle with your **application build.gradle** (it will create MyMainSamplersActivity in your project)
     - On your **application build.gradle** add this line at the end
