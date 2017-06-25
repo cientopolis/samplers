@@ -3,6 +3,7 @@
     <string name="action_settings">Configuracion</string>
     <string name="action_samples">Muestras</string>
     <string name="title_activity_take_sample">Tomar Muestra</string>
+    <string name="title_activity_samples_list">Mestras tomadas</string>
 
     <!-- Main Activity -->
     <string name="txt_welcome_message">Bienvenidos al registro regional de gatos</string>
