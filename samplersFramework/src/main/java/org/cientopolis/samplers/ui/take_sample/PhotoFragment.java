@@ -1,5 +1,8 @@
 package org.cientopolis.samplers.ui.take_sample;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.media.ExifInterface;
 import android.net.Uri;
@@ -27,16 +30,22 @@ import java.io.IOException;
  * Created by lilauth on 3/9/17.
  */
 
-// TODO: 15/03/2017 Refactor: create a inner class per implementation callback
 public class PhotoFragment extends StepFragment{
 
     private ViewGroup photo_layout;
     private ViewGroup preview_layout;
     private Camera camera;
     private ImageView photo_preview;
-    //private Uri imageURI;
+    private Uri imageURI;
     private String imageFileName;
     SurfaceHolder surfaceHolder;
+
+    private int fragmentState = 1;
+    //fragment state = 1, camera open and previewing
+    //fragment state = 2 preview photo, valid imageFile
+
+    private static final String KEY_STATE = "org.cientopolis.samplers.PhotoFragmentState";
+    private static final String KEY_PHOTOFILEURI = "org.cientopolis.samplers.PhotoFileUri";
 
 
     public PhotoFragment() {
@@ -88,6 +97,36 @@ public class PhotoFragment extends StepFragment{
         return new PhotoStepResult(imageFileName);
     }
 
+    @Override
+    public void onSaveInstanceState (Bundle outState) {
+        if(fragmentState == 1) {
+            //camera is streameing. So, we released the camera and stop the streaming
+            releaseCamera();
+        }
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(KEY_STATE,fragmentState);
+        outState.putParcelable(KEY_PHOTOFILEURI, imageURI);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            fragmentState = (int) savedInstanceState.getSerializable(KEY_STATE);
+            imageURI = savedInstanceState.getParcelable(KEY_PHOTOFILEURI);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(fragmentState == 1) {
+            if (openCamera()){startPreview();}
+        }else{
+           showPreviewLayout(imageURI, imageURI.getPath());
+        }
+    }
+
     private boolean openCamera(){
         try {
             camera = Camera.open();
@@ -108,6 +147,7 @@ public class PhotoFragment extends StepFragment{
 
     private boolean startPreview(){
         try {
+            fragmentState = 1;
             setCameraDisplayOrientation(0, camera);
             camera.setPreviewDisplay(surfaceHolder);
             camera.startPreview();
@@ -166,7 +206,7 @@ public class PhotoFragment extends StepFragment{
         //now we have to determine frame orientation
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
         int degrees = 0;
-        if (cameraOrientation == 1){
+        if ((cameraOrientation == 1) || (cameraOrientation == 0)){
             switch (rotation) {
                 case Surface.ROTATION_0: //portrait normal
                     degrees = 90;
@@ -199,6 +239,7 @@ public class PhotoFragment extends StepFragment{
 
 
     private void showPreviewLayout (Uri imageURI, String absoluteImagePath) {
+        fragmentState = 2;
         // hide the camera layout
         photo_layout.setVisibility(View.INVISIBLE);
         // FIXME close camera here and open up again on new picture capture
@@ -207,9 +248,19 @@ public class PhotoFragment extends StepFragment{
         preview_layout.setVisibility(View.VISIBLE);
         //get rotation in degrees for image
         int rotation = getOrientation(absoluteImagePath);
+        //get rotation in degrees for image
+        //test for preview problem
+        Matrix matrix = new Matrix();
+        matrix.postRotate(rotation);
+        //test for max preview size supported
+
+        Bitmap b = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(absoluteImagePath,null), 1920, 1080, false);
+        Bitmap rotatedBitmap = Bitmap.createBitmap(b , 0, 0, b.getWidth(), b.getHeight(), matrix, true);
+
+        photo_preview.setImageBitmap(rotatedBitmap/*b Bitmap.createScaledBitmap(b, 1920, 1080, false)*/);
         // load image on the ui control
-        photo_preview.setImageURI(imageURI);
-        photo_preview.setRotation(rotation);
+        //photo_preview.setImageURI(imageURI);
+        //photo_preview.setRotation(rotation);
         photo_preview.refreshDrawableState();
         //Glide.with(getActivity().getApplicationContext()).load(imageURI.toString()).into(photo_preview);
     }
@@ -252,8 +303,10 @@ public class PhotoFragment extends StepFragment{
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             //Surface holder = this.surfaceHolder
-            if(openCamera()) {
-                startPreview();
+            if(fragmentState == 1) {
+                if (openCamera()) {
+                    startPreview();
+                }
             }
         }
 
@@ -293,6 +346,7 @@ public class PhotoFragment extends StepFragment{
                 //private File savePhoto;
                 file = MultimediaIOManagement.saveTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
                 imageFileName = file.getName();
+                imageURI = Uri.fromFile(file);
                 releaseCamera();
 
             } catch (Exception e) {
@@ -300,6 +354,7 @@ public class PhotoFragment extends StepFragment{
             }
             Log.e("Image URI",Uri.fromFile(file).toString());
             // TODO: 15/03/2017 check if no errors with file == null
+
             showPreviewLayout(Uri.fromFile(file), file.getAbsolutePath());
         }
     }

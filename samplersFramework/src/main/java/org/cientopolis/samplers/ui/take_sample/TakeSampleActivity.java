@@ -9,10 +9,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.widget.TextView;
-import android.widget.Toast;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.*;
 import org.cientopolis.samplers.persistence.DAO_Factory;
+import org.cientopolis.samplers.ui.ErrorMessaging;
 
 
 import java.util.Date;
@@ -115,7 +115,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
                 // Save the sample localy
                 DAO_Factory.getSampleDAO(getApplicationContext()).save(sample);
 
-                Toast.makeText(this, "Coool!!", Toast.LENGTH_LONG).show();
+                ErrorMessaging.showInfoMessage(this, getResources().getString(R.string.message_sample_saved));
                 Log.e("TakeSample", "finish");
                 this.finish();
             }
@@ -123,21 +123,11 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
 
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        // TODO remove test code
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Log.e("TakeSampleActivity","KEYCODE_BACK");
-            //Fragment f =  getFragmentManager().findFragmentById(R.id.container);
-            /*
-            if (f instanceof OnBackKeyDown) {
-
-                ((OnBackKeyDown) f).onBackKeyDown();
-                //return true;
-            }*/
-        }
-        return super.onKeyDown(keyCode, event);
+    private void previuosStep() {
+        workflow.previuosStep();
+        refreshStepStateOnScreen();
     }
+
 
     private void refreshStepStateOnScreen() {
         lb_step_count.setText(String.valueOf(workflow.getStepPosition()+1) + "/" + String.valueOf(workflow.getStepCount()));
@@ -152,6 +142,18 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
         nextStep();
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Log.e("TakeSampleActivity","KEYCODE_BACK");
+
+            previuosStep();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+
     private class MyOnBackStackChangedListener implements FragmentManager.OnBackStackChangedListener {
 
         @Override
@@ -162,9 +164,9 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
             //proximoPaso = getSupportFragmentManager().getBackStackEntryCount()+1;
 
 
-            workflow.setStepPosition(getFragmentManager().getBackStackEntryCount());
+            //workflow.setStepPosition(getFragmentManager().getBackStackEntryCount());
 
-            refreshStepStateOnScreen();
+            //refreshStepStateOnScreen();
         }
     }
 }

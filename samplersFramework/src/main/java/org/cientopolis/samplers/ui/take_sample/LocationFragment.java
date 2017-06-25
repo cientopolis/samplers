@@ -10,10 +10,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
+import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -31,6 +32,7 @@ import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.LocationStep;
 import org.cientopolis.samplers.model.LocationStepResult;
 import org.cientopolis.samplers.model.StepResult;
+import org.cientopolis.samplers.ui.ErrorMessaging;
 
 /**
  * Created by Xavier on 09/04/2017.
@@ -173,8 +175,7 @@ public class LocationFragment extends StepFragment {
 
         if (mLocation == null) {
             ok = false;
-            // TODO: 10/04/2017 Unify messages to show
-            Toast.makeText(getActivity(), getResources().getString(R.string.error_must_take_location), Toast.LENGTH_LONG).show();
+            ErrorMessaging.showValidationErrorMessage(getActivity(), getResources().getString(R.string.error_must_take_location));
         }
 
         return ok;
@@ -191,7 +192,7 @@ public class LocationFragment extends StepFragment {
         lb_longitude.setText(String.valueOf(mLocation.getLongitude()));
     }
 
-    private class GoogleApiConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+    private class GoogleApiConnectionCallbacks implements ConnectionCallbacks, OnConnectionFailedListener {
 
         @Override
         public void onConnected(@Nullable Bundle bundle) {

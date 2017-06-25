@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.Workflow;
 import org.cientopolis.samplers.ui.samples_list.SamplesListActivity;
@@ -16,14 +15,14 @@ import org.cientopolis.samplers.ui.take_sample.TakeSampleActivity;
 
 
 public abstract class SamplersMainActivity extends Activity {
-    protected TextView lb_main_titulo;
+    protected TextView lb_main_welcome_message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_samplers_main);
 
-        lb_main_titulo = (TextView) findViewById(R.id.lb_main_titulo);
+        lb_main_welcome_message = (TextView) findViewById(R.id.lb_main_welcome_message);
     }
 
 
@@ -44,7 +43,7 @@ public abstract class SamplersMainActivity extends Activity {
         //noinspection SimplifiableIfStatement
         // // TODO: 27/02/2017 Refactor: use case statement
         if (id == R.id.action_settings) {
-            Toast.makeText(this, "Settings", Toast.LENGTH_LONG).show();
+            ErrorMessaging.showInfoMessage(this, "Settings");
             return true;
         }
         else if (id == R.id.action_samples) {

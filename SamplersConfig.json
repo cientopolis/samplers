@@ -6,7 +6,7 @@
 
 	"aplication": {
 		"title" : "Samplers Hello World App",
-		"wellcomeMessage" : "Wellcome to your first Samplers App!",
+		"welcomeMessage" : "Welcome to your first Samplers App!",
 		"networkConfiguration" : {
 			"url" : "http://192.168.1.10/samplers/upload.php",
 			"paramName" : "sample"

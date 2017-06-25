@@ -22,6 +22,14 @@
     <item name="grey400" type="color">#BDBDBD</item>
     <item name="grey500" type="color">#9E9E9E</item>
 
+    <item name="bluegrey50" type="color">#ECEFF1</item>
+    <item name="bluegrey100" type="color">#CFD8DC</item>
+    <item name="bluegrey200" type="color">#B0BEC5</item>
+    <item name="bluegrey300" type="color">#90A4AE</item>
+    <item name="bluegrey400" type="color">#78909C</item>
+    <item name="bluegrey500" type="color">#607D8B</item>
+    <item name="bluegrey600" type="color">#546E7A</item>
+
     <item name="pinkA100" type="color">#FF80AB</item>
     <item name="pinkA200" type="color">#FF4081</item>
     <item name="pinkA400" type="color">#F50057</item>
@@ -43,4 +51,14 @@
     <item name="fragment_background" type="color">@color/grey300</item>
 
     <item name="list_selected_item" type="color">@color/indigoA100</item>
+
+
+    <!-- Information and Error Messaging ======================================================= -->
+    <item name="toast_back_color_info" type="color">@color/bluegrey600</item>
+    <item name="toast_back_color_error" type="color">@color/indigo500</item>
+    <item name="toast_back_color_error_fatal" type="color">@color/redA700</item>
+
+    <item name="toast_font_color_info" type="color">@color/white</item>
+    <item name="toast_font_color_error" type="color">@color/white</item>
+    <item name="toast_font_color_error_fatal" type="color">@color/white</item>
 </resources>

@@ -12,7 +12,6 @@ import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.Sample;
 import org.cientopolis.samplers.network.SendSample;
 import org.cientopolis.samplers.persistence.DAO_Factory;
-import org.cientopolis.samplers.persistence.SampleDAO;
 
 import java.util.List;
 
