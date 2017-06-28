@@ -58,7 +58,7 @@ public class SamplersClassGenerator {
         XMLManagement.addString(varName, welcomeMessage);
 
         output.add("        String "+varName +" = getResources().getString(R.string."+varName+"); ");
-        output.add("        lb_main_titulo.setText("+varName+");");
+        output.add("        lb_main_welcome_message.setText("+varName+");");
 
         output.add("    }");
         output.add("");
