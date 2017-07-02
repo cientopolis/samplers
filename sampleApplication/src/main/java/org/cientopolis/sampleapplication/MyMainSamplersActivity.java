@@ -41,10 +41,10 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         workflow.addStep(new InformationStep("Informacion de prueba para ver que se muestra bien"));
 
         // InsertTextStep
-        workflow.addStep(new InsertTextStep("Escriba algo","cualquier cosa",50, InsertTextStep.InputType.TYPE_TEXT, true));
+        //workflow.addStep(new InsertTextStep("Escriba algo","cualquier cosa",50, InsertTextStep.InputType.TYPE_TEXT, true));
 
         // LocationStep
-        workflow.addStep(new LocationStep("Seleccione la posicion de la muestra"));
+        //workflow.addStep(new LocationStep("Seleccione la posicion de la muestra"));
 
         // PhotoStep
         workflow.addStep(new PhotoStep("Instrucciones para mostrar",""));

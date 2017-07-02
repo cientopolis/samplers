@@ -1,6 +1,8 @@
 package org.cientopolis.samplers.ui.take_sample;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -34,18 +36,47 @@ import java.io.IOException;
 
 public class PhotoFragment1 extends Fragment {
 
+    private static final String ARG_INSTRUCTIONS = "param_instructions";
+    private static final String ARG_CALLBACKS = "param_callbacks";
+
     private ViewGroup photo_layout;
     private Camera camera;
-    private ImageView photo_preview;
     private Uri imageURI;
     private String imageFileName;
     private SurfaceHolder surfaceHolder;
+
+    private String instructions;
+    private PhotoFragmentCallbacks mListener;
 
 
     public PhotoFragment1() {
         // Required empty public constructor
     }
 
+    public static PhotoFragment1 newInstance(PhotoFragmentCallbacks mListener, String instructions) {
+        PhotoFragment1 fragment = null;
+        try {
+            fragment = new PhotoFragment1();
+            Bundle args = new Bundle();
+            args.putSerializable(ARG_CALLBACKS, mListener);
+            args.putString(ARG_INSTRUCTIONS, instructions);
+            fragment.setArguments(args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            this.mListener = (PhotoFragmentCallbacks) getArguments().getSerializable(ARG_CALLBACKS);
+            this.instructions =  getArguments().getString(ARG_INSTRUCTIONS);
+        }
+    }
 
 
     @Override
@@ -59,19 +90,15 @@ public class PhotoFragment1 extends Fragment {
 
         SurfaceView surfaceView = (SurfaceView) rootView.findViewById(R.id.surfaceView2);
 
-
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(new SurfaceCallbacksHelper());
         surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
+        TextView textView = (TextView) rootView.findViewById(R.id.lb_instructions);
+        textView.setText(instructions);
+
         Button b_takePicture = (Button) rootView.findViewById(R.id.b_take_picture);
         b_takePicture.setOnClickListener(new TakePictureClick());
-
-
-        TextView textView = (TextView) rootView.findViewById(R.id.lb_instructions);
-        //textView.setText(getStep().getInstructionsToShow());
-
-        photo_preview = (ImageView) rootView.findViewById(R.id.photo_preview);
 
         return rootView;
     }
@@ -79,6 +106,7 @@ public class PhotoFragment1 extends Fragment {
 
     @Override
     public void onSaveInstanceState (Bundle outState) {
+        // TODO no se esta ejecutando este metodo
         //camera is streameing. So, we released the camera and stop the streaming
         releaseCamera();
 
@@ -279,6 +307,7 @@ public class PhotoFragment1 extends Fragment {
             // TODO: 15/03/2017 check if no errors with file == null
 
             // FINALIZAR ACA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            mListener.onPhotoTaked(imageURI);
         }
     }
 

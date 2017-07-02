@@ -1,5 +1,6 @@
 package org.cientopolis.samplers.ui.take_sample;
 
+import android.app.FragmentTransaction;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -27,13 +28,14 @@ import java.io.Serializable;
  * Created by lilauth on 3/9/17.
  */
 
-public class PhotoFragment extends StepFragment{
+public class PhotoFragment extends StepFragment implements PhotoFragmentCallbacks {
 
-    private ViewGroup photo_layout;
     private ViewGroup preview_layout;
     private ImageView photo_preview;
     private Uri imageURI;
     private String imageFileName;
+
+    private PhotoFragment1 camera_fragment;
 
     private PhotoFragmentState fragmentState = PhotoFragmentState.TAKING_PHOTO;
 
@@ -54,16 +56,12 @@ public class PhotoFragment extends StepFragment{
     @Override
     protected void onCreateViewStepFragment(View rootView, Bundle savedInstanceState) {
 
-        photo_layout = (ViewGroup) rootView.findViewById(R.id.photo_layout);
         preview_layout = (ViewGroup) rootView.findViewById(R.id.preview_layout);
 
-        Button b_back = (Button) rootView.findViewById(R.id.bt_retake_photo);
-        b_back.setOnClickListener(new ReTakePhotoClick());
-
-        TextView textView = (TextView) rootView.findViewById(R.id.lb_instructions);
-        textView.setText(getStep().getInstructionsToShow());
-
         photo_preview = (ImageView) rootView.findViewById(R.id.photo_preview);
+
+        Button bt_retake_photo = (Button) rootView.findViewById(R.id.bt_retake_photo);
+        bt_retake_photo.setOnClickListener(new ReTakePhotoClick());
 
     }
 
@@ -93,14 +91,13 @@ public class PhotoFragment extends StepFragment{
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             fragmentState = (PhotoFragmentState) savedInstanceState.getSerializable(KEY_STATE);
-            imageURI = savedInstanceState.getParcelable(KEY_PHOTOFILEURI);
+            imageURI = (Uri) savedInstanceState.getParcelable(KEY_PHOTOFILEURI);
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
         if (fragmentState == PhotoFragmentState.TAKING_PHOTO) {
             showCamera();
         }else{
@@ -111,14 +108,33 @@ public class PhotoFragment extends StepFragment{
 
     private void showCamera() {
         fragmentState = PhotoFragmentState.TAKING_PHOTO;
+
+        camera_fragment = PhotoFragment1.newInstance(this, getStep().getInstructionsToShow());
+
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+        transaction.replace(R.id.child_container, camera_fragment);
+        transaction.commit();
     }
 
     private void showPreview() {
         fragmentState = PhotoFragmentState.SHOWING_PREVIEW;
 
+        if (camera_fragment != null) {
+            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+            transaction.remove(camera_fragment);
+            transaction.commit();
+            camera_fragment = null;
+        }
+
         showPreviewLayout(imageURI, imageURI.getPath());
     }
 
+    @Override
+    public void onPhotoTaked(Uri imageURI) {
+        this.imageURI = imageURI;
+
+        showPreview();
+    }
 
 
     private int getOrientation(String imagePath){
@@ -172,12 +188,9 @@ public class PhotoFragment extends StepFragment{
 
 
     private void showPreviewLayout (Uri imageURI, String absoluteImagePath) {
-
-        // hide the camera layout
-        photo_layout.setVisibility(View.INVISIBLE);
-
         // Shows the preview layout
-        preview_layout.setVisibility(View.VISIBLE);
+        //preview_layout.setVisibility(View.VISIBLE);
+
         //get rotation in degrees for image
         int rotation = getOrientation(absoluteImagePath);
         //get rotation in degrees for image
@@ -196,6 +209,7 @@ public class PhotoFragment extends StepFragment{
         photo_preview.refreshDrawableState();
         //Glide.with(getActivity().getApplicationContext()).load(imageURI.toString()).into(photo_preview);
     }
+
 
 
     /*private helper classes*/
