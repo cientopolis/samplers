@@ -1,4 +1,4 @@
-package org.cientopolis.samplers.ui.camera2;
+package org.cientopolis.samplers.ui.take_sample;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -51,7 +51,6 @@ import org.cientopolis.samplers.model.PhotoStepResult;
 import org.cientopolis.samplers.model.StepResult;
 import org.cientopolis.samplers.persistence.MultimediaIOManagement;
 import org.cientopolis.samplers.ui.ErrorMessaging;
-import org.cientopolis.samplers.ui.take_sample.StepFragment;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,6 +1,5 @@
 package org.cientopolis.samplers.model;
 
-import org.cientopolis.samplers.ui.camera2.PhotoFragment2;
 import org.cientopolis.samplers.ui.take_sample.PhotoFragment;
 
 
