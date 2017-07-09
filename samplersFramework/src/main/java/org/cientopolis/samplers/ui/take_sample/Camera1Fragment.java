@@ -1,14 +1,10 @@
 package org.cientopolis.samplers.ui.take_sample;
 
-import android.app.Activity;
+import android.annotation.TargetApi;
 import android.app.Fragment;
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.hardware.Camera;
-import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,13 +14,9 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.cientopolis.samplers.R;
-import org.cientopolis.samplers.model.PhotoStep;
-import org.cientopolis.samplers.model.PhotoStepResult;
-import org.cientopolis.samplers.model.StepResult;
 import org.cientopolis.samplers.persistence.MultimediaIOManagement;
 
 import java.io.File;
@@ -34,12 +26,13 @@ import java.io.IOException;
  * Created by lilauth on 3/9/17.
  */
 
-public class PhotoFragment1 extends Fragment {
+@SuppressWarnings("deprecation")
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+public class Camera1Fragment extends Fragment {
 
     private static final String ARG_INSTRUCTIONS = "param_instructions";
     private static final String ARG_CALLBACKS = "param_callbacks";
 
-    private ViewGroup photo_layout;
     private Camera camera;
     private Uri imageURI;
     private String imageFileName;
@@ -49,14 +42,14 @@ public class PhotoFragment1 extends Fragment {
     private PhotoFragmentCallbacks mListener;
 
 
-    public PhotoFragment1() {
+    public Camera1Fragment() {
         // Required empty public constructor
     }
 
-    public static PhotoFragment1 newInstance(PhotoFragmentCallbacks mListener, String instructions) {
-        PhotoFragment1 fragment = null;
+    public static Camera1Fragment newInstance(PhotoFragmentCallbacks mListener, String instructions) {
+        Camera1Fragment fragment = null;
         try {
-            fragment = new PhotoFragment1();
+            fragment = new Camera1Fragment();
             Bundle args = new Bundle();
             args.putSerializable(ARG_CALLBACKS, mListener);
             args.putString(ARG_INSTRUCTIONS, instructions);
@@ -84,9 +77,7 @@ public class PhotoFragment1 extends Fragment {
                                 Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_photo1, container, false);
-
-        photo_layout = (ViewGroup) rootView.findViewById(R.id.photo_layout);
+        View rootView = inflater.inflate(R.layout.fragment_camera1, container, false);
 
         SurfaceView surfaceView = (SurfaceView) rootView.findViewById(R.id.surfaceView2);
 
@@ -127,7 +118,7 @@ public class PhotoFragment1 extends Fragment {
             camera = Camera.open();
             return true;
         } catch (RuntimeException e) {
-            System.err.println(e);
+            e.printStackTrace();
             return false;
          }
     }
@@ -147,7 +138,7 @@ public class PhotoFragment1 extends Fragment {
             camera.startPreview();
             return true;
         } catch (Exception e) {
-            System.err.println(e);
+            e.printStackTrace();
             return false;
         }
     }
@@ -181,56 +172,6 @@ public class PhotoFragment1 extends Fragment {
         }
         camera.setDisplayOrientation(result);
     }
-
-    private int getOrientation(String imagePath){
-        int rotation = 0;
-        try {
-            ExifInterface exif = new ExifInterface(imagePath);
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-            rotation = getRotation(orientation);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("error exif", "error loading exif data");
-        }
-        return rotation;
-    }
-
-    private int getRotation(int cameraOrientation) {
-        //now we have to determine frame orientation
-        int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
-        int degrees = 0;
-        if ((cameraOrientation == 1) || (cameraOrientation == 0)){
-            switch (rotation) {
-                case Surface.ROTATION_0: //portrait normal
-                    degrees = 90;
-                    break;
-                case Surface.ROTATION_90: //landscape, buttons on the right
-                    degrees = 0;
-                    break;
-                case Surface.ROTATION_180: //portrait upside-down
-                    degrees = 270;
-                    break;
-                case Surface.ROTATION_270: //landscape, buttons on the left
-                    degrees = 180;
-                    break;
-            }
-
-        }
-        Log.e("rot and degree", "rotation: "+String.valueOf(rotation)+ " degrees: "+ String.valueOf(degrees));
-        return degrees;
-    }
-
-    /** This is what exif.TAG_ORIENTATION means
-         *   1        2       3      4         5            6           7          8
-
-         888888  888888      88  88      8888888888  88                  88  8888888888
-         88          88      88  88      88  88      88  88          88  88      88  88
-         8888      8888    8888  8888    88          8888888888  8888888888          88
-         88          88      88  88
-         88          88  888888  888888
-         */
-
 
     public void captureImage() throws IOException{
         //take picture and calls onPictureTaken()
@@ -272,6 +213,7 @@ public class PhotoFragment1 extends Fragment {
             }
 
             catch (Exception e) {
+                e.printStackTrace();
             }
 
             try {
@@ -279,6 +221,7 @@ public class PhotoFragment1 extends Fragment {
                 camera.startPreview();
             }
             catch (Exception e) {
+                e.printStackTrace();
             }
         }
 

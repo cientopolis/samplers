@@ -1,21 +1,19 @@
 package org.cientopolis.samplers.ui.take_sample;
 
+import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Surface;
-
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
-
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.PhotoStep;
 import org.cientopolis.samplers.model.PhotoStepResult;
@@ -30,15 +28,13 @@ import java.io.Serializable;
 
 public class PhotoFragment extends StepFragment implements PhotoFragmentCallbacks {
 
-    private ViewGroup preview_layout;
     private ImageView photo_preview;
     private Uri imageURI;
     private String imageFileName;
 
-    private PhotoFragment1 camera_fragment;
+    private Fragment camera_fragment;
 
     private PhotoFragmentState fragmentState = PhotoFragmentState.TAKING_PHOTO;
-
 
     private static final String KEY_STATE = "org.cientopolis.samplers.PhotoFragmentState";
     private static final String KEY_PHOTOFILEURI = "org.cientopolis.samplers.PhotoFileUri";
@@ -55,8 +51,6 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
 
     @Override
     protected void onCreateViewStepFragment(View rootView, Bundle savedInstanceState) {
-
-        preview_layout = (ViewGroup) rootView.findViewById(R.id.preview_layout);
 
         photo_preview = (ImageView) rootView.findViewById(R.id.photo_preview);
 
@@ -91,7 +85,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             fragmentState = (PhotoFragmentState) savedInstanceState.getSerializable(KEY_STATE);
-            imageURI = (Uri) savedInstanceState.getParcelable(KEY_PHOTOFILEURI);
+            imageURI = savedInstanceState.getParcelable(KEY_PHOTOFILEURI);
         }
     }
 
@@ -109,7 +103,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
     private void showCamera() {
         fragmentState = PhotoFragmentState.TAKING_PHOTO;
 
-        camera_fragment = PhotoFragment1.newInstance(this, getStep().getInstructionsToShow());
+        camera_fragment = getCamera_fragment();
 
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.child_container, camera_fragment);
@@ -127,6 +121,20 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         }
 
         showPreviewLayout(imageURI, imageURI.getPath());
+    }
+
+    private Fragment getCamera_fragment() {
+        Fragment fragment;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Log.d("Photo Fragment", "camera2 selected");
+            fragment = Camera2Fragment.newInstance(this, getStep().getInstructionsToShow());
+        } else {
+            Log.d("Photo Fragment", "camera1 selected");
+            fragment = Camera1Fragment.newInstance(this, getStep().getInstructionsToShow());
+        }
+
+        return fragment;
     }
 
     @Override
@@ -224,7 +232,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
 
     private enum PhotoFragmentState implements Serializable {
         TAKING_PHOTO,
-        SHOWING_PREVIEW;
+        SHOWING_PREVIEW
     }
 
 }
