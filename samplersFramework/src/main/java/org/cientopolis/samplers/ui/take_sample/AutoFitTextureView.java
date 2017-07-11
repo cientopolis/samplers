@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.cientopolis.samplers.ui.camera2;
+package org.cientopolis.samplers.ui.take_sample;
 
 import android.content.Context;
 import android.util.AttributeSet;
