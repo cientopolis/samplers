@@ -35,7 +35,7 @@ public class Camera1Fragment extends Fragment {
 
     private Camera camera;
     private Uri imageURI;
-    private String imageFileName;
+    //private String imageFileName;
     private SurfaceHolder surfaceHolder;
 
     private String instructions;
@@ -237,9 +237,9 @@ public class Camera1Fragment extends Fragment {
         public void onPictureTaken(byte[] data, Camera camera) {
             File file = null;
             try {
-                //private File savePhoto;
                 file = MultimediaIOManagement.saveTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
-                imageFileName = file.getName();
+
+                Log.e("getAbsolutePath",file.getAbsolutePath());
                 imageURI = Uri.fromFile(file);
                 releaseCamera();
 

@@ -95,9 +95,9 @@ public class Camera2Fragment extends Fragment {
     private static final int MAX_PREVIEW_WIDTH = 1920; //Max preview width that is guaranteed by Camera2 API
     private static final int MAX_PREVIEW_HEIGHT = 1080; //Max preview height that is guaranteed by Camera2 API
 
-    String absoluteImagePath;
-    String imageFileName;
-    Uri imageURI;
+    //String absoluteImagePath;
+    //String imageFileName;
+    private Uri imageURI;
 
     private AutoFitTextureView autoFitTextureView; //An {@link AutoFitTextureView} for camera preview.
 
@@ -422,7 +422,7 @@ public class Camera2Fragment extends Fragment {
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             //final Fragment parent = getParentFragment();
-            return new AlertDialog.Builder(getActivity()).setMessage(R.string.request_permission).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+            return new AlertDialog.Builder(getActivity()).setMessage(R.string.camera_request_permission).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
                     { //onClick listener accept
 
                         @RequiresApi(api = Build.VERSION_CODES.M)
@@ -482,8 +482,6 @@ public class Camera2Fragment extends Fragment {
     /**
      * Stops the background thread and its {@link Handler}.
      */
-    /*
-    // Commented 'cause not used
 
     private void stopBackgroundThread() {
         backgroundThread.quitSafely();
@@ -495,7 +493,7 @@ public class Camera2Fragment extends Fragment {
             e.printStackTrace();
         }
     }
-    */
+
 
     private class CCSStateCallback extends CameraCaptureSession.StateCallback{
 
@@ -521,6 +519,7 @@ public class Camera2Fragment extends Fragment {
 
         @Override
         public void onConfigureFailed(@NonNull CameraCaptureSession session) {
+            // TODO put on strings.xml
             showMessage("Failed");
         }
     }
@@ -720,8 +719,6 @@ public class Camera2Fragment extends Fragment {
             }
             if(imageFile != null) {
                 imageURI = Uri.fromFile(imageFile);
-                absoluteImagePath = imageFile.getAbsolutePath();
-                imageFileName = imageFile.getName();
                 Log.e("Image URI", imageURI.toString());
             }
             mImage.close();

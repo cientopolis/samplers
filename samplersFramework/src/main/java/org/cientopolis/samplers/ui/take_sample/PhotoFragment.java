@@ -30,7 +30,6 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
 
     private ImageView photo_preview;
     private Uri imageURI;
-    private String imageFileName;
 
     private Fragment camera_fragment;
 
@@ -69,8 +68,14 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
 
     @Override
     protected StepResult getStepResult() {
+        // Extract file name from URI
+        String fileName = imageURI.getPath();
+        int cut = fileName.lastIndexOf('/');
+        if (cut != -1) {
+            fileName = fileName.substring(cut + 1);
+        }
 
-        return new PhotoStepResult(imageFileName);
+        return new PhotoStepResult(fileName);
     }
 
     @Override
@@ -120,7 +125,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
             camera_fragment = null;
         }
 
-        showPreviewLayout(imageURI, imageURI.getPath());
+        showPreviewLayout(imageURI.getPath());
     }
 
     private Fragment getCamera_fragment() {
@@ -195,9 +200,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
          */
 
 
-    private void showPreviewLayout (Uri imageURI, String absoluteImagePath) {
-        // Shows the preview layout
-        //preview_layout.setVisibility(View.VISIBLE);
+    private void showPreviewLayout (String absoluteImagePath) {
 
         //get rotation in degrees for image
         int rotation = getOrientation(absoluteImagePath);

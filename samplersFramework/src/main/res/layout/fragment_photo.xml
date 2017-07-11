@@ -19,6 +19,7 @@
             android:layout_height="match_parent"
             android:layout_above="@id/bt_next"
             android:layout_gravity="start|top"
+            android:background="@color/colorAccent"
         />
 
         <Button
