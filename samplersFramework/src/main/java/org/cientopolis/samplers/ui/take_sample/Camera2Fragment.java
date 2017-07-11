@@ -1,4 +1,4 @@
-package org.cientopolis.samplers.ui.camera2;
+package org.cientopolis.samplers.ui.take_sample;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -25,7 +26,6 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.ExifInterface;
 import android.media.Image;
 import android.media.ImageReader;
 import android.net.Uri;
@@ -39,22 +39,16 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
+import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import org.cientopolis.samplers.R;
-import org.cientopolis.samplers.model.PhotoStep;
-import org.cientopolis.samplers.model.PhotoStepResult;
-import org.cientopolis.samplers.model.StepResult;
 import org.cientopolis.samplers.persistence.MultimediaIOManagement;
 import org.cientopolis.samplers.ui.ErrorMessaging;
-import org.cientopolis.samplers.ui.take_sample.StepFragment;
-
 import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,11 +63,11 @@ import java.util.concurrent.TimeUnit;
  */
 
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class PhotoFragment2 extends StepFragment{
+public class Camera2Fragment extends Fragment {
 
+    private static final String ARG_INSTRUCTIONS = "org.cientopolis.samplers.param_instructions";
+    private static final String ARG_CALLBACKS = "org.cientopolis.samplers.param_callbacks";
 
-    private static final String KEY_STATE = "org.cientopolis.samplers.PhotoFragmentState";
-    private static final String KEY_PHOTO2FILEPATH = "org.cientopolis.samplers.Photo2PathFile";
 
     /*textual copy from example*/
     private static final int REQUEST_CAMERA_PERMISSION = 1;
@@ -101,13 +95,9 @@ public class PhotoFragment2 extends StepFragment{
     private static final int MAX_PREVIEW_WIDTH = 1920; //Max preview width that is guaranteed by Camera2 API
     private static final int MAX_PREVIEW_HEIGHT = 1080; //Max preview height that is guaranteed by Camera2 API
 
-    String absoluteImagePath;
-    String imageFileName;
-    Uri imageURI;
-
-    private ViewGroup photo_layout;
-    private ViewGroup preview_layout;
-    private ImageView photo_preview;
+    //String absoluteImagePath;
+    //String imageFileName;
+    private Uri imageURI;
 
     private AutoFitTextureView autoFitTextureView; //An {@link AutoFitTextureView} for camera preview.
 
@@ -121,9 +111,10 @@ public class PhotoFragment2 extends StepFragment{
 
     private ImageReader imageReader; //An {@link ImageReader} that handles still image capture.
 
-    private int fragmentState = 1;
-    //fragment state = 1, camera open and previewing
-    //fragment state = 2 preview photo, valid imageFile
+    private ViewGroup photo_layout;
+
+    private String instructions;
+    private PhotoFragmentCallbacks mListener;
 
     /**
      * This a callback object for the {@link ImageReader}. "onImageAvailable" will be called when a
@@ -210,31 +201,46 @@ public class PhotoFragment2 extends StepFragment{
         }
     }
 
+
+    public static Camera2Fragment newInstance(PhotoFragmentCallbacks mListener, String instructions) {
+        Camera2Fragment fragment = null;
+        try {
+            fragment = new Camera2Fragment();
+            Bundle args = new Bundle();
+            args.putSerializable(ARG_CALLBACKS, mListener);
+            args.putString(ARG_INSTRUCTIONS, instructions);
+            fragment.setArguments(args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            fragmentState = (int) savedInstanceState.getSerializable(KEY_STATE);
-            imageURI = savedInstanceState.getParcelable(KEY_PHOTO2FILEPATH);
+
+        if (getArguments() != null) {
+            this.mListener = (PhotoFragmentCallbacks) getArguments().getSerializable(ARG_CALLBACKS);
+            this.instructions = getArguments().getString(ARG_INSTRUCTIONS);
         }
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(fragmentState == 1) {
-            startCameraStreaming();
-        }else{
-            showPreviewLayout();
-        }
+
+        showHidePhotoLayout(true);
+        startCameraStreaming();
     }
 
 
     @Override
     public void onSaveInstanceState (Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(KEY_STATE,fragmentState);
-        outState.putParcelable(KEY_PHOTO2FILEPATH, imageURI);
+
     }
 
     @Override
@@ -319,10 +325,15 @@ public class PhotoFragment2 extends StepFragment{
                 int maxPreviewWidth = displaySize.x;
                 int maxPreviewHeight = displaySize.y;
 
+
                 if (swappedDimensions) {
+                    //noinspection SuspiciousNameCombination
                     rotatedPreviewWidth = height;
+                    //noinspection SuspiciousNameCombination
                     rotatedPreviewHeight = width;
+                    //noinspection SuspiciousNameCombination
                     maxPreviewWidth = displaySize.y;
+                    //noinspection SuspiciousNameCombination
                     maxPreviewHeight = displaySize.x;
                 }
 
@@ -399,7 +410,7 @@ public class PhotoFragment2 extends StepFragment{
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         //
     }
 
@@ -411,7 +422,7 @@ public class PhotoFragment2 extends StepFragment{
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             //final Fragment parent = getParentFragment();
-            return new AlertDialog.Builder(getActivity()).setMessage(R.string.request_permission).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+            return new AlertDialog.Builder(getActivity()).setMessage(R.string.camera_request_permission).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
                     { //onClick listener accept
 
                         @RequiresApi(api = Build.VERSION_CODES.M)
@@ -471,6 +482,7 @@ public class PhotoFragment2 extends StepFragment{
     /**
      * Stops the background thread and its {@link Handler}.
      */
+
     private void stopBackgroundThread() {
         backgroundThread.quitSafely();
         try {
@@ -481,6 +493,7 @@ public class PhotoFragment2 extends StepFragment{
             e.printStackTrace();
         }
     }
+
 
     private class CCSStateCallback extends CameraCaptureSession.StateCallback{
 
@@ -506,6 +519,7 @@ public class PhotoFragment2 extends StepFragment{
 
         @Override
         public void onConfigureFailed(@NonNull CameraCaptureSession session) {
+            // TODO put on strings.xml
             showMessage("Failed");
         }
     }
@@ -530,7 +544,6 @@ public class PhotoFragment2 extends StepFragment{
             previewRequestBuilder.addTarget(surface);
 
             // Here, we create a CameraCaptureSession for camera preview.
-            fragmentState = 1;
             camera.createCaptureSession(Arrays.asList(surface, imageReader.getSurface()), new CCSStateCallback(), null);
 
         } catch (CameraAccessException e) {
@@ -628,80 +641,8 @@ public class PhotoFragment2 extends StepFragment{
         return (ORIENTATIONS.get(rotation) + sensorOrientation + 270) % 360;
     }
 
-    private int getRotation(int cameraOrientation) {
-        //now we have to determine frame orientation
-        int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
-        int degrees = 0;
-        if (cameraOrientation == 1){
-            switch (rotation) {
-                case Surface.ROTATION_0: //portrait normal
-                    degrees = 90;
-                    break;
-                case Surface.ROTATION_90: //landscape, buttons on the right
-                    degrees = 0;
-                    break;
-                case Surface.ROTATION_180: //portrait upside-down
-                    degrees = 270;
-                    break;
-                case Surface.ROTATION_270: //landscape, buttons on the left
-                    degrees = 180;
-                    break;
-            }
-
-        }
-        Log.e("rot and degree", "rotation: "+String.valueOf(rotation)+ " degrees: "+ String.valueOf(degrees));
-        return degrees;
-    }
-
-    private int getOrientation(String imagePath){
-        int rotation = 0;
-        try {
-            ExifInterface exif = new ExifInterface(imagePath);
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-            rotation = getRotation(orientation);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("error exif", "error loading exif data");
-        }
-        return rotation;
-    }
-
-    private void showPreviewLayout () {
-                // hide the camera layout
-                getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                photo_layout.setVisibility(View.INVISIBLE);
-
-                // Shows the preview layout
-                preview_layout.setVisibility(View.VISIBLE);
-                //get rotation in degrees for image
-                int rotation = getOrientation(absoluteImagePath);
-                // load image on the ui control
-                photo_preview.setImageURI(imageURI);
-                photo_preview.setRotation(rotation);
-                photo_preview.refreshDrawableState();
-            }
-        });
 
 
-        //Glide.with(getActivity().getApplicationContext()).load(imageURI.toString()).into(photo_preview);
-    }
-
-    private void hidePreviewLayout () {
-                // hide the preview layout
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                photo_layout.setVisibility(View.VISIBLE);
-                // FIXME close camera here and open up again on new picture capture
-
-                // Shows the preview layout
-                preview_layout.setVisibility(View.INVISIBLE);
-            }
-        });
-    }
 
     /**
      * Unlock the focus. This method should be called when still image capture sequence is
@@ -709,10 +650,40 @@ public class PhotoFragment2 extends StepFragment{
      */
     private void unlockFocus(CameraDevice camera) {
         closeCamera(camera);
-        //show picture and preview layout
-        fragmentState = 2;
-        showPreviewLayout();
+
+        showHidePhotoLayout(false);
+
+        //mListener.onPhotoTaked(imageURI);
+        // Needs to run on UI Thread
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mListener.onPhotoTaked(imageURI);
+            }
+        });
     }
+
+
+
+    private void showHidePhotoLayout (boolean show) {
+
+        final int visibility;
+        if (show)
+            visibility = View.VISIBLE;
+        else
+            visibility = View.INVISIBLE;
+
+
+        // Needs to run on UI Thread
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                photo_layout.setVisibility(visibility);
+
+            }
+        });
+    }
+
 
     private void setAutoFlash(CaptureRequest.Builder requestBuilder) {
         if (flashSupported) {
@@ -730,7 +701,7 @@ public class PhotoFragment2 extends StepFragment{
          */
         private final Image mImage;
 
-        public ImageSaver(Image image) {
+        private ImageSaver(Image image) {
             mImage = image;
         }
 
@@ -748,8 +719,6 @@ public class PhotoFragment2 extends StepFragment{
             }
             if(imageFile != null) {
                 imageURI = Uri.fromFile(imageFile);
-                absoluteImagePath = imageFile.getAbsolutePath();
-                imageFileName = imageFile.getName();
                 Log.e("Image URI", imageURI.toString());
             }
             mImage.close();
@@ -761,7 +730,7 @@ public class PhotoFragment2 extends StepFragment{
     /**
      * Compares two {@code Size}s based on their areas.
      */
-    static class CompareSizesByArea implements Comparator<Size> {
+    private static class CompareSizesByArea implements Comparator<Size> {
 
         @Override
         public int compare(Size lhs, Size rhs) {
@@ -777,41 +746,24 @@ public class PhotoFragment2 extends StepFragment{
      */
 
 
-    /*things from Stepfragment*/
-    @Override
-    protected int getLayoutResource() {
-        return R.layout.fragment_photo2;
-    }
+
 
     @Override
-    protected void onCreateViewStepFragment(View rootView, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        // Inflate the layout for this fragment
+        View rootView = inflater.inflate(R.layout.fragment_camera2, container, false);
+
         Button b_take_picture = (Button) rootView.findViewById(R.id.b_take_picture);
         b_take_picture.setOnClickListener(new TakePictureClick());
         autoFitTextureView = (AutoFitTextureView) rootView.findViewById(R.id.textureView);
         //layouts
         photo_layout = (ViewGroup) rootView.findViewById(R.id.photo_layout);
-        preview_layout = (ViewGroup) rootView.findViewById(R.id.preview_layout);
-        //picture preview
-        photo_preview = (ImageView) rootView.findViewById(R.id.photo_preview);
 
-        Button b_back = (Button) rootView.findViewById(R.id.bt_retake_photo);
-        b_back.setOnClickListener(new BackFromPreviewClick());
-    }
-
-    @Override
-    protected PhotoStep getStep() {
-        return (PhotoStep) step;
-    }
-
-    @Override
-    protected boolean validate() {
-        // TODO implement validate
-        return true;
-    }
-
-    @Override
-    protected StepResult getStepResult() {
-        return new PhotoStepResult(imageFileName);
+        // TODO set the instructions to show to a TextView
+        //instructions
+        return rootView;
     }
 
     /*Helper classes*/
@@ -823,13 +775,7 @@ public class PhotoFragment2 extends StepFragment{
         }
     }
 
-    private class BackFromPreviewClick implements View.OnClickListener{
-        @Override
-        public void onClick(View v) {
-            hidePreviewLayout();
-            startCameraStreaming();
-        }
-    }
+
 
     /**
      * {@link TextureView.SurfaceTextureListener} handles several lifecycle events on a
@@ -909,6 +855,7 @@ public class PhotoFragment2 extends StepFragment{
                 }
                 case STATE_WAITING_LOCK: {
                     Integer afState = result.get(CaptureResult.CONTROL_AF_STATE);
+                    // TODO check this, its forced to true....
                     if ((afState == null) || (true)){
                         captureStillPicture(camera);
                     } else if (CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED == afState || CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED == afState)

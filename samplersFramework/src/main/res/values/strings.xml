@@ -24,7 +24,7 @@
 
     <!-- Photo Fragment -->
     <string name="bt_retake_photo">Volver a tomar foto</string>
-    <string name="request_permission">Esta muestra necesita permisos de acceso a la camara.</string>
+    <string name="camera_request_permission">Esta muestra necesita permisos de acceso a la camara.</string>
 
     <!-- Location Fragment -->
     <string name="lb_latitude">Latitud:</string>
