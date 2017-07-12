@@ -46,5 +46,10 @@ public class SelectOneStep extends BaseStep {
         return title;
     }
 
+    @Override
+    public Integer getNextStepId() {
+        return null;
+    }
+
 
 }

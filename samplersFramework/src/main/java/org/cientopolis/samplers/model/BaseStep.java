@@ -8,6 +8,7 @@ import org.cientopolis.samplers.ui.take_sample.StepFragment;
 
 public abstract class BaseStep implements Step {
     protected Class stepFragmentClass;
+    protected Integer id;
 
     @Override
     public <T extends StepFragment> void setStepFragmentClass(Class<T> type) {
@@ -18,4 +19,11 @@ public abstract class BaseStep implements Step {
     public <T extends StepFragment> Class<T> getStepFragmentClass() {
         return stepFragmentClass;
     }
+
+    @Override
+    public Integer getId() {
+        return id;
+    }
+
+
 }

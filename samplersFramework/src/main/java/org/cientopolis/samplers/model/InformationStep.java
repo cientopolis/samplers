@@ -8,6 +8,7 @@ import org.cientopolis.samplers.ui.take_sample.InformationFragment;
  */
 public class InformationStep extends BaseStep {
 
+    private Integer nextStepId;
     private String textToShow;
 
     public InformationStep(String aTextToShow) {
@@ -21,4 +22,12 @@ public class InformationStep extends BaseStep {
     }
 
 
+    @Override
+    public Integer getNextStepId() {
+        return nextStepId;
+    }
+
+    public void setNextStepId(Integer nextStepId) {
+        this.nextStepId = nextStepId;
+    }
 }

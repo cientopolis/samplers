@@ -12,6 +12,7 @@ public class MultipleSelectStep extends BaseStep {
 
     private ArrayList<SelectOption> optionsToSelect;
     private String title;
+    private Integer nextStepId;
 
 
     public MultipleSelectStep() {
@@ -46,4 +47,12 @@ public class MultipleSelectStep extends BaseStep {
     }
 
 
+    @Override
+    public Integer getNextStepId() {
+        return nextStepId;
+    }
+
+    public void setNextStepId(Integer nextStepId) {
+        this.nextStepId = nextStepId;
+    }
 }

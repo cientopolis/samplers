@@ -130,7 +130,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
 
 
     private void refreshStepStateOnScreen() {
-        lb_step_count.setText(String.valueOf(workflow.getStepPosition()+1) + "/" + String.valueOf(workflow.getStepCount()));
+        //lb_step_count.setText(String.valueOf(workflow.getStepPosition()+1) + "/" + String.valueOf(workflow.getStepCount()));
     }
 
 

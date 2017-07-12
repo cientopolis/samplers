@@ -11,6 +11,7 @@ public class PhotoStep extends BaseStep {
     private String instructionsToShow;
     // TODO: 15/03/2017 Add functionality to support this
     private String imageToOverlay;
+    private Integer nextStepId;
 
 
     public PhotoStep(String anInstructionsToShow, String anImageToOverlay) {
@@ -35,5 +36,13 @@ public class PhotoStep extends BaseStep {
         return imageToOverlay;
     }
 
+    @Override
+    public Integer getNextStepId() {
+        return nextStepId;
+    }
+
+    public void setNextStepId(Integer nextStepId) {
+        this.nextStepId = nextStepId;
+    }
 
 }

@@ -15,6 +15,7 @@ public class InsertTextStep extends BaseStep {
     private int maxLength;
     private InsertTextStep.InputType inputType;
     private boolean optional;
+    private Integer nextStepId;
 
     public InsertTextStep(String textToShow, String sampleText, int maxLength, InsertTextStep.InputType inputType, boolean optional) {
         stepFragmentClass = InsertTextFragment.class;
@@ -44,6 +45,15 @@ public class InsertTextStep extends BaseStep {
 
     public InsertTextStep.InputType getInputType() {
         return inputType;
+    }
+
+    @Override
+    public Integer getNextStepId() {
+        return nextStepId;
+    }
+
+    public void setNextStepId(Integer nextStepId) {
+        this.nextStepId = nextStepId;
     }
 
     public enum InputType {

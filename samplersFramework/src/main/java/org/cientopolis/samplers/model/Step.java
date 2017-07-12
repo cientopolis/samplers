@@ -12,4 +12,7 @@ public interface Step extends Serializable{
     public <T extends StepFragment> Class<T> getStepFragmentClass();
     public <T extends StepFragment> void setStepFragmentClass(Class<T> type);
 
+    public Integer getId();
+    public Integer getNextStepId();
+
 }
