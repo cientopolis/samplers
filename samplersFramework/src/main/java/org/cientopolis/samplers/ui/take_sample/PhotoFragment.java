@@ -2,8 +2,13 @@ package org.cientopolis.samplers.ui.take_sample;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +18,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Surface;
@@ -166,7 +172,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
     @TargetApi(Build.VERSION_CODES.M)
     private void requestCameraPermission() {
         if (this.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-            new Camera2Fragment.ConfirmationDialog().show(getChildFragmentManager(), "dialog");
+            new ConfirmationDialog().show(getChildFragmentManager(), "dialog");
         } else {
             getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
         }
@@ -266,6 +272,37 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
     private enum PhotoFragmentState implements Serializable {
         TAKING_PHOTO,
         SHOWING_PREVIEW
+    }
+
+    /**
+     * Shows OK/Cancel confirmation dialog about camera permission.
+     */
+    public static class ConfirmationDialog extends DialogFragment {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            //final Fragment parent = getParentFragment();
+            return new AlertDialog.Builder(getActivity()).setMessage(R.string.camera_request_permission).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+            { //onClick listener accept
+
+                @RequiresApi(api = Build.VERSION_CODES.M)
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+                }
+            })
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
+                    { //onClick listener cancel
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Activity activity = getActivity();
+                            if (activity != null) {
+                                activity.finish();
+                            }
+                        }
+                    })
+                    .create();
+        }
     }
 
 }

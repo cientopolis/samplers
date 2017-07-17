@@ -266,7 +266,7 @@ public class Camera2Fragment extends Fragment {
         if (autoFitTextureView.isAvailable()) {
             height = autoFitTextureView.getHeight();
             width = autoFitTextureView.getWidth();
-            getCameraAccess(/*autoFitTextureView.getWidth(), autoFitTextureView.getHeight()*/);
+            openCamera(/*autoFitTextureView.getWidth(), autoFitTextureView.getHeight()*/);
         } else {
             autoFitTextureView.setSurfaceTextureListener(new TVSurfaceTextureListener());
         }
@@ -391,7 +391,7 @@ public class Camera2Fragment extends Fragment {
 
             CDStateCallback stateCallback = new CDStateCallback();
             //this is redundant, but needed
-            if ((cameraID != null) && (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)){
+            if ((cameraID != null) && (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)){
                 manager.openCamera(cameraID, stateCallback, backgroundHandler);}
         } catch (CameraAccessException e) {
             e.printStackTrace();
@@ -399,88 +399,6 @@ public class Camera2Fragment extends Fragment {
             throw new RuntimeException("Interrupted while trying to lock camera opening.", e);
         }
     }
-
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void getCameraAccess(/*int width, int height*/) {
-
-        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            requestCameraPermission(); //if the user does not accept, the app stops
-            return;
-        }
-       /** else{
-            openCamera(width, height);
-        }*/
-        Activity activity = getActivity();
-        CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
-        String cameraID = setUpCameraOutputs(width, height, manager); //this method defines wich camera will use
-        configureTransform(width, height);
-
-        try {
-            if (!cameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
-                throw new RuntimeException("Time out waiting to lock camera opening.");
-            }
-
-            CDStateCallback stateCallback = new CDStateCallback();
-            if(cameraID != null) {
-                manager.openCamera(cameraID, stateCallback, backgroundHandler);
-            }
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Interrupted while trying to lock camera opening.", e);
-        }
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void requestCameraPermission() {
-        if (this.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-            new ConfirmationDialog().show(getChildFragmentManager(), "dialog");
-        } else {
-            getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        //test for results
-       /* if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
-            //the user agrees to access camera
-            openCamera(height,width);
-        }*/
-    }
-
-    /**
-     * Shows OK/Cancel confirmation dialog about camera permission.
-     */
-    public static class ConfirmationDialog extends DialogFragment {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            //final Fragment parent = getParentFragment();
-            return new AlertDialog.Builder(getActivity()).setMessage(R.string.camera_request_permission).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
-                    { //onClick listener accept
-
-                        @RequiresApi(api = Build.VERSION_CODES.M)
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
-                    { //onClick listener cancel
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Activity activity = getActivity();
-                                    if (activity != null) {
-                                        activity.finish();
-                                    }
-                                }
-                            })
-                    .create();
-        }
-    }
-
 
         /**
          * Closes the current {@link CameraDevice}.
@@ -823,7 +741,7 @@ public class Camera2Fragment extends Fragment {
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int _width, int _height) {
             width = _width;
             height = _height;
-            getCameraAccess(/*width, height*/);
+            openCamera(/*width, height*/);
         }
 
         @Override
