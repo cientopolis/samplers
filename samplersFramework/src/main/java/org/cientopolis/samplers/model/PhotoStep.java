@@ -14,14 +14,6 @@ public class PhotoStep extends BaseStep {
 
 
     public PhotoStep(String anInstructionsToShow, String anImageToOverlay) {
-        /*
-        TO DO
-            instantiate appropiate class
-            if(Android > 5) then
-              PhotoFragment2
-            else
-              PhotoFragment
-        */
         stepFragmentClass = PhotoFragment.class;
         instructionsToShow = anInstructionsToShow;
         imageToOverlay = anImageToOverlay; //comment here!

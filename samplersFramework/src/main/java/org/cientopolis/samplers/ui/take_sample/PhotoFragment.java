@@ -1,7 +1,10 @@
 package org.cientopolis.samplers.ui.take_sample;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -9,6 +12,8 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Surface;
 import android.view.View;
@@ -21,6 +26,7 @@ import org.cientopolis.samplers.model.StepResult;
 
 import java.io.IOException;
 import java.io.Serializable;
+
 
 /**
  * Created by lilauth on 3/9/17.
@@ -37,6 +43,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
 
     private static final String KEY_STATE = "org.cientopolis.samplers.PhotoFragmentState";
     private static final String KEY_PHOTOFILEURI = "org.cientopolis.samplers.PhotoFileUri";
+    private static final int REQUEST_CAMERA_PERMISSION = 1;
 
 
     public PhotoFragment() {
@@ -82,7 +89,8 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
     public void onSaveInstanceState (Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_STATE,fragmentState);
-        outState.putParcelable(KEY_PHOTOFILEURI, imageURI);
+        /*if(imageURI != null){*/
+            outState.putParcelable(KEY_PHOTOFILEURI, imageURI);//}
     }
 
     @Override
@@ -90,7 +98,8 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             fragmentState = (PhotoFragmentState) savedInstanceState.getSerializable(KEY_STATE);
-            imageURI = savedInstanceState.getParcelable(KEY_PHOTOFILEURI);
+            /*if(getArguments().containsKey(KEY_PHOTOFILEURI)){*/
+                imageURI = savedInstanceState.getParcelable(KEY_PHOTOFILEURI);//}
         }
     }
 
@@ -105,14 +114,39 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         }
     }
 
-    private void showCamera() {
+    private void startCameraStreaming(){
         fragmentState = PhotoFragmentState.TAKING_PHOTO;
-
-        camera_fragment = getCamera_fragment();
-
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.child_container, camera_fragment);
         transaction.commit();
+    }
+
+    private void showCamera() {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP){
+            Log.d("Photo Fragment", "camera1 selected");
+            camera_fragment = Camera1Fragment.newInstance(this, getStep().getInstructionsToShow());
+            startCameraStreaming();
+        }
+        else{
+            //the fragment will return on a callback
+            if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                requestCameraPermission(); //if the user does not accept, the app stops
+            }
+            else{ //we already have permission, instantiate the fragment
+                Log.d("Photo Fragment", "camera2 selected");
+                camera_fragment = Camera2Fragment.newInstance(this, getStep().getInstructionsToShow());
+                startCameraStreaming();
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Log.d("Photo Fragment", "camera2 selected");
+            camera_fragment = Camera2Fragment.newInstance(this, getStep().getInstructionsToShow());
+            startCameraStreaming();
+        }
     }
 
     private void showPreview() {
@@ -128,18 +162,14 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         showPreviewLayout(imageURI.getPath());
     }
 
-    private Fragment getCamera_fragment() {
-        Fragment fragment;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Log.d("Photo Fragment", "camera2 selected");
-            fragment = Camera2Fragment.newInstance(this, getStep().getInstructionsToShow());
+    /*code testing*/
+    @TargetApi(Build.VERSION_CODES.M)
+    private void requestCameraPermission() {
+        if (this.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+            new Camera2Fragment.ConfirmationDialog().show(getChildFragmentManager(), "dialog");
         } else {
-            Log.d("Photo Fragment", "camera1 selected");
-            fragment = Camera1Fragment.newInstance(this, getStep().getInstructionsToShow());
+            getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
         }
-
-        return fragment;
     }
 
     @Override

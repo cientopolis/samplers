@@ -49,6 +49,7 @@ import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.persistence.MultimediaIOManagement;
 import org.cientopolis.samplers.ui.ErrorMessaging;
 import java.io.File;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,8 +89,8 @@ public class Camera2Fragment extends Fragment {
      */
     private static final int STATE_PREVIEW = 0; //Showing camera preview.
     private static final int STATE_WAITING_LOCK = 1; //Waiting for the focus to be locked.
-    private static final int STATE_WAITING_PRECAPTURE = 2; //Waiting for the exposure to be precapture state.
-    private static final int STATE_WAITING_NON_PRECAPTURE = 3; //Waiting for the exposure state to be something other than precapture.
+    private static final int STATE_WAITING_PRE_CAPTURE = 2; //Waiting for the exposure to be precapture state.
+    private static final int STATE_WAITING_NON_PRE_CAPTURE = 3; //Waiting for the exposure state to be something other than precapture.
     private static final int STATE_PICTURE_TAKEN = 4; //Picture was taken.
 
     private static final int MAX_PREVIEW_WIDTH = 1920; //Max preview width that is guaranteed by Camera2 API
@@ -115,6 +116,10 @@ public class Camera2Fragment extends Fragment {
 
     private String instructions;
     private PhotoFragmentCallbacks mListener;
+
+    /*dirty, change*/
+    private int height;
+    private int width;
 
     /**
      * This a callback object for the {@link ImageReader}. "onImageAvailable" will be called when a
@@ -259,7 +264,9 @@ public class Camera2Fragment extends Fragment {
         // a camera and start preview from here (otherwise, we wait until the surface is ready in
         // the SurfaceTextureListener).
         if (autoFitTextureView.isAvailable()) {
-            openCamera(autoFitTextureView.getWidth(), autoFitTextureView.getHeight());
+            height = autoFitTextureView.getHeight();
+            width = autoFitTextureView.getWidth();
+            getCameraAccess(/*autoFitTextureView.getWidth(), autoFitTextureView.getHeight()*/);
         } else {
             autoFitTextureView.setSurfaceTextureListener(new TVSurfaceTextureListener());
         }
@@ -371,14 +378,39 @@ public class Camera2Fragment extends Fragment {
         return null;
     }
 
+    private void openCamera(/*int width, int height*/){
+        Activity activity = getActivity();
+        CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
+        String cameraID = setUpCameraOutputs(width, height, manager); //this method defines wich camera will use
+        configureTransform(width, height);
+
+        try {
+            if (!cameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
+                throw new RuntimeException("Time out waiting to lock camera opening.");
+            }
+
+            CDStateCallback stateCallback = new CDStateCallback();
+            //this is redundant, but needed
+            if ((cameraID != null) && (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)){
+                manager.openCamera(cameraID, stateCallback, backgroundHandler);}
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            throw new RuntimeException("Interrupted while trying to lock camera opening.", e);
+        }
+    }
+
 
     @TargetApi(Build.VERSION_CODES.M)
-    private void openCamera(int width, int height) {
+    private void getCameraAccess(/*int width, int height*/) {
+
         if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             requestCameraPermission(); //if the user does not accept, the app stops
             return;
         }
-
+       /** else{
+            openCamera(width, height);
+        }*/
         Activity activity = getActivity();
         CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
         String cameraID = setUpCameraOutputs(width, height, manager); //this method defines wich camera will use
@@ -411,7 +443,11 @@ public class Camera2Fragment extends Fragment {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        //
+        //test for results
+       /* if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+            //the user agrees to access camera
+            openCamera(height,width);
+        }*/
     }
 
     /**
@@ -784,8 +820,10 @@ public class Camera2Fragment extends Fragment {
     private class TVSurfaceTextureListener implements TextureView.SurfaceTextureListener {
 
         @Override
-        public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-            openCamera(width, height);
+        public void onSurfaceTextureAvailable(SurfaceTexture surface, int _width, int _height) {
+            width = _width;
+            height = _height;
+            getCameraAccess(/*width, height*/);
         }
 
         @Override
@@ -872,17 +910,17 @@ public class Camera2Fragment extends Fragment {
                     }
                     break;
                 }
-                case STATE_WAITING_PRECAPTURE: {
+                case STATE_WAITING_PRE_CAPTURE: {
                     // CONTROL_AE_STATE can be null on some devices
                     Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
                     if (aeState == null ||
                             aeState == CaptureResult.CONTROL_AE_STATE_PRECAPTURE ||
                             aeState == CaptureRequest.CONTROL_AE_STATE_FLASH_REQUIRED) {
-                        cameraState = STATE_WAITING_NON_PRECAPTURE;
+                        cameraState = STATE_WAITING_NON_PRE_CAPTURE;
                     }
                     break;
                 }
-                case STATE_WAITING_NON_PRECAPTURE: {
+                case STATE_WAITING_NON_PRE_CAPTURE: {
                     // CONTROL_AE_STATE can be null on some devices
                     Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
                     if (aeState == null || aeState != CaptureResult.CONTROL_AE_STATE_PRECAPTURE) {
