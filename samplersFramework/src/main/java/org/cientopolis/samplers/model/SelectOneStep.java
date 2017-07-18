@@ -14,12 +14,13 @@ public class SelectOneStep extends BaseStep {
     private String title;
 
 
-    public SelectOneStep() {
+    public SelectOneStep(int id) {
 
-        this(new ArrayList<SelectOption>(),"");
+        this(id,new ArrayList<SelectOption>(),"");
     }
 
-    public SelectOneStep(ArrayList<SelectOption> anOptionsToSelect, String title) {
+    public SelectOneStep(int id, ArrayList<SelectOption> anOptionsToSelect, String title) {
+        super(id);
         stepFragmentClass = SelectOneFragment.class;
         optionsToSelect = anOptionsToSelect;
         this.title = title;
@@ -48,6 +49,11 @@ public class SelectOneStep extends BaseStep {
 
     @Override
     public Integer getNextStepId() {
+        if (stepResult == null) {
+            throw new RuntimeException("You must set the StepResult first");
+        }
+
+
         return null;
     }
 

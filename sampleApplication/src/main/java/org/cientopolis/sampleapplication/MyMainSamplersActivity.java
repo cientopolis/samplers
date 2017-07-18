@@ -38,16 +38,16 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         Workflow workflow = new Workflow();
 
         // InformationStep
-        workflow.addStep(new InformationStep("Informacion de prueba para ver que se muestra bien"));
+        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien"));
 
         // InsertTextStep
-        //workflow.addStep(new InsertTextStep("Escriba algo","cualquier cosa",50, InsertTextStep.InputType.TYPE_TEXT, true));
+        //workflow.addStep(new InsertTextStep(2, "Escriba algo","cualquier cosa",50, InsertTextStep.InputType.TYPE_TEXT, true));
 
         // LocationStep
-        //workflow.addStep(new LocationStep("Seleccione la posicion de la muestra"));
+        //workflow.addStep(new LocationStep(3, "Seleccione la posicion de la muestra"));
 
         // PhotoStep
-        workflow.addStep(new PhotoStep("Instrucciones para mostrar",""));
+        workflow.addStep(new PhotoStep(4, "Instrucciones para mostrar",""));
 
         // MultipleSelectStep
         ArrayList<SelectOption> optionsToSelect = new ArrayList<SelectOption>();
@@ -55,7 +55,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         optionsToSelect.add(new SelectOption(2,"Basura", false));
         optionsToSelect.add(new SelectOption(3,"Arroyo", false));
         optionsToSelect.add(new SelectOption(4,"Animales", false));
-        workflow.addStep(new MultipleSelectStep(optionsToSelect, "Seleccione si observa algo de esto"));
+        workflow.addStep(new MultipleSelectStep(5, optionsToSelect, "Seleccione si observa algo de esto"));
 
         // SelectOneStep
         ArrayList<SelectOption> optionsToSelect2 = new ArrayList<SelectOption>();
@@ -63,7 +63,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         optionsToSelect2.add(new SelectOption(2,"Opcion 2",false));
         optionsToSelect2.add(new SelectOption(3,"Opcion 3",false));
         optionsToSelect2.add(new SelectOption(4,"Opcion 4",false));
-        workflow.addStep(new SelectOneStep(optionsToSelect2, "Seleccione solo uno"));
+        workflow.addStep(new SelectOneStep(6, optionsToSelect2, "Seleccione solo uno"));
 
         return workflow;
     }

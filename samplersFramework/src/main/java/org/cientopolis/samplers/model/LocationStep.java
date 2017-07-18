@@ -13,7 +13,8 @@ public class LocationStep extends BaseStep {
     private String textToShow;
 
 
-    public LocationStep(String aTextToShow) {
+    public LocationStep(int id, String aTextToShow) {
+        super(id);
         stepFragmentClass = LocationFragment.class;
         textToShow = aTextToShow;
     }

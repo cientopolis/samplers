@@ -17,8 +17,9 @@ public class InsertTextStep extends BaseStep {
     private boolean optional;
     private Integer nextStepId;
 
-    public InsertTextStep(String textToShow, String sampleText, int maxLength, InsertTextStep.InputType inputType, boolean optional) {
-        stepFragmentClass = InsertTextFragment.class;
+    public InsertTextStep(int id, String textToShow, String sampleText, int maxLength, InsertTextStep.InputType inputType, boolean optional) {
+        super(id);
+        this.stepFragmentClass = InsertTextFragment.class;
         this.textToShow = textToShow;
         this.sampleText = sampleText;
         this.maxLength = maxLength;

@@ -8,7 +8,12 @@ import org.cientopolis.samplers.ui.take_sample.StepFragment;
 
 public abstract class BaseStep implements Step {
     protected Class stepFragmentClass;
-    protected Integer id;
+    protected int id;
+    protected StepResult stepResult;
+
+    public BaseStep(int id) {
+        this.id = id;
+    }
 
     @Override
     public <T extends StepFragment> void setStepFragmentClass(Class<T> type) {
@@ -21,9 +26,13 @@ public abstract class BaseStep implements Step {
     }
 
     @Override
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
 
+    @Override
+    public void setStepResult(StepResult stepResult) {
+        this.stepResult = stepResult;
+    }
 }
