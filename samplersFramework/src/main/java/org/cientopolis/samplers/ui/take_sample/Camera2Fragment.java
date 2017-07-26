@@ -112,7 +112,7 @@ public class Camera2Fragment extends Fragment {
 
     private ImageReader imageReader; //An {@link ImageReader} that handles still image capture.
 
-    private ViewGroup photo_layout;
+    //private ViewGroup photo_layout;
 
     private String instructions;
     private PhotoFragmentCallbacks mListener;
@@ -632,7 +632,7 @@ public class Camera2Fragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                photo_layout.setVisibility(visibility);
+       //         photo_layout.setVisibility(visibility);
 
             }
         });
@@ -713,7 +713,7 @@ public class Camera2Fragment extends Fragment {
         b_take_picture.setOnClickListener(new TakePictureClick());
         autoFitTextureView = (AutoFitTextureView) rootView.findViewById(R.id.textureView);
         //layouts
-        photo_layout = (ViewGroup) rootView.findViewById(R.id.photo_layout);
+       // photo_layout = (ViewGroup) rootView.findViewById(R.id.photo_layout);
 
         // TODO set the instructions to show to a TextView
         //instructions
