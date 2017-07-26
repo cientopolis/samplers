@@ -133,12 +133,11 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
             camera_fragment = Camera1Fragment.newInstance(this, getStep().getInstructionsToShow());
             startCameraStreaming();
         }
-        else{
-            //the fragment will return on a callback
+        else {
+            //the fragment will return in 'onRequestPermissionsResult'
             if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 requestCameraPermission(); //if the user does not accept, the app stops
-            }
-            else{ //we already have permission, instantiate the fragment
+            } else { //we already have permission, instantiate the fragment
                 Log.d("Photo Fragment", "camera2 selected");
                 camera_fragment = Camera2Fragment.newInstance(this, getStep().getInstructionsToShow());
                 startCameraStreaming();
@@ -152,6 +151,8 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
             Log.d("Photo Fragment", "camera2 selected");
             camera_fragment = Camera2Fragment.newInstance(this, getStep().getInstructionsToShow());
             startCameraStreaming();
+        }else{
+            //TODO show error message
         }
     }
 
