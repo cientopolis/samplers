@@ -46,12 +46,12 @@ public class Camera1Fragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static Camera1Fragment newInstance(PhotoFragmentCallbacks mListener, String instructions) {
+    public static Camera1Fragment newInstance(/*PhotoFragmentCallbacks mListener,*/ String instructions) {
         Camera1Fragment fragment = null;
         try {
             fragment = new Camera1Fragment();
             Bundle args = new Bundle();
-            args.putSerializable(ARG_CALLBACKS, mListener);
+           // args.putSerializable(ARG_CALLBACKS, mListener);
             args.putString(ARG_INSTRUCTIONS, instructions);
             fragment.setArguments(args);
         } catch (Exception e) {
@@ -105,18 +105,11 @@ public class Camera1Fragment extends Fragment {
     }
 
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (openCamera()){
-            startPreview();
-        }
-    }
-
     private boolean openCamera(){
         try {
             camera = Camera.open();
             return true;
+
         } catch (RuntimeException e) {
             e.printStackTrace();
             return false;
@@ -208,17 +201,13 @@ public class Camera1Fragment extends Fragment {
                 return;
             }
 
+            if (camera == null){
+                openCamera();
+            }
+
             try {
                 camera.stopPreview();
-            }
-
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            try {
-                camera.setPreviewDisplay(holder);
-                camera.startPreview();
+                startPreview();
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -228,6 +217,7 @@ public class Camera1Fragment extends Fragment {
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
             //release camera happens when picture is taken
+
         }
     }
     /*Camera callbacks helper*/

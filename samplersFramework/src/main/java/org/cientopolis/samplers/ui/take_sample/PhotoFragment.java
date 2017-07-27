@@ -130,7 +130,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
     private void showCamera() {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP){
             Log.d("Photo Fragment", "camera1 selected");
-            camera_fragment = Camera1Fragment.newInstance(this, getStep().getInstructionsToShow());
+            camera_fragment = Camera1Fragment.newInstance(/*this,*/ getStep().getInstructionsToShow());
             startCameraStreaming();
         }
         else {

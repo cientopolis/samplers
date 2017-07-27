@@ -237,7 +237,6 @@ public class Camera2Fragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        showHidePhotoLayout(true);
         startCameraStreaming();
     }
 
@@ -605,8 +604,6 @@ public class Camera2Fragment extends Fragment {
     private void unlockFocus(CameraDevice camera) {
         closeCamera(camera);
 
-        showHidePhotoLayout(false);
-
         //mListener.onPhotoTaked(imageURI);
         // Needs to run on UI Thread
         getActivity().runOnUiThread(new Runnable() {
@@ -617,26 +614,6 @@ public class Camera2Fragment extends Fragment {
         });
     }
 
-
-
-    private void showHidePhotoLayout (boolean show) {
-
-        final int visibility;
-        if (show)
-            visibility = View.VISIBLE;
-        else
-            visibility = View.INVISIBLE;
-
-
-        // Needs to run on UI Thread
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-       //         photo_layout.setVisibility(visibility);
-
-            }
-        });
-    }
 
 
     private void setAutoFlash(CaptureRequest.Builder requestBuilder) {
