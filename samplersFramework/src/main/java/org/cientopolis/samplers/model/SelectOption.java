@@ -10,13 +10,10 @@ public class SelectOption implements Serializable {
 
     private int id;
     private String textToShow;
-    // // TODO: 02/03/2017 this shouldn't be here, its a view state
-    private boolean selected;
 
-    public SelectOption(int aId, String aTextToShow, boolean aSelected) {
+    public SelectOption(int aId, String aTextToShow) {
         id = aId;
         textToShow = aTextToShow;
-        selected = aSelected;
     }
 
     public String getTextToShow() {
@@ -27,11 +24,4 @@ public class SelectOption implements Serializable {
         return id;
     }
 
-    public boolean isSelected() {
-        return selected;
-    }
-
-    public void setSelected(boolean aSelected) {
-        selected = aSelected;
-    }
 }

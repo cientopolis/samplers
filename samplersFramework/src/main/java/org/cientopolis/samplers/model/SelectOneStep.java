@@ -30,18 +30,6 @@ public class SelectOneStep extends BaseStep {
         return optionsToSelect;
     }
 
-    public SelectOption getSelectedOption() {
-        SelectOption selectedOption = null;
-
-        for (SelectOption option: optionsToSelect) {
-            if (option.isSelected()) {
-                selectedOption = option;
-                break;
-            }
-        }
-
-        return selectedOption;
-    }
 
     public String getTitle() {
         return title;

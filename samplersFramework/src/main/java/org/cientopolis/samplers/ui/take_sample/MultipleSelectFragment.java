@@ -50,7 +50,7 @@ public class MultipleSelectFragment extends StepFragment {
                 checkBox.setText(option.getTextToShow());
                 checkBox.setTextSize(20);
                 checkBox.setTag(option);
-                checkBox.setChecked(option.isSelected());
+                //checkBox.setChecked(option.isSelected()); ///////////////////////////////////////////////////////////////////////////////
                 checkBox.setOnCheckedChangeListener(new MyOnCheckedChangeListener());
 
                 vertical_layout.addView(checkBox);
@@ -72,7 +72,7 @@ public class MultipleSelectFragment extends StepFragment {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             SelectOption option = (SelectOption) buttonView.getTag();
-            option.setSelected(isChecked);
+            //option.setSelected(isChecked);///////////////////////////////////////////////////////////////////////////////
         }
     }
 
@@ -80,19 +80,18 @@ public class MultipleSelectFragment extends StepFragment {
     @Override
     protected boolean validate() {
         boolean ok = true;
-
-        if (getStep().getSelectedOptions().size() == 0) {
+/*
+        if (getStep().getSelectedOptions().size() == 0) {///////////////////////////////////////////////////////////////////////////////
             ok = false;
-            // TODO: 02/03/2017 Unify messages to show
             ErrorMessaging.showValidationErrorMessage(getActivity(), getResources().getString(R.string.error_must_select_an_option_at_least));
         }
-
+*/
         return ok;
     }
 
     @Override
     protected StepResult getStepResult() {
-        return new MultipleSelectStepResult(getStep().getSelectedOptions());
+        return null; //new MultipleSelectStepResult(getStep().getSelectedOptions()); ///////////////////////////////////////////////////////////////////////////////
     }
 
 

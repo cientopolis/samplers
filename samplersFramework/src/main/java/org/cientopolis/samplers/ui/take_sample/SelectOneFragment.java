@@ -22,6 +22,9 @@ import org.cientopolis.samplers.ui.ErrorMessaging;
  */
 public class SelectOneFragment extends StepFragment {
 
+    private static final String KEY_SELECTONE_SELECTED_OPTION = "org.cientopolis.samplers.KEY_SELECTONE_SELECTED_OPTION";
+
+    private SelectOption selectedOption;
 
     public SelectOneFragment() {
         // Required empty public constructor
@@ -33,7 +36,20 @@ public class SelectOneFragment extends StepFragment {
     }
 
     @Override
+    public void onSaveInstanceState (Bundle outState) {
+        Log.e("SelectOneFragment","onSaveInstanceState");
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(KEY_SELECTONE_SELECTED_OPTION,selectedOption);
+
+    }
+
+    @Override
     protected void onCreateViewStepFragment(View rootView, Bundle savedInstanceState) {
+        Log.e("SelectOneFragment", "onCreateViewStepFragment");
+        if (savedInstanceState != null) {
+            selectedOption = (SelectOption) savedInstanceState.getSerializable(KEY_SELECTONE_SELECTED_OPTION);
+            Log.e("SelectOneFragment", "savedInstanceState");
+        }
 
         // title
         TextView lb_select_one_title = (TextView) rootView.findViewById(R.id.lb_select_one_title);
@@ -52,7 +68,7 @@ public class SelectOneFragment extends StepFragment {
                 // // TODO: 02/03/2017 Parametrize style
                 radioButton.setTextSize(20);
                 radioButton.setTag(option);
-                radioButton.setChecked(option.isSelected());
+                radioButton.setChecked(option == selectedOption);
                 radioButton.setOnCheckedChangeListener(new MyOnCheckedChangeListener());
 
                 radio_group.addView(radioButton);
@@ -73,8 +89,8 @@ public class SelectOneFragment extends StepFragment {
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            SelectOption option = (SelectOption) buttonView.getTag();
-            option.setSelected(isChecked);
+            if (isChecked)
+                selectedOption = (SelectOption) buttonView.getTag();
         }
     }
 
@@ -82,9 +98,8 @@ public class SelectOneFragment extends StepFragment {
     protected boolean validate() {
         boolean ok = true;
         
-        if (getStep().getSelectedOption() == null) {
+        if (selectedOption == null) {
             ok = false;
-            // TODO: 02/03/2017 Unify messages to show
             ErrorMessaging.showValidationErrorMessage(getActivity(), getResources().getString(R.string.error_must_select_an_option));
         }
         
@@ -93,7 +108,7 @@ public class SelectOneFragment extends StepFragment {
 
     @Override
     protected StepResult getStepResult() {
-        return new SelectOneStepResult(getStep().getSelectedOption());
+        return new SelectOneStepResult(selectedOption);
     }
 
 

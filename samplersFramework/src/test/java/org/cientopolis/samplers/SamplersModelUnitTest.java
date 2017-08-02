@@ -23,14 +23,14 @@ public class SamplersModelUnitTest {
 
     @Test
     public void informationStep() throws Exception {
-        InformationStep is = new InformationStep(1, "an informative text");
+        InformationStep is = new InformationStep(1, "an informative text",null);
         assertEquals("an informative text", is.getTextToShow());
         assertEquals(1, is.getId());
     }
 
     @Test
     public void emptyMultipleSelectStep() throws Exception {
-        multipleSelectStep = new MultipleSelectStep(2);
+        multipleSelectStep = new MultipleSelectStep(2,"title",null);
         assertEquals(0, multipleSelectStep.getOptionsToSelect().size());
         assertEquals(2, multipleSelectStep.getId());
     }
@@ -39,22 +39,22 @@ public class SamplersModelUnitTest {
     public void MultipleSelectStepWithSelectedOptions() throws Exception {
         //options
         ArrayList<SelectOption> optionsToSelect = new ArrayList<SelectOption>();
-        optionsToSelect.add(new SelectOption(1,"Option 1", false));
-        optionsToSelect.add(new SelectOption(2,"Option 2", false));
-        SelectOption selectedOption1 = new SelectOption(3,"Option 3", true);
+        optionsToSelect.add(new SelectOption(1,"Option 1"));
+        optionsToSelect.add(new SelectOption(2,"Option 2"));
+        SelectOption selectedOption1 = new SelectOption(3,"Option 3");
         optionsToSelect.add(selectedOption1);
-        SelectOption selectedOption2 = new SelectOption(4,"Option 4", true);
+        SelectOption selectedOption2 = new SelectOption(4,"Option 4");
         optionsToSelect.add(selectedOption2);
         // MultipleSelectStep
-        multipleSelectStep = new MultipleSelectStep(3, optionsToSelect,"Seleccione lo que ve");
+        multipleSelectStep = new MultipleSelectStep(3, optionsToSelect,"Seleccione lo que ve",null);
         //
-        assertEquals(2, multipleSelectStep.getSelectedOptions().size());
+        assertEquals(4, multipleSelectStep.getOptionsToSelect().size());
         assertEquals(3, multipleSelectStep.getId());
     }
 
     @Test
     public void PhotoStepTest () throws Exception {
-        PhotoStep photoStep = new PhotoStep(4, "instructions","path to image");
+        PhotoStep photoStep = new PhotoStep(4, "instructions","path to image",null);
         assertEquals("instructions", photoStep.getInstructionsToShow());
         assertEquals(4, photoStep.getId());
     }
@@ -63,26 +63,26 @@ public class SamplersModelUnitTest {
     public void SelectOneStepTestWithSelection () throws Exception {
         //options
         ArrayList<SelectOption> optionsToSelect = new ArrayList<SelectOption>();
-        optionsToSelect.add(new SelectOption(1,"Option 1", false));
-        optionsToSelect.add(new SelectOption(2,"Option 2", false));
-        SelectOption selectedOption1 = new SelectOption(3,"Option 3", true);
+        optionsToSelect.add(new SelectOption(1,"Option 1"));
+        optionsToSelect.add(new SelectOption(2,"Option 2"));
+        SelectOption selectedOption1 = new SelectOption(3,"Option 3");
         optionsToSelect.add(selectedOption1);
-        SelectOption selectedOption2 = new SelectOption(4,"Option 4", true);
+        SelectOption selectedOption2 = new SelectOption(4,"Option 4");
         optionsToSelect.add(selectedOption2);
 
         SelectOneStep selectOneStep = new SelectOneStep(5,optionsToSelect, "Seleccione uno solo");
         //returns the first selected
-        assertEquals("Option 3", selectOneStep.getSelectedOption().getTextToShow());
+        assertEquals("Seleccione uno solo", selectOneStep.getTitle());
         assertEquals(5, selectOneStep.getId());
     }
 
     @Test
     public void workflowTestNextStep () throws Exception {
         //options
-        Step step0 = new InformationStep(0,"paso 0");
-        Step step1 = new InformationStep(1,"paso 1");
-        Step step2 = new InformationStep(2,"paso 2");
-        Step step3 = new InformationStep(3,"paso 3");
+        Step step0 = new InformationStep(0,"paso 0",1);
+        Step step1 = new InformationStep(1,"paso 1",2);
+        Step step2 = new InformationStep(2,"paso 2",3);
+        Step step3 = new InformationStep(3,"paso 3",null);
 
         Workflow workflow = new Workflow();
 
@@ -100,8 +100,8 @@ public class SamplersModelUnitTest {
 
     @Test
     public void workflowTestOutOfBounds () throws Exception {
-        Step step0 = new InformationStep(0, "step 0");
-        Step step1 = new InformationStep(1, "step 1");
+        Step step0 = new InformationStep(0, "step 0",1);
+        Step step1 = new InformationStep(1, "step 1",null);
 
         Workflow workflow = new Workflow();
 
@@ -119,10 +119,10 @@ public class SamplersModelUnitTest {
     @Test
     public void workflowTestPriortStep () throws Exception {
         //options
-        Step step0 = new InformationStep(0,"step 0");
-        Step step1 = new InformationStep(1,"step 1");
-        Step step2 = new InformationStep(2,"step 2");
-        Step step3 = new InformationStep(3,"step 3");
+        Step step0 = new InformationStep(0,"step 0",1);
+        Step step1 = new InformationStep(1,"step 1",2);
+        Step step2 = new InformationStep(2,"step 2",3);
+        Step step3 = new InformationStep(3,"step 3",null);
 
         Workflow workflow = new Workflow();
 

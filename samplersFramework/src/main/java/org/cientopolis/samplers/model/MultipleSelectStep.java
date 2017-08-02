@@ -15,33 +15,23 @@ public class MultipleSelectStep extends BaseStep {
     private Integer nextStepId;
 
 
-    public MultipleSelectStep(int id) {
+    public MultipleSelectStep(int id, String title, Integer nextStepId) {
 
-        this(id, new ArrayList<SelectOption>(), "");
+        this(id, new ArrayList<SelectOption>(), title, nextStepId);
     }
 
-    public MultipleSelectStep(int id, ArrayList<SelectOption> anOptionsToSelect, String title) {
+    public MultipleSelectStep(int id, ArrayList<SelectOption> anOptionsToSelect, String title, Integer nextStepId) {
         super(id);
         stepFragmentClass = MultipleSelectFragment.class;
         this.optionsToSelect = anOptionsToSelect;
         this.title = title;
+        this.nextStepId = nextStepId;
     }
 
     public ArrayList<SelectOption> getOptionsToSelect() {
         return optionsToSelect;
     }
 
-    public ArrayList<SelectOption> getSelectedOptions() {
-
-        ArrayList<SelectOption> options = new ArrayList<>();
-
-        for (SelectOption option: optionsToSelect) {
-            if (option.isSelected()) {
-                options.add(option);
-            }
-        }
-        return options;
-    }
 
     public String getTitle() {
         return title;

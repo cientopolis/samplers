@@ -16,4 +16,5 @@ public interface Step extends Serializable{
     public Integer getNextStepId();
 
     public void setStepResult(StepResult stepResult);
+    public StepResult getStepResult();
 }

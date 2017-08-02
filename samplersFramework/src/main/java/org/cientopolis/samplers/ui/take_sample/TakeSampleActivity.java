@@ -26,6 +26,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     private TextView lb_step_count;
     protected Workflow workflow;
     protected Sample sample;
+    protected Step actualStep;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,9 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
         if (workflow == null)
             workflow = new Workflow();
 
+        if (!workflow.validate()) {
+            throw new RuntimeException("invalid workflow");
+        }
 
         getFragmentManager().addOnBackStackChangedListener(new MyOnBackStackChangedListener());
 
@@ -87,19 +91,18 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     private void nextStep() {
         if (workflow != null) {
             if (!workflow.isEnd()) {
-                Step step = workflow.nextStep();
+                actualStep = workflow.nextStep();
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-                StepFragment fragment = StepFragment.newInstance(step.getStepFragmentClass(), step);
+                StepFragment fragment = StepFragment.newInstance(actualStep.getStepFragmentClass(), actualStep);
 
                 if (fragment != null) {
 
                     transaction.replace(R.id.container, fragment);
-                    Log.e("TakeSampleActivity", "replaced");
+
                     if (workflow.getStepPosition() > 0) {
                         transaction.addToBackStack(null);
-                        Log.e("TakeSampleActivity", "addToBackStack");
                     }
                     transaction.commit();
                 }
@@ -116,7 +119,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
                 DAO_Factory.getSampleDAO(getApplicationContext()).save(sample);
 
                 ErrorMessaging.showInfoMessage(this, getResources().getString(R.string.message_sample_saved));
-                Log.e("TakeSample", "finish");
+                Log.e("TakeSample", "finished");
                 this.finish();
             }
         }
@@ -136,6 +139,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
 
     @Override
     public void onStepFinished(StepResult stepResult) {
+        actualStep.setStepResult(stepResult);
         sample.addStepResult(stepResult);
 
         // go to the next step

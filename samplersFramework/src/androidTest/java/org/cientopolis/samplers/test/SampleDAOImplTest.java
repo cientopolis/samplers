@@ -36,30 +36,34 @@ public class SampleDAOImplTest {
     private Long id;
     @Before
     public void setUp() throws Exception {
+        /*
         id = Long.valueOf(0);
         //create sample
         ArrayList<SelectOption> optionsToSelect = new ArrayList<SelectOption>();
-        optionsToSelect.add(new SelectOption(1,"Arboles", true));
-        optionsToSelect.add(new SelectOption(2,"Basura", false));
-        optionsToSelect.add(new SelectOption(3,"Arroyo", true));
-        optionsToSelect.add(new SelectOption(4,"Animales", false));
-        MultipleSelectStep multipleSelectStep = new MultipleSelectStep(1,optionsToSelect,"Seleccione lo que ve");
+        optionsToSelect.add(new SelectOption(1,"Arboles"));
+        optionsToSelect.add(new SelectOption(2,"Basura"));
+        optionsToSelect.add(new SelectOption(3,"Arroyo"));
+        optionsToSelect.add(new SelectOption(4,"Animales"));
+        MultipleSelectStep multipleSelectStep = new MultipleSelectStep(1,optionsToSelect,"Seleccione lo que ve",2);
 
         ArrayList<SelectOption> optionsToOneSelect = new ArrayList<SelectOption>();
-        optionsToSelect.add(new SelectOption(1,"option0", false));
-        optionsToSelect.add(new SelectOption(2,"option1", false));
-        optionsToSelect.add(new SelectOption(3,"option2", true));
-        optionsToSelect.add(new SelectOption(4,"option3", false));
+        optionsToSelect.add(new SelectOption(1,"option0"));
+        optionsToSelect.add(new SelectOption(2,"option1"));
+        optionsToSelect.add(new SelectOption(3,"option2"));
+        optionsToSelect.add(new SelectOption(4,"option3"));
         SelectOneStep selectOneStep = new SelectOneStep(2,optionsToOneSelect, "Seleccion uno solo");
-        /*create step results*/
+        // create step results
         MultipleSelectStepResult multipleSelectStepResult = new MultipleSelectStepResult(multipleSelectStep.getSelectedOptions());
+        multipleSelectStep.setStepResult(multipleSelectStepResult);
+
         SelectOneStepResult selectOneStepResult = new SelectOneStepResult(selectOneStep.getSelectedOption());
+        selectOneStep.setStepResult(selectOneStepResult);
 
         sample = new Sample();
 
         sample.addStepResult(multipleSelectStepResult);
         sample.addStepResult(selectOneStepResult);
-
+*/
     }
 
     @After

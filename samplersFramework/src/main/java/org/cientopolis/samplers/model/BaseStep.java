@@ -2,11 +2,13 @@ package org.cientopolis.samplers.model;
 
 import org.cientopolis.samplers.ui.take_sample.StepFragment;
 
+import java.io.Serializable;
+
 /**
  * Created by Xavier on 15/04/2017.
  */
 
-public abstract class BaseStep implements Step {
+public abstract class BaseStep implements Step, Serializable {
     protected Class stepFragmentClass;
     protected int id;
     protected StepResult stepResult;
@@ -34,5 +36,10 @@ public abstract class BaseStep implements Step {
     @Override
     public void setStepResult(StepResult stepResult) {
         this.stepResult = stepResult;
+    }
+
+    @Override
+    public StepResult getStepResult() {
+        return stepResult;
     }
 }

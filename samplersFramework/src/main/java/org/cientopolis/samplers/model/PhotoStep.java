@@ -14,11 +14,12 @@ public class PhotoStep extends BaseStep {
     private Integer nextStepId;
 
 
-    public PhotoStep(int id, String anInstructionsToShow, String anImageToOverlay) {
+    public PhotoStep(int id, String anInstructionsToShow, String anImageToOverlay, Integer nextStepId) {
         super(id);
         stepFragmentClass = PhotoFragment.class;
         instructionsToShow = anInstructionsToShow;
         imageToOverlay = anImageToOverlay; //comment here!
+        this.nextStepId = nextStepId;
     }
 
     public String getInstructionsToShow() {

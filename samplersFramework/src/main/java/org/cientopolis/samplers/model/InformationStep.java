@@ -11,10 +11,11 @@ public class InformationStep extends BaseStep {
     private Integer nextStepId;
     private String textToShow;
 
-    public InformationStep(int id, String aTextToShow) {
+    public InformationStep(int id, String aTextToShow, Integer nextStepId) {
         super(id);
         stepFragmentClass = InformationFragment.class;
         textToShow = aTextToShow;
+        this.nextStepId = nextStepId;
     }
 
     public String getTextToShow(){

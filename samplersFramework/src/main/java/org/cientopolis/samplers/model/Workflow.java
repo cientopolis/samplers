@@ -1,5 +1,7 @@
 package org.cientopolis.samplers.model;
 
+import android.util.Log;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,12 +29,32 @@ public class Workflow implements Serializable {
         this.firstStep = firstStep;
     }
 
+    public boolean validate() {
+        boolean ok = true;
+
+        // Validate if the next step of each step is in the workflow
+        for (Step step :steps.values()){
+
+            if (SelectOneStep.class.isInstance(step)) {
+                // For SelectOneStep test over all posible step results (all options to select)
+                //((SelectOneStep) step).getOptionsToSelect()
+            }
+            else if (steps.get(step.getNextStepId()) == null) {
+                Log.e("Workflow","NextStepId="+String.valueOf(step.getNextStepId())+" of step id="+String.valueOf(step.getId())+" not found in the workflow");
+                ok = false;
+            }
+        }
+
+        return ok;
+    }
+
     public void addStep(Step aStep) {
 
         if (steps.isEmpty())
             firstStep = aStep;
 
         steps.put(aStep.getId(),aStep);
+        Log.e("Workflow","StepId:"+String.valueOf(aStep.getId()));
     }
 
     public Step nextStep() {
@@ -43,7 +65,10 @@ public class Workflow implements Serializable {
         else {
             Integer nextStepId = this.actualStep.getNextStepId();
             if (nextStepId != null) {
+                Log.e("Workflow","nextStepId:"+String.valueOf(nextStepId));
                 step = steps.get(nextStepId);
+                if (step == null)
+                    Log.e("Workflow","NULLLLLL:");
             }
         }
 
