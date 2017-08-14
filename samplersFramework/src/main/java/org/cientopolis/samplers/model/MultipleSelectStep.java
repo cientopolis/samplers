@@ -10,17 +10,17 @@ import java.util.ArrayList;
  */
 public class MultipleSelectStep extends BaseStep {
 
-    private ArrayList<SelectOption> optionsToSelect;
+    private ArrayList<MultipleSelectOption> optionsToSelect;
     private String title;
     private Integer nextStepId;
 
 
     public MultipleSelectStep(int id, String title, Integer nextStepId) {
 
-        this(id, new ArrayList<SelectOption>(), title, nextStepId);
+        this(id, new ArrayList<MultipleSelectOption>(), title, nextStepId);
     }
 
-    public MultipleSelectStep(int id, ArrayList<SelectOption> anOptionsToSelect, String title, Integer nextStepId) {
+    public MultipleSelectStep(int id, ArrayList<MultipleSelectOption> anOptionsToSelect, String title, Integer nextStepId) {
         super(id);
         stepFragmentClass = MultipleSelectFragment.class;
         this.optionsToSelect = anOptionsToSelect;
@@ -28,7 +28,7 @@ public class MultipleSelectStep extends BaseStep {
         this.nextStepId = nextStepId;
     }
 
-    public ArrayList<SelectOption> getOptionsToSelect() {
+    public ArrayList<MultipleSelectOption> getOptionsToSelect() {
         return optionsToSelect;
     }
 

@@ -54,7 +54,7 @@ public class Workflow implements Serializable {
             firstStep = aStep;
 
         steps.put(aStep.getId(),aStep);
-        Log.e("Workflow","StepId:"+String.valueOf(aStep.getId()));
+        //Log.e("Workflow","StepId:"+String.valueOf(aStep.getId()));
     }
 
     public Step nextStep() {
@@ -65,7 +65,7 @@ public class Workflow implements Serializable {
         else {
             Integer nextStepId = this.actualStep.getNextStepId();
             if (nextStepId != null) {
-                Log.e("Workflow","nextStepId:"+String.valueOf(nextStepId));
+                //Log.e("Workflow","nextStepId:"+String.valueOf(nextStepId));
                 step = steps.get(nextStepId);
                 if (step == null)
                     Log.e("Workflow","NULLLLLL:");
@@ -91,6 +91,10 @@ public class Workflow implements Serializable {
             step = this.stepStack.remove(this.stepStack.size()-1);
         }
 
+        //if (step != null) {
+            this.actualStep = step;
+        //}
+
         return step;
     }
 
@@ -101,7 +105,7 @@ public class Workflow implements Serializable {
     // from 0 to count()-1
     public int getStepPosition() {
 
-        return this.stepStack.size()+1;
+        return this.stepStack.size();
     }
 
     // from 0 to count()-1

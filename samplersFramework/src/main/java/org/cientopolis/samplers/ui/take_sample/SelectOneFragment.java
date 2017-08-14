@@ -9,7 +9,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.SelectOneStep;
-import org.cientopolis.samplers.model.SelectOption;
+import org.cientopolis.samplers.model.SelectOneOption;
 import org.cientopolis.samplers.model.SelectOneStepResult;
 import org.cientopolis.samplers.model.StepResult;
 import org.cientopolis.samplers.ui.ErrorMessaging;
@@ -24,7 +24,7 @@ public class SelectOneFragment extends StepFragment {
 
     private static final String KEY_SELECTONE_SELECTED_OPTION = "org.cientopolis.samplers.KEY_SELECTONE_SELECTED_OPTION";
 
-    private SelectOption selectedOption;
+    private SelectOneOption selectedOption;
 
     public SelectOneFragment() {
         // Required empty public constructor
@@ -47,7 +47,7 @@ public class SelectOneFragment extends StepFragment {
     protected void onCreateViewStepFragment(View rootView, Bundle savedInstanceState) {
         Log.e("SelectOneFragment", "onCreateViewStepFragment");
         if (savedInstanceState != null) {
-            selectedOption = (SelectOption) savedInstanceState.getSerializable(KEY_SELECTONE_SELECTED_OPTION);
+            selectedOption = (SelectOneOption) savedInstanceState.getSerializable(KEY_SELECTONE_SELECTED_OPTION);
             Log.e("SelectOneFragment", "savedInstanceState");
         }
 
@@ -59,20 +59,25 @@ public class SelectOneFragment extends StepFragment {
         RadioGroup radio_group = (RadioGroup) rootView.findViewById(R.id.radio_group);
 
         RadioButton radioButton;
+        MyOnCheckedChangeListener myOnCheckedChangeListener = new MyOnCheckedChangeListener();
 
         if (radio_group != null) {
             // create a radio button for each option to show/select
-            for (SelectOption option : getStep().getOptionsToSelect()) {
+            for (SelectOneOption option : getStep().getOptionsToSelect()) {
                 radioButton = new RadioButton(getActivity());
+                radioButton.setId(option.getId());
                 radioButton.setText(option.getTextToShow());
                 // // TODO: 02/03/2017 Parametrize style
                 radioButton.setTextSize(20);
                 radioButton.setTag(option);
-                radioButton.setChecked(option == selectedOption);
-                radioButton.setOnCheckedChangeListener(new MyOnCheckedChangeListener());
+                radioButton.setOnCheckedChangeListener(myOnCheckedChangeListener);
 
                 radio_group.addView(radioButton);
             }
+
+            if (selectedOption != null)
+                radio_group.check(selectedOption.getId());
+
         }
         else
             Log.e("SelectOneFragment", "RadioGroup NULL");
@@ -89,8 +94,11 @@ public class SelectOneFragment extends StepFragment {
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (isChecked)
-                selectedOption = (SelectOption) buttonView.getTag();
+            Log.e("MyOnCheckedChangeListener", "onCheckedChanged");
+            if (isChecked) {
+                selectedOption = (SelectOneOption) buttonView.getTag();
+                Log.e("MyOnCheckedChangeListener", "isChecked:"+selectedOption.getTextToShow());
+            }
         }
     }
 
@@ -108,7 +116,9 @@ public class SelectOneFragment extends StepFragment {
 
     @Override
     protected StepResult getStepResult() {
-        return new SelectOneStepResult(selectedOption);
+        Log.e("SelectOneFragment", "getStepResult:"+selectedOption.getTextToShow());
+        Log.e("SelectOneFragment", "NextStepID:"+String.valueOf(selectedOption.getNextStepId()));
+        return new SelectOneStepResult(getStep().getId(),selectedOption);
     }
 
 

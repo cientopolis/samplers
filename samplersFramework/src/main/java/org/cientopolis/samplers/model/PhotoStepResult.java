@@ -9,7 +9,8 @@ package org.cientopolis.samplers.model;
 public class PhotoStepResult extends StepResult {
     private String imageFileName;
 
-    public PhotoStepResult(String imageFileName) {
+    public PhotoStepResult(int stepId, String imageFileName) {
+        super(stepId);
         this.imageFileName = imageFileName;
     }
 

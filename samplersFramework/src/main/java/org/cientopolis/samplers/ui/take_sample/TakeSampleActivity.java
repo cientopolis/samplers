@@ -22,6 +22,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     public static final String EXTRA_WORKFLOW = "org.cientopolis.samplers.WORKFLOW";
 
     private static final String KEY_SAMPLE = "org.cientopolis.samplers.SAMPLE";
+    private static final String KEY_ACTUAL_STEP = "org.cientopolis.samplers.ACTUAL_STEP";
 
     private TextView lb_step_count;
     protected Workflow workflow;
@@ -73,6 +74,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     public void onSaveInstanceState (Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_SAMPLE, sample);
+        outState.putSerializable(KEY_ACTUAL_STEP, actualStep);
 
         Log.e("TakeSampleActivity", "onSaveInstanceState");
     }
@@ -80,8 +82,10 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     @Override
     public void onRestoreInstanceState (Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             sample = (Sample) savedInstanceState.getSerializable(KEY_SAMPLE);
+            actualStep = (Step) savedInstanceState.getSerializable(KEY_ACTUAL_STEP);
+        }
 
         refreshStepStateOnScreen();
 
@@ -127,19 +131,21 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     }
 
     private void previuosStep() {
-        workflow.previuosStep();
+        Log.e("TakeSample", "previuosStep()");
+        actualStep = workflow.previuosStep();
         refreshStepStateOnScreen();
     }
 
 
     private void refreshStepStateOnScreen() {
-        //lb_step_count.setText(String.valueOf(workflow.getStepPosition()+1) + "/" + String.valueOf(workflow.getStepCount()));
+        lb_step_count.setText(String.valueOf(workflow.getStepPosition()+1));
     }
 
 
     @Override
     public void onStepFinished(StepResult stepResult) {
         actualStep.setStepResult(stepResult);
+        Log.e("onStepFinished","actualStep:"+actualStep);
         sample.addStepResult(stepResult);
 
         // go to the next step

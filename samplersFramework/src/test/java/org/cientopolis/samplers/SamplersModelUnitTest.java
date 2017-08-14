@@ -1,10 +1,11 @@
 package org.cientopolis.samplers;
 
 import org.cientopolis.samplers.model.InformationStep;
+import org.cientopolis.samplers.model.MultipleSelectOption;
 import org.cientopolis.samplers.model.MultipleSelectStep;
 import org.cientopolis.samplers.model.PhotoStep;
+import org.cientopolis.samplers.model.SelectOneOption;
 import org.cientopolis.samplers.model.SelectOneStep;
-import org.cientopolis.samplers.model.SelectOption;
 import org.cientopolis.samplers.model.Step;
 import org.cientopolis.samplers.model.Workflow;
 import org.junit.Test;
@@ -38,12 +39,12 @@ public class SamplersModelUnitTest {
     @Test
     public void MultipleSelectStepWithSelectedOptions() throws Exception {
         //options
-        ArrayList<SelectOption> optionsToSelect = new ArrayList<SelectOption>();
-        optionsToSelect.add(new SelectOption(1,"Option 1"));
-        optionsToSelect.add(new SelectOption(2,"Option 2"));
-        SelectOption selectedOption1 = new SelectOption(3,"Option 3");
+        ArrayList<MultipleSelectOption> optionsToSelect = new ArrayList<>();
+        optionsToSelect.add(new MultipleSelectOption(1,"Option 1"));
+        optionsToSelect.add(new MultipleSelectOption(2,"Option 2"));
+        MultipleSelectOption selectedOption1 = new MultipleSelectOption(3,"Option 3");
         optionsToSelect.add(selectedOption1);
-        SelectOption selectedOption2 = new SelectOption(4,"Option 4");
+        MultipleSelectOption selectedOption2 = new MultipleSelectOption(4,"Option 4");
         optionsToSelect.add(selectedOption2);
         // MultipleSelectStep
         multipleSelectStep = new MultipleSelectStep(3, optionsToSelect,"Seleccione lo que ve",null);
@@ -62,12 +63,12 @@ public class SamplersModelUnitTest {
     @Test
     public void SelectOneStepTestWithSelection () throws Exception {
         //options
-        ArrayList<SelectOption> optionsToSelect = new ArrayList<SelectOption>();
-        optionsToSelect.add(new SelectOption(1,"Option 1"));
-        optionsToSelect.add(new SelectOption(2,"Option 2"));
-        SelectOption selectedOption1 = new SelectOption(3,"Option 3");
+        ArrayList<SelectOneOption> optionsToSelect = new ArrayList<>();
+        optionsToSelect.add(new SelectOneOption(1,"Option 1",null));
+        optionsToSelect.add(new SelectOneOption(2,"Option 2",null));
+        SelectOneOption selectedOption1 = new SelectOneOption(3,"Option 3", null);
         optionsToSelect.add(selectedOption1);
-        SelectOption selectedOption2 = new SelectOption(4,"Option 4");
+        SelectOneOption selectedOption2 = new SelectOneOption(4,"Option 4",null);
         optionsToSelect.add(selectedOption2);
 
         SelectOneStep selectOneStep = new SelectOneStep(5,optionsToSelect, "Seleccione uno solo");

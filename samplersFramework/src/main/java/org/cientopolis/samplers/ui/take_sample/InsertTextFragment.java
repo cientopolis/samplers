@@ -85,6 +85,6 @@ public class InsertTextFragment extends StepFragment {
 
     @Override
     protected StepResult getStepResult() {
-        return new InsertTextStepResult(ed_it_text_to_enter.getText().toString());
+        return new InsertTextStepResult(getStep().getId(),ed_it_text_to_enter.getText().toString());
     }
 }

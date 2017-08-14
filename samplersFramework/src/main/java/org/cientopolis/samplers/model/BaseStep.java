@@ -42,4 +42,15 @@ public abstract class BaseStep implements Step, Serializable {
     public StepResult getStepResult() {
         return stepResult;
     }
+
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() +"{" +
+                "id=" + id +
+                ", nextStepId=" + String.valueOf(getNextStepId()) +
+                ", stepFragmentClass=" + stepFragmentClass.getSimpleName() +
+                ", stepResult=" + stepResult +
+                '}';
+    }
 }

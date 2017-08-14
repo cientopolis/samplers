@@ -8,7 +8,8 @@ public class InsertTextStepResult extends StepResult {
 
     private String insertedText;
 
-    public InsertTextStepResult(String insertedText){
+    public InsertTextStepResult(int stepId, String insertedText){
+        super(stepId);
         this.insertedText = insertedText;
     }
 

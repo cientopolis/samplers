@@ -3,12 +3,7 @@ package org.cientopolis.samplers.test;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import org.cientopolis.samplers.model.MultipleSelectStep;
-import org.cientopolis.samplers.model.MultipleSelectStepResult;
 import org.cientopolis.samplers.model.Sample;
-import org.cientopolis.samplers.model.SelectOneStep;
-import org.cientopolis.samplers.model.SelectOneStepResult;
-import org.cientopolis.samplers.model.SelectOption;
 import org.cientopolis.samplers.persistence.DAO_Factory;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -23,7 +18,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -39,18 +33,18 @@ public class SampleDAOImplTest {
         /*
         id = Long.valueOf(0);
         //create sample
-        ArrayList<SelectOption> optionsToSelect = new ArrayList<SelectOption>();
-        optionsToSelect.add(new SelectOption(1,"Arboles"));
-        optionsToSelect.add(new SelectOption(2,"Basura"));
-        optionsToSelect.add(new SelectOption(3,"Arroyo"));
-        optionsToSelect.add(new SelectOption(4,"Animales"));
+        ArrayList<MultipleSelectOption> optionsToSelect = new ArrayList<MultipleSelectOption>();
+        optionsToSelect.add(new MultipleSelectOption(1,"Arboles"));
+        optionsToSelect.add(new MultipleSelectOption(2,"Basura"));
+        optionsToSelect.add(new MultipleSelectOption(3,"Arroyo"));
+        optionsToSelect.add(new MultipleSelectOption(4,"Animales"));
         MultipleSelectStep multipleSelectStep = new MultipleSelectStep(1,optionsToSelect,"Seleccione lo que ve",2);
 
-        ArrayList<SelectOption> optionsToOneSelect = new ArrayList<SelectOption>();
-        optionsToSelect.add(new SelectOption(1,"option0"));
-        optionsToSelect.add(new SelectOption(2,"option1"));
-        optionsToSelect.add(new SelectOption(3,"option2"));
-        optionsToSelect.add(new SelectOption(4,"option3"));
+        ArrayList<MultipleSelectOption> optionsToOneSelect = new ArrayList<MultipleSelectOption>();
+        optionsToSelect.add(new MultipleSelectOption(1,"option0"));
+        optionsToSelect.add(new MultipleSelectOption(2,"option1"));
+        optionsToSelect.add(new MultipleSelectOption(3,"option2"));
+        optionsToSelect.add(new MultipleSelectOption(4,"option3"));
         SelectOneStep selectOneStep = new SelectOneStep(2,optionsToOneSelect, "Seleccion uno solo");
         // create step results
         MultipleSelectStepResult multipleSelectStepResult = new MultipleSelectStepResult(multipleSelectStep.getSelectedOptions());

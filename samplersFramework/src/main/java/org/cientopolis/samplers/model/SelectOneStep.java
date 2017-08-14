@@ -10,23 +10,23 @@ import java.util.ArrayList;
  */
 public class SelectOneStep extends BaseStep {
 
-    private ArrayList<SelectOption> optionsToSelect;
+    private ArrayList<SelectOneOption> optionsToSelect;
     private String title;
 
 
     public SelectOneStep(int id) {
 
-        this(id,new ArrayList<SelectOption>(),"");
+        this(id,new ArrayList<SelectOneOption>(),"");
     }
 
-    public SelectOneStep(int id, ArrayList<SelectOption> anOptionsToSelect, String title) {
+    public SelectOneStep(int id, ArrayList<SelectOneOption> anOptionsToSelect, String title) {
         super(id);
         stepFragmentClass = SelectOneFragment.class;
         optionsToSelect = anOptionsToSelect;
         this.title = title;
     }
 
-    public ArrayList<SelectOption> getOptionsToSelect() {
+    public ArrayList<SelectOneOption> getOptionsToSelect() {
         return optionsToSelect;
     }
 
@@ -41,8 +41,8 @@ public class SelectOneStep extends BaseStep {
             throw new RuntimeException("You must set the StepResult first");
         }
 
-
-        return null;
+        // NextStepId depends on the selected option
+        return ((SelectOneStepResult) stepResult).getSelectedOption().getNextStepId();
     }
 
 

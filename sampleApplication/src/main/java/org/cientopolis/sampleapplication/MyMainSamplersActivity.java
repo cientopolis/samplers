@@ -3,12 +3,11 @@ package org.cientopolis.sampleapplication;
 import android.os.Bundle;
 
 import org.cientopolis.samplers.model.InformationStep;
-import org.cientopolis.samplers.model.InsertTextStep;
-import org.cientopolis.samplers.model.LocationStep;
 import org.cientopolis.samplers.model.MultipleSelectStep;
 import org.cientopolis.samplers.model.PhotoStep;
+import org.cientopolis.samplers.model.SelectOneOption;
 import org.cientopolis.samplers.model.SelectOneStep;
-import org.cientopolis.samplers.model.SelectOption;
+import org.cientopolis.samplers.model.MultipleSelectOption;
 import org.cientopolis.samplers.model.Step;
 import org.cientopolis.samplers.model.Workflow;
 import org.cientopolis.samplers.network.NetworkConfiguration;
@@ -40,32 +39,38 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         Step step;
 
         // InformationStep
-        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",4));
-
-        // InsertTextStep
-        //workflow.addStep(new InsertTextStep(2, "Escriba algo","cualquier cosa",50, InsertTextStep.InputType.TYPE_TEXT, true, 3));
-
-        // LocationStep
-        //workflow.addStep(new LocationStep(3, "Seleccione la posicion de la muestra",4));
-
-        // PhotoStep
-        workflow.addStep(new PhotoStep(4, "Instrucciones para mostrar","",5));
-
-        // MultipleSelectStep
-        ArrayList<SelectOption> optionsToSelect = new ArrayList<SelectOption>();
-        optionsToSelect.add(new SelectOption(1,"Arboles"));
-        optionsToSelect.add(new SelectOption(2,"Basura"));
-        optionsToSelect.add(new SelectOption(3,"Arroyo"));
-        optionsToSelect.add(new SelectOption(4,"Animales"));
-        workflow.addStep(new MultipleSelectStep(5, optionsToSelect, "Seleccione si observa algo de esto",6));
+        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",2));
 
         // SelectOneStep
-        ArrayList<SelectOption> optionsToSelect2 = new ArrayList<SelectOption>();
-        optionsToSelect2.add(new SelectOption(1,"Opcion 1"));
-        optionsToSelect2.add(new SelectOption(2,"Opcion 2"));
-        optionsToSelect2.add(new SelectOption(3,"Opcion 3"));
-        optionsToSelect2.add(new SelectOption(4,"Opcion 4"));
-        workflow.addStep(new SelectOneStep(6, optionsToSelect2, "Seleccione solo uno"));
+        ArrayList<SelectOneOption> optionsToSelect2 = new ArrayList<SelectOneOption>();
+        optionsToSelect2.add(new SelectOneOption(1,"SI", 5));
+        optionsToSelect2.add(new SelectOneOption(2,"NO", 6));
+        workflow.addStep(new SelectOneStep(2, optionsToSelect2, "¿Quiere sacar una foto?"));
+
+        // InsertTextStep
+        //workflow.addStep(new InsertTextStep(3, "Escriba algo","cualquier cosa",50, InsertTextStep.InputType.TYPE_TEXT, true, 3));
+
+        // LocationStep
+        //workflow.addStep(new LocationStep(4, "Seleccione la posicion de la muestra",4));
+
+        // PhotoStep
+        workflow.addStep(new PhotoStep(5, "Instrucciones para mostrar","",6));
+
+        // MultipleSelectStep
+        ArrayList<MultipleSelectOption> optionsToSelect = new ArrayList<MultipleSelectOption>();
+        optionsToSelect.add(new MultipleSelectOption(1,"Arboles"));
+        optionsToSelect.add(new MultipleSelectOption(2,"Basura"));
+        optionsToSelect.add(new MultipleSelectOption(3,"Arroyo"));
+        optionsToSelect.add(new MultipleSelectOption(4,"Animales"));
+        workflow.addStep(new MultipleSelectStep(6, optionsToSelect, "Seleccione si observa algo de esto",7));
+
+        // SelectOneStep
+        optionsToSelect2 = new ArrayList<SelectOneOption>();
+        optionsToSelect2.add(new SelectOneOption(1,"Opcion 1", null));
+        optionsToSelect2.add(new SelectOneOption(2,"Opcion 2", null));
+        optionsToSelect2.add(new SelectOneOption(3,"Opcion 3", null));
+        optionsToSelect2.add(new SelectOneOption(4,"Opcion 4", null));
+        workflow.addStep(new SelectOneStep(7, optionsToSelect2, "Seleccione solo uno"));
 
         return workflow;
     }
