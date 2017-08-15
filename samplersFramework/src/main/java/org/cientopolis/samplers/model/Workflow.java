@@ -39,7 +39,7 @@ public class Workflow implements Serializable {
                 // For SelectOneStep test over all posible step results (all options to select)
                 //((SelectOneStep) step).getOptionsToSelect()
             }
-            else if (steps.get(step.getNextStepId()) == null) {
+            else if ((step.getNextStepId() != null) && (steps.get(step.getNextStepId()) == null)) {
                 Log.e("Workflow","NextStepId="+String.valueOf(step.getNextStepId())+" of step id="+String.valueOf(step.getId())+" not found in the workflow");
                 ok = false;
             }

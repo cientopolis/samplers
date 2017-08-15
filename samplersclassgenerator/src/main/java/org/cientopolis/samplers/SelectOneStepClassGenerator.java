@@ -9,16 +9,19 @@ import java.util.List;
 
 public class SelectOneStepClassGenerator implements StepClassGenerator {
 
-    private List<SelectOption> optionsToShow;
+    private int id;
+    private List<SelectOneOption> optionsToShow;
     private String title;
 
-    public SelectOneStepClassGenerator(String title) {
+
+    public SelectOneStepClassGenerator(int id, String title) {
+        this.id = id;
         this.optionsToShow = new ArrayList<>();
         this.title = title;
     }
 
-    public void addOptionToSelect(int id, String textToShow) {
-        SelectOption selectOption = new SelectOption(id, textToShow);
+    public void addOptionToSelect(int id, String textToShow, Integer nextStepId) {
+        SelectOneOption selectOption = new SelectOneOption(id, textToShow, nextStepId);
         optionsToShow.add(selectOption);
     }
 
@@ -32,19 +35,19 @@ public class SelectOneStepClassGenerator implements StepClassGenerator {
         XMLManagement.addString(varNameTitle, this.title);
 
         output.add("    String "+varNameTitle +" = getResources().getString(R.string."+varNameTitle+"); ");
-        output.add("    ArrayList<SelectOption> "+varNameOptions +" = new ArrayList<SelectOption>();");
+        output.add("    ArrayList<SelectOneOption> "+varNameOptions +" = new ArrayList<SelectOneOption>();");
 
         for (int i=0; i<optionsToShow.size(); i++) {
-            SelectOption option = optionsToShow.get(i);
+            SelectOneOption option = optionsToShow.get(i);
 
             String varNameOptionText = "selectOneOptionText" + String.valueOf(stepIndex)+"_"+String.valueOf(i);
             XMLManagement.addString(varNameOptionText, option.getTextToShow());
 
             output.add("    String "+varNameOptionText +" = getResources().getString(R.string."+varNameOptionText+"); ");
-            output.add("    "+varNameOptions +".add(new SelectOption("+option.getId()+","+varNameOptionText+", false));");
+            output.add("    "+varNameOptions +".add(new SelectOneOption("+option.getId()+","+varNameOptionText+", "+String.valueOf(option.getNextStepId())+"));");
         }
 
-        output.add("    "+workflow_var+".addStep(new SelectOneStep("+varNameOptions+","+varNameTitle+")); ");
+        output.add("    "+workflow_var+".addStep(new SelectOneStep("+String.valueOf(id)+","+varNameOptions+","+varNameTitle+")); ");
 
         return output;
     }
