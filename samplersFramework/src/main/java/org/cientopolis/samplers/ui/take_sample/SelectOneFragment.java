@@ -9,7 +9,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.SelectOneStep;
-import org.cientopolis.samplers.model.SelectOption;
+import org.cientopolis.samplers.model.SelectOneOption;
 import org.cientopolis.samplers.model.SelectOneStepResult;
 import org.cientopolis.samplers.model.StepResult;
 import org.cientopolis.samplers.ui.ErrorMessaging;
@@ -22,6 +22,9 @@ import org.cientopolis.samplers.ui.ErrorMessaging;
  */
 public class SelectOneFragment extends StepFragment {
 
+    private static final String KEY_SELECTONE_SELECTED_OPTION = "org.cientopolis.samplers.KEY_SELECTONE_SELECTED_OPTION";
+
+    private SelectOneOption selectedOption;
 
     public SelectOneFragment() {
         // Required empty public constructor
@@ -33,7 +36,20 @@ public class SelectOneFragment extends StepFragment {
     }
 
     @Override
+    public void onSaveInstanceState (Bundle outState) {
+        Log.e("SelectOneFragment","onSaveInstanceState");
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(KEY_SELECTONE_SELECTED_OPTION,selectedOption);
+
+    }
+
+    @Override
     protected void onCreateViewStepFragment(View rootView, Bundle savedInstanceState) {
+        Log.e("SelectOneFragment", "onCreateViewStepFragment");
+        if (savedInstanceState != null) {
+            selectedOption = (SelectOneOption) savedInstanceState.getSerializable(KEY_SELECTONE_SELECTED_OPTION);
+            Log.e("SelectOneFragment", "savedInstanceState");
+        }
 
         // title
         TextView lb_select_one_title = (TextView) rootView.findViewById(R.id.lb_select_one_title);
@@ -43,20 +59,25 @@ public class SelectOneFragment extends StepFragment {
         RadioGroup radio_group = (RadioGroup) rootView.findViewById(R.id.radio_group);
 
         RadioButton radioButton;
+        MyOnCheckedChangeListener myOnCheckedChangeListener = new MyOnCheckedChangeListener();
 
         if (radio_group != null) {
             // create a radio button for each option to show/select
-            for (SelectOption option : getStep().getOptionsToSelect()) {
+            for (SelectOneOption option : getStep().getOptionsToSelect()) {
                 radioButton = new RadioButton(getActivity());
+                radioButton.setId(option.getId());
                 radioButton.setText(option.getTextToShow());
                 // // TODO: 02/03/2017 Parametrize style
                 radioButton.setTextSize(20);
                 radioButton.setTag(option);
-                radioButton.setChecked(option.isSelected());
-                radioButton.setOnCheckedChangeListener(new MyOnCheckedChangeListener());
+                radioButton.setOnCheckedChangeListener(myOnCheckedChangeListener);
 
                 radio_group.addView(radioButton);
             }
+
+            if (selectedOption != null)
+                radio_group.check(selectedOption.getId());
+
         }
         else
             Log.e("SelectOneFragment", "RadioGroup NULL");
@@ -73,8 +94,11 @@ public class SelectOneFragment extends StepFragment {
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            SelectOption option = (SelectOption) buttonView.getTag();
-            option.setSelected(isChecked);
+            Log.e("MyOnCheckedChangeListener", "onCheckedChanged");
+            if (isChecked) {
+                selectedOption = (SelectOneOption) buttonView.getTag();
+                Log.e("MyOnCheckedChangeListener", "isChecked:"+selectedOption.getTextToShow());
+            }
         }
     }
 
@@ -82,9 +106,8 @@ public class SelectOneFragment extends StepFragment {
     protected boolean validate() {
         boolean ok = true;
         
-        if (getStep().getSelectedOption() == null) {
+        if (selectedOption == null) {
             ok = false;
-            // TODO: 02/03/2017 Unify messages to show
             ErrorMessaging.showValidationErrorMessage(getActivity(), getResources().getString(R.string.error_must_select_an_option));
         }
         
@@ -93,7 +116,9 @@ public class SelectOneFragment extends StepFragment {
 
     @Override
     protected StepResult getStepResult() {
-        return new SelectOneStepResult(getStep().getSelectedOption());
+        Log.e("SelectOneFragment", "getStepResult:"+selectedOption.getTextToShow());
+        Log.e("SelectOneFragment", "NextStepID:"+String.valueOf(selectedOption.getNextStepId()));
+        return new SelectOneStepResult(getStep().getId(),selectedOption);
     }
 
 

@@ -75,7 +75,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
             fileName = fileName.substring(cut + 1);
         }
 
-        return new PhotoStepResult(fileName);
+        return new PhotoStepResult(getStep().getId(),fileName);
     }
 
     @Override

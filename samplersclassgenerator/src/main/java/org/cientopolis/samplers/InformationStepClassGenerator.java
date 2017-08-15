@@ -9,9 +9,13 @@ import java.util.List;
 
 public class InformationStepClassGenerator implements StepClassGenerator {
 
+    private int id;
+    private Integer nextStepId;
     private String textToShow;
 
-    public InformationStepClassGenerator(String textToShow) {
+    public InformationStepClassGenerator(int id, Integer nextStepId, String textToShow) {
+        this.id = id;
+        this.nextStepId = nextStepId;
         this.textToShow = textToShow;
     }
 
@@ -25,7 +29,7 @@ public class InformationStepClassGenerator implements StepClassGenerator {
         XMLManagement.addString(varName, this.textToShow);
 
         output.add("    String "+varName +" = getResources().getString(R.string."+varName+"); ");
-        output.add("    "+workflow_var+".addStep(new InformationStep("+varName+")); ");
+        output.add("    "+workflow_var+".addStep(new InformationStep("+String.valueOf(id)+","+varName+","+String.valueOf(nextStepId)+")); ");
 
         return output;
     }

@@ -4,14 +4,14 @@ package org.cientopolis.samplers;
  * Created by Xavier on 07/06/2017.
  */
 
-public class SelectOption {
+public class MultipleSelectOption {
 
     private int id;
     private String textToShow;
 
-    public SelectOption(int aId, String aTextToShow) {
-        id = aId;
-        textToShow = aTextToShow;
+    public MultipleSelectOption(int id, String textToShow) {
+        this.id = id;
+        this.textToShow = textToShow;
     }
 
     public String getTextToShow() {

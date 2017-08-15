@@ -12,21 +12,21 @@ import java.util.List;
 public class Sample implements Serializable {
 
     private Long id;
-    private List<StepResult> stepResults;
+    private List<StepResult> steps;
     private Date startDateTime;
     private Date endDateTime;
 
     public Sample(){
         startDateTime = new Date();
-        stepResults = new ArrayList<StepResult>();
+        steps = new ArrayList<StepResult>();
     }
 
-    public void addStepResult(StepResult aStepResult) {
-        stepResults.add(aStepResult);
+    public void addStepResult(StepResult stepResult) {
+        steps.add(stepResult);
     }
 
     public List<StepResult> getStepResults() {
-        return stepResults;
+        return steps;
     }
 
     public Date getStartDateTime() {

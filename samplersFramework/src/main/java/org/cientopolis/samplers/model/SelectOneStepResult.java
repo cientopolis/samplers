@@ -7,13 +7,14 @@ package org.cientopolis.samplers.model;
 
 public class SelectOneStepResult extends StepResult {
 
-    private SelectOption selectedOption;
+    private SelectOneOption selectedOption;
 
-    public SelectOneStepResult(SelectOption selectedOption) {
+    public SelectOneStepResult(int stepId, SelectOneOption selectedOption) {
+        super(stepId);
         this.selectedOption = selectedOption;
     }
 
-    public SelectOption getSelectedOption() {
+    public SelectOneOption getSelectedOption() {
         return selectedOption;
     }
 }

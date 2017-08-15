@@ -62,16 +62,16 @@ task samplers_config {
             println "No google maps API KEY found"
 
         // Workflow
-        json.workflow.tasks.eachWithIndex { task, i ->
-            switch (task.type) {
+        json.workflow.steps.eachWithIndex { step, i ->
+            switch (step.type) {
                 case "Information":
-                    class_generator.addStep(new org.cientopolis.samplers.InformationStepClassGenerator(task.text))
+                    class_generator.addStep(new org.cientopolis.samplers.InformationStepClassGenerator(step.id, step.nextStepId, step.text))
                     break
 
                 case "MultipleSelect":
-                    org.cientopolis.samplers.MultipleSelectStepClassGenerator stepMutipleSelect = new org.cientopolis.samplers.MultipleSelectStepClassGenerator(task.title)
+                    org.cientopolis.samplers.MultipleSelectStepClassGenerator stepMutipleSelect = new org.cientopolis.samplers.MultipleSelectStepClassGenerator(step.id, step.nextStepId, step.title)
 
-                    task.options.each { option ->
+                    step.options.each { option ->
                         stepMutipleSelect.addOptionToSelect(option.id, option.text)
                     }
 
@@ -79,10 +79,10 @@ task samplers_config {
                     break
 
                 case "SelectOne":
-                    org.cientopolis.samplers.SelectOneStepClassGenerator stepSelectOne = new org.cientopolis.samplers.SelectOneStepClassGenerator(task.title)
+                    org.cientopolis.samplers.SelectOneStepClassGenerator stepSelectOne = new org.cientopolis.samplers.SelectOneStepClassGenerator(step.id, step.title)
 
-                    task.options.each { option ->
-                        stepSelectOne.addOptionToSelect(option.id, option.text)
+                    step.options.each { option ->
+                        stepSelectOne.addOptionToSelect(option.id, option.text, option.nextStepId)
                     }
 
                     class_generator.addStep(stepSelectOne)
@@ -90,11 +90,11 @@ task samplers_config {
 
                 case "Photo":
                     // TODO add functionality to overlay image
-                    class_generator.addStep(new org.cientopolis.samplers.PhotoStepClassGenerator(task.text, ""))
+                    class_generator.addStep(new org.cientopolis.samplers.PhotoStepClassGenerator(step.id, step.nextStepId, step.text, ""))
                     break
 
                 case "Location":
-                    class_generator.addStep(new org.cientopolis.samplers.LocationStepClassGenerator(task.text))
+                    class_generator.addStep(new org.cientopolis.samplers.LocationStepClassGenerator(step.id, step.nextStepId, step.text))
                     break
             }
         }

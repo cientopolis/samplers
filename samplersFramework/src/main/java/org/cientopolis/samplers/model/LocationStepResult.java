@@ -9,7 +9,8 @@ public class LocationStepResult extends StepResult {
     private double latitude;
     private double longitude;
 
-    public LocationStepResult(double latitude, double longitude) {
+    public LocationStepResult(int stepId, double latitude, double longitude) {
+        super(stepId);
         this.latitude = latitude;
         this.longitude = longitude;
     }

@@ -8,13 +8,14 @@ import java.util.List;
 
 public class MultipleSelectStepResult extends StepResult {
 
-    private List<SelectOption> selectedOptions;
+    private List<MultipleSelectOption> selectedOptions;
 
-    public MultipleSelectStepResult(List<SelectOption> selectedOptions) {
+    public MultipleSelectStepResult(int stepId, List<MultipleSelectOption> selectedOptions) {
+        super(stepId);
         this.selectedOptions = selectedOptions;
     }
 
-    public List<SelectOption> getSelectedOptions() {
+    public List<MultipleSelectOption> getSelectedOptions() {
         return selectedOptions;
     }
 }
