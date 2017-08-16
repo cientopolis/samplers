@@ -299,7 +299,7 @@ public class Camera2Fragment extends Fragment {
                 if(imageReader != null){
                     imageReader = null;
                 }
-                imageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(), ImageFormat.JPEG, /*maxImages*/2);
+                imageReader = ImageReader.newInstance(/*largest.getWidth(), largest.getHeight()*/600,800, ImageFormat.JPEG, /*maxImages*/2);
                 imageReader.setOnImageAvailableListener(onImageAvailableListener, backgroundHandler);
 
                 // Find out if we need to swap dimension to get the preview size relative to sensor coordinate.
@@ -354,7 +354,8 @@ public class Camera2Fragment extends Fragment {
                 // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
                 // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
                 // garbage capture data.
-                previewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class), rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth, maxPreviewHeight, largest);
+                previewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class), rotatedPreviewWidth, rotatedPreviewHeight,
+                                                maxPreviewWidth, maxPreviewHeight, largest);
 
                 // We fit the aspect ratio of TextureView to the size of preview we picked.
                 int orient = getResources().getConfiguration().orientation;

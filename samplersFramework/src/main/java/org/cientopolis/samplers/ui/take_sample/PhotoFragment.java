@@ -247,13 +247,13 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         matrix.postRotate(rotation);
         //test for max preview size supported
 
-        Bitmap b = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(absoluteImagePath,null), 1920, 1080, false);
-        Bitmap rotatedBitmap = Bitmap.createBitmap(b , 0, 0, b.getWidth(), b.getHeight(), matrix, true);
+        //Bitmap b = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(absoluteImagePath,null), 1920, 1080, false);
+        //Bitmap rotatedBitmap = Bitmap.createBitmap(b , 0, 0, b.getWidth(), b.getHeight(), matrix, true);
 
-        photo_preview.setImageBitmap(rotatedBitmap/*b Bitmap.createScaledBitmap(b, 1920, 1080, false)*/);
+        //photo_preview.setImageBitmap(rotatedBitmap/*b Bitmap.createScaledBitmap(b, 1920, 1080, false)*/);
         // load image on the ui control
-        //photo_preview.setImageURI(imageURI);
-        //photo_preview.setRotation(rotation);
+        photo_preview.setImageURI(imageURI);
+        photo_preview.setRotation(rotation);
         photo_preview.refreshDrawableState();
         //Glide.with(getActivity().getApplicationContext()).load(imageURI.toString()).into(photo_preview);
     }
