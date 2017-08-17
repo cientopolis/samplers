@@ -130,7 +130,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
     private void showCamera() {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP){
             Log.d("Photo Fragment", "camera1 selected");
-            camera_fragment = Camera1Fragment.newInstance(/*this,*/ getStep().getInstructionsToShow());
+            camera_fragment = Camera1Fragment.newInstance(this, getStep().getInstructionsToShow());
             startCameraStreaming();
         }
         else {
@@ -191,7 +191,10 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         int rotation = 0;
         try {
             ExifInterface exif = new ExifInterface(imagePath);
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, /*ExifInterface.ORIENTATION_NORMAL*/-1);
+            if(orientation == -1){
+                throw new RuntimeException("-1, exif");
+            }
             rotation = getRotation(orientation);
 
         } catch (IOException e) {

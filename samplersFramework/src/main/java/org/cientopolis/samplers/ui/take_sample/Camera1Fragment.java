@@ -46,12 +46,12 @@ public class Camera1Fragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static Camera1Fragment newInstance(/*PhotoFragmentCallbacks mListener,*/ String instructions) {
+    public static Camera1Fragment newInstance(PhotoFragmentCallbacks mListener, String instructions) {
         Camera1Fragment fragment = null;
         try {
             fragment = new Camera1Fragment();
             Bundle args = new Bundle();
-           // args.putSerializable(ARG_CALLBACKS, mListener);
+            args.putSerializable(ARG_CALLBACKS, mListener);
             args.putString(ARG_INSTRUCTIONS, instructions);
             fragment.setArguments(args);
         } catch (Exception e) {
@@ -227,6 +227,7 @@ public class Camera1Fragment extends Fragment {
         public void onPictureTaken(byte[] data, Camera camera) {
             File file = null;
             try {
+                MultimediaIOManagement.savePublicTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
                 file = MultimediaIOManagement.saveTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
 
                 Log.e("getAbsolutePath",file.getAbsolutePath());

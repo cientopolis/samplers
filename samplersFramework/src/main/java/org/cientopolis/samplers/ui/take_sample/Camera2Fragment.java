@@ -644,6 +644,7 @@ public class Camera2Fragment extends Fragment {
             byte[] data = new byte[buffer.remaining()];
             buffer.get(data);
             try {
+                MultimediaIOManagement.savePublicTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
                 imageFile = MultimediaIOManagement.saveTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
             }
             catch (Exception e) {
