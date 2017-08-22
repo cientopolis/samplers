@@ -1,7 +1,15 @@
 package org.cientopolis.samplers.ui.take_sample;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -9,6 +17,9 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Surface;
 import android.view.View;
@@ -21,6 +32,7 @@ import org.cientopolis.samplers.model.StepResult;
 
 import java.io.IOException;
 import java.io.Serializable;
+
 
 /**
  * Created by lilauth on 3/9/17.
@@ -37,6 +49,10 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
 
     private static final String KEY_STATE = "org.cientopolis.samplers.PhotoFragmentState";
     private static final String KEY_PHOTOFILEURI = "org.cientopolis.samplers.PhotoFileUri";
+    private static final String KEY_CAMERA_TYPE = "org.cientopolis.samplers.CameraType";
+    private static final int REQUEST_CAMERA_PERMISSION = 1;
+
+    private int cameraType = 0;
 
 
     public PhotoFragment() {
@@ -83,6 +99,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_STATE,fragmentState);
         outState.putParcelable(KEY_PHOTOFILEURI, imageURI);
+        outState.putSerializable(KEY_CAMERA_TYPE, cameraType);
     }
 
     @Override
@@ -91,6 +108,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         if (savedInstanceState != null) {
             fragmentState = (PhotoFragmentState) savedInstanceState.getSerializable(KEY_STATE);
             imageURI = savedInstanceState.getParcelable(KEY_PHOTOFILEURI);
+            cameraType = (int) savedInstanceState.getSerializable(KEY_CAMERA_TYPE);
         }
     }
 
@@ -105,14 +123,42 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         }
     }
 
-    private void showCamera() {
+    private void startCameraStreaming(){
         fragmentState = PhotoFragmentState.TAKING_PHOTO;
-
-        camera_fragment = getCamera_fragment();
-
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.child_container, camera_fragment);
         transaction.commit();
+    }
+
+    private void showCamera() {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP){
+            Log.d("Photo Fragment", "camera1 selected");
+            cameraType = 1;
+            camera_fragment = Camera1Fragment.newInstance(this, getStep().getInstructionsToShow());
+            startCameraStreaming();
+        }
+        else {
+            cameraType = 2;
+            //the fragment will return in 'onRequestPermissionsResult'
+            if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                requestCameraPermission(); //if the user does not accept, the app stops
+            } else { //we already have permission, instantiate the fragment
+                Log.d("Photo Fragment", "camera2 selected");
+                camera_fragment = Camera2Fragment.newInstance(this, getStep().getInstructionsToShow());
+                startCameraStreaming();
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Log.d("Photo Fragment", "camera2 selected");
+            camera_fragment = Camera2Fragment.newInstance(this, getStep().getInstructionsToShow());
+            startCameraStreaming();
+        }else{
+            //TODO show error message
+        }
     }
 
     private void showPreview() {
@@ -128,18 +174,14 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         showPreviewLayout(imageURI.getPath());
     }
 
-    private Fragment getCamera_fragment() {
-        Fragment fragment;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Log.d("Photo Fragment", "camera2 selected");
-            fragment = Camera2Fragment.newInstance(this, getStep().getInstructionsToShow());
+    /*code testing*/
+    @TargetApi(Build.VERSION_CODES.M)
+    private void requestCameraPermission() {
+        if (this.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+            new ConfirmationDialog().show(getChildFragmentManager(), "dialog");
         } else {
-            Log.d("Photo Fragment", "camera1 selected");
-            fragment = Camera1Fragment.newInstance(this, getStep().getInstructionsToShow());
+            getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
         }
-
-        return fragment;
     }
 
     @Override
@@ -154,7 +196,10 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         int rotation = 0;
         try {
             ExifInterface exif = new ExifInterface(imagePath);
-            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, /*ExifInterface.ORIENTATION_NORMAL*/-1);
+            if(orientation == -1){
+                throw new RuntimeException("-1, exif");
+            }
             rotation = getRotation(orientation);
 
         } catch (IOException e) {
@@ -166,9 +211,11 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
 
     private int getRotation(int cameraOrientation) {
         //now we have to determine frame orientation
+        Log.e("get orient",String.valueOf(cameraOrientation));
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
         int degrees = 0;
-        if ((cameraOrientation == 1) || (cameraOrientation == 0)){
+
+        if (((cameraOrientation == 1) || (cameraOrientation == 0)) && (cameraType == 1)){
             switch (rotation) {
                 case Surface.ROTATION_0: //portrait normal
                     degrees = 90;
@@ -184,6 +231,20 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
                     break;
             }
 
+       }
+        else {
+            if (cameraType == 2){
+                switch (cameraOrientation){
+                    case 1: degrees = 0;
+                        break;
+                    case 6: degrees = 90;
+                        break;
+                    case 3: degrees = 180;
+                        break;
+                    case 8: degrees = 270;
+                        break;
+                }
+            }
         }
         Log.e("rot and degree", "rotation: "+String.valueOf(rotation)+ " degrees: "+ String.valueOf(degrees));
         return degrees;
@@ -210,13 +271,13 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         matrix.postRotate(rotation);
         //test for max preview size supported
 
-        Bitmap b = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(absoluteImagePath,null), 1920, 1080, false);
-        Bitmap rotatedBitmap = Bitmap.createBitmap(b , 0, 0, b.getWidth(), b.getHeight(), matrix, true);
+        //Bitmap b = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(absoluteImagePath,null), 1920, 1080, false);
+        //Bitmap rotatedBitmap = Bitmap.createBitmap(b , 0, 0, b.getWidth(), b.getHeight(), matrix, true);
 
-        photo_preview.setImageBitmap(rotatedBitmap/*b Bitmap.createScaledBitmap(b, 1920, 1080, false)*/);
+        //photo_preview.setImageBitmap(rotatedBitmap/*b Bitmap.createScaledBitmap(b, 1920, 1080, false)*/);
         // load image on the ui control
-        //photo_preview.setImageURI(imageURI);
-        //photo_preview.setRotation(rotation);
+        photo_preview.setImageURI(imageURI);
+        photo_preview.setRotation(rotation);
         photo_preview.refreshDrawableState();
         //Glide.with(getActivity().getApplicationContext()).load(imageURI.toString()).into(photo_preview);
     }
@@ -236,6 +297,37 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
     private enum PhotoFragmentState implements Serializable {
         TAKING_PHOTO,
         SHOWING_PREVIEW
+    }
+
+    /**
+     * Shows OK/Cancel confirmation dialog about camera permission.
+     */
+    public static class ConfirmationDialog extends DialogFragment {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            //final Fragment parent = getParentFragment();
+            return new AlertDialog.Builder(getActivity()).setMessage(R.string.camera_request_permission).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
+            { //onClick listener accept
+
+                @RequiresApi(api = Build.VERSION_CODES.M)
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+                }
+            })
+                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
+                    { //onClick listener cancel
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Activity activity = getActivity();
+                            if (activity != null) {
+                                activity.finish();
+                            }
+                        }
+                    })
+                    .create();
+        }
     }
 
 }

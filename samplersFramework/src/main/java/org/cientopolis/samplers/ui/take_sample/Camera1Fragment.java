@@ -105,18 +105,11 @@ public class Camera1Fragment extends Fragment {
     }
 
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (openCamera()){
-            startPreview();
-        }
-    }
-
     private boolean openCamera(){
         try {
             camera = Camera.open();
             return true;
+
         } catch (RuntimeException e) {
             e.printStackTrace();
             return false;
@@ -208,17 +201,13 @@ public class Camera1Fragment extends Fragment {
                 return;
             }
 
+            if (camera == null){
+                openCamera();
+            }
+
             try {
                 camera.stopPreview();
-            }
-
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            try {
-                camera.setPreviewDisplay(holder);
-                camera.startPreview();
+                startPreview();
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -228,6 +217,7 @@ public class Camera1Fragment extends Fragment {
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
             //release camera happens when picture is taken
+
         }
     }
     /*Camera callbacks helper*/
@@ -237,6 +227,7 @@ public class Camera1Fragment extends Fragment {
         public void onPictureTaken(byte[] data, Camera camera) {
             File file = null;
             try {
+                MultimediaIOManagement.savePublicTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
                 file = MultimediaIOManagement.saveTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
 
                 Log.e("getAbsolutePath",file.getAbsolutePath());

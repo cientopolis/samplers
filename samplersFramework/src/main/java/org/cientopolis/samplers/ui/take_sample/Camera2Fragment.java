@@ -49,6 +49,7 @@ import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.persistence.MultimediaIOManagement;
 import org.cientopolis.samplers.ui.ErrorMessaging;
 import java.io.File;
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -88,8 +89,8 @@ public class Camera2Fragment extends Fragment {
      */
     private static final int STATE_PREVIEW = 0; //Showing camera preview.
     private static final int STATE_WAITING_LOCK = 1; //Waiting for the focus to be locked.
-    private static final int STATE_WAITING_PRECAPTURE = 2; //Waiting for the exposure to be precapture state.
-    private static final int STATE_WAITING_NON_PRECAPTURE = 3; //Waiting for the exposure state to be something other than precapture.
+    private static final int STATE_WAITING_PRE_CAPTURE = 2; //Waiting for the exposure to be precapture state.
+    private static final int STATE_WAITING_NON_PRE_CAPTURE = 3; //Waiting for the exposure state to be something other than precapture.
     private static final int STATE_PICTURE_TAKEN = 4; //Picture was taken.
 
     private static final int MAX_PREVIEW_WIDTH = 1920; //Max preview width that is guaranteed by Camera2 API
@@ -111,10 +112,14 @@ public class Camera2Fragment extends Fragment {
 
     private ImageReader imageReader; //An {@link ImageReader} that handles still image capture.
 
-    private ViewGroup photo_layout;
+    //private ViewGroup photo_layout;
 
     private String instructions;
     private PhotoFragmentCallbacks mListener;
+
+    /*dirty, change*/
+    private int height;
+    private int width;
 
     /**
      * This a callback object for the {@link ImageReader}. "onImageAvailable" will be called when a
@@ -232,7 +237,6 @@ public class Camera2Fragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        showHidePhotoLayout(true);
         startCameraStreaming();
     }
 
@@ -259,7 +263,9 @@ public class Camera2Fragment extends Fragment {
         // a camera and start preview from here (otherwise, we wait until the surface is ready in
         // the SurfaceTextureListener).
         if (autoFitTextureView.isAvailable()) {
-            openCamera(autoFitTextureView.getWidth(), autoFitTextureView.getHeight());
+            height = autoFitTextureView.getHeight();
+            width = autoFitTextureView.getWidth();
+            openCamera(/*autoFitTextureView.getWidth(), autoFitTextureView.getHeight()*/);
         } else {
             autoFitTextureView.setSurfaceTextureListener(new TVSurfaceTextureListener());
         }
@@ -293,7 +299,7 @@ public class Camera2Fragment extends Fragment {
                 if(imageReader != null){
                     imageReader = null;
                 }
-                imageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(), ImageFormat.JPEG, /*maxImages*/2);
+                imageReader = ImageReader.newInstance(/*largest.getWidth(), largest.getHeight()*/600,800, ImageFormat.JPEG, /*maxImages*/2);
                 imageReader.setOnImageAvailableListener(onImageAvailableListener, backgroundHandler);
 
                 // Find out if we need to swap dimension to get the preview size relative to sensor coordinate.
@@ -348,7 +354,8 @@ public class Camera2Fragment extends Fragment {
                 // Danger, W.R.! Attempting to use too large a preview size could  exceed the camera
                 // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
                 // garbage capture data.
-                previewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class), rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth, maxPreviewHeight, largest);
+                previewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class), rotatedPreviewWidth, rotatedPreviewHeight,
+                                                maxPreviewWidth, maxPreviewHeight, largest);
 
                 // We fit the aspect ratio of TextureView to the size of preview we picked.
                 int orient = getResources().getConfiguration().orientation;
@@ -371,14 +378,7 @@ public class Camera2Fragment extends Fragment {
         return null;
     }
 
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void openCamera(int width, int height) {
-        if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            requestCameraPermission(); //if the user does not accept, the app stops
-            return;
-        }
-
+    private void openCamera(/*int width, int height*/){
         Activity activity = getActivity();
         CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
         String cameraID = setUpCameraOutputs(width, height, manager); //this method defines wich camera will use
@@ -390,61 +390,15 @@ public class Camera2Fragment extends Fragment {
             }
 
             CDStateCallback stateCallback = new CDStateCallback();
-            if(cameraID != null) {
-                manager.openCamera(cameraID, stateCallback, backgroundHandler);
-            }
+            //this is redundant, but needed
+            if ((cameraID != null) && (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)){
+                manager.openCamera(cameraID, stateCallback, backgroundHandler);}
         } catch (CameraAccessException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             throw new RuntimeException("Interrupted while trying to lock camera opening.", e);
         }
     }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void requestCameraPermission() {
-        if (this.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-            new ConfirmationDialog().show(getChildFragmentManager(), "dialog");
-        } else {
-            getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        //
-    }
-
-    /**
-     * Shows OK/Cancel confirmation dialog about camera permission.
-     */
-    public static class ConfirmationDialog extends DialogFragment {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            //final Fragment parent = getParentFragment();
-            return new AlertDialog.Builder(getActivity()).setMessage(R.string.camera_request_permission).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
-                    { //onClick listener accept
-
-                        @RequiresApi(api = Build.VERSION_CODES.M)
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-                        }
-                    })
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
-                    { //onClick listener cancel
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Activity activity = getActivity();
-                                    if (activity != null) {
-                                        activity.finish();
-                                    }
-                                }
-                            })
-                    .create();
-        }
-    }
-
 
         /**
          * Closes the current {@link CameraDevice}.
@@ -614,7 +568,8 @@ public class Camera2Fragment extends Fragment {
 
             // Use the same AE and AF modes as the preview.
             captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-            setAutoFlash(captureBuilder);
+            //we will ignore the flash
+            //setAutoFlash(captureBuilder);
 
             // Orientation
             int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
@@ -651,8 +606,6 @@ public class Camera2Fragment extends Fragment {
     private void unlockFocus(CameraDevice camera) {
         closeCamera(camera);
 
-        showHidePhotoLayout(false);
-
         //mListener.onPhotoTaked(imageURI);
         // Needs to run on UI Thread
         getActivity().runOnUiThread(new Runnable() {
@@ -663,26 +616,6 @@ public class Camera2Fragment extends Fragment {
         });
     }
 
-
-
-    private void showHidePhotoLayout (boolean show) {
-
-        final int visibility;
-        if (show)
-            visibility = View.VISIBLE;
-        else
-            visibility = View.INVISIBLE;
-
-
-        // Needs to run on UI Thread
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                photo_layout.setVisibility(visibility);
-
-            }
-        });
-    }
 
 
     private void setAutoFlash(CaptureRequest.Builder requestBuilder) {
@@ -712,6 +645,7 @@ public class Camera2Fragment extends Fragment {
             byte[] data = new byte[buffer.remaining()];
             buffer.get(data);
             try {
+                //MultimediaIOManagement.savePublicTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
                 imageFile = MultimediaIOManagement.saveTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
             }
             catch (Exception e) {
@@ -759,7 +693,7 @@ public class Camera2Fragment extends Fragment {
         b_take_picture.setOnClickListener(new TakePictureClick());
         autoFitTextureView = (AutoFitTextureView) rootView.findViewById(R.id.textureView);
         //layouts
-        photo_layout = (ViewGroup) rootView.findViewById(R.id.photo_layout);
+       // photo_layout = (ViewGroup) rootView.findViewById(R.id.photo_layout);
 
         // TODO set the instructions to show to a TextView
         //instructions
@@ -784,8 +718,10 @@ public class Camera2Fragment extends Fragment {
     private class TVSurfaceTextureListener implements TextureView.SurfaceTextureListener {
 
         @Override
-        public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-            openCamera(width, height);
+        public void onSurfaceTextureAvailable(SurfaceTexture surface, int _width, int _height) {
+            width = _width;
+            height = _height;
+            openCamera(/*width, height*/);
         }
 
         @Override
@@ -872,17 +808,17 @@ public class Camera2Fragment extends Fragment {
                     }
                     break;
                 }
-                case STATE_WAITING_PRECAPTURE: {
+                case STATE_WAITING_PRE_CAPTURE: {
                     // CONTROL_AE_STATE can be null on some devices
                     Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
                     if (aeState == null ||
                             aeState == CaptureResult.CONTROL_AE_STATE_PRECAPTURE ||
                             aeState == CaptureRequest.CONTROL_AE_STATE_FLASH_REQUIRED) {
-                        cameraState = STATE_WAITING_NON_PRECAPTURE;
+                        cameraState = STATE_WAITING_NON_PRE_CAPTURE;
                     }
                     break;
                 }
-                case STATE_WAITING_NON_PRECAPTURE: {
+                case STATE_WAITING_NON_PRE_CAPTURE: {
                     // CONTROL_AE_STATE can be null on some devices
                     Integer aeState = result.get(CaptureResult.CONTROL_AE_STATE);
                     if (aeState == null || aeState != CaptureResult.CONTROL_AE_STATE_PRECAPTURE) {
