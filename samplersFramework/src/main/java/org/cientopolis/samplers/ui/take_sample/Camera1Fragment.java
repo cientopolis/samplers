@@ -35,7 +35,6 @@ public class Camera1Fragment extends Fragment {
 
     private Camera camera;
     private Uri imageURI;
-    //private String imageFileName;
     private SurfaceHolder surfaceHolder;
 
     private String instructions;
@@ -98,7 +97,7 @@ public class Camera1Fragment extends Fragment {
     @Override
     public void onSaveInstanceState (Bundle outState) {
         // TODO no se esta ejecutando este metodo
-        //camera is streameing. So, we released the camera and stop the streaming
+        //camera is streaming. So, we released the camera and stop the streaming
         releaseCamera();
 
         super.onSaveInstanceState(outState);
@@ -227,7 +226,13 @@ public class Camera1Fragment extends Fragment {
         public void onPictureTaken(byte[] data, Camera camera) {
             File file = null;
             try {
-                MultimediaIOManagement.savePublicTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
+                /**
+                 *
+                 * for testing purposes if needed, add to Manifest permission for writing on external storage
+                 * and let MultimediaIOManagement save file to Galery
+                 *
+                 * MultimediaIOManagement.savePublicTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
+                 */
                 file = MultimediaIOManagement.saveTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
 
                 Log.e("getAbsolutePath",file.getAbsolutePath());
@@ -237,11 +242,15 @@ public class Camera1Fragment extends Fragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            Log.e("Image URI",Uri.fromFile(file).toString());
-            // TODO: 15/03/2017 check if no errors with file == null
 
-            // FINALIZAR ACA !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            mListener.onPhotoTaked(imageURI);
+            Log.e("Image URI",Uri.fromFile(file).toString());
+
+            if(imageURI == null){
+                throw new RuntimeException("unable to create picture");
+            }
+            else{
+                mListener.onPhotoTaked(imageURI);
+            }
         }
     }
 

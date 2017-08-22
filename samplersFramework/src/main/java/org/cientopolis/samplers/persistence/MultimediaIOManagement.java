@@ -53,6 +53,12 @@ public class MultimediaIOManagement {
         return file;
     }
 
+    /**
+     * for testing purposes if needed, add to Manifest permission for writing external storage
+     * and let MultimediaIOManagement save file to Galery
+     *
+     * */
+    @SuppressWarnings("unused")
     public static File savePublicTempFile(Context context, String fileExtension, byte[] data) throws IOException {
         ContentResolver cr = context.getContentResolver();
 

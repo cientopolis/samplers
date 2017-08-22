@@ -645,7 +645,7 @@ public class Camera2Fragment extends Fragment {
             byte[] data = new byte[buffer.remaining()];
             buffer.get(data);
             try {
-                //MultimediaIOManagement.savePublicTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
+
                 imageFile = MultimediaIOManagement.saveTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
             }
             catch (Exception e) {
@@ -692,8 +692,6 @@ public class Camera2Fragment extends Fragment {
         Button b_take_picture = (Button) rootView.findViewById(R.id.b_take_picture);
         b_take_picture.setOnClickListener(new TakePictureClick());
         autoFitTextureView = (AutoFitTextureView) rootView.findViewById(R.id.textureView);
-        //layouts
-       // photo_layout = (ViewGroup) rootView.findViewById(R.id.photo_layout);
 
         // TODO set the instructions to show to a TextView
         //instructions

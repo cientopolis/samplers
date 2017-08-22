@@ -12,7 +12,7 @@ public class PhotoStep extends BaseStep {
     // TODO: 15/03/2017 Add functionality to support this
     private String imageToOverlay;
     private Integer nextStepId;
-    
+
     public PhotoStep(int id, String anInstructionsToShow, String anImageToOverlay, Integer nextStepId) {
         super(id);
         stepFragmentClass = PhotoFragment.class;
