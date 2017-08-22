@@ -568,7 +568,8 @@ public class Camera2Fragment extends Fragment {
 
             // Use the same AE and AF modes as the preview.
             captureBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
-            setAutoFlash(captureBuilder);
+            //we will ignore the flash
+            //setAutoFlash(captureBuilder);
 
             // Orientation
             int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
@@ -644,7 +645,7 @@ public class Camera2Fragment extends Fragment {
             byte[] data = new byte[buffer.remaining()];
             buffer.get(data);
             try {
-                MultimediaIOManagement.savePublicTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
+                //MultimediaIOManagement.savePublicTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
                 imageFile = MultimediaIOManagement.saveTempFile(getActivity().getApplicationContext(), MultimediaIOManagement.PHOTO_EXTENSION, data);
             }
             catch (Exception e) {

@@ -49,7 +49,10 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
 
     private static final String KEY_STATE = "org.cientopolis.samplers.PhotoFragmentState";
     private static final String KEY_PHOTOFILEURI = "org.cientopolis.samplers.PhotoFileUri";
+    private static final String KEY_CAMERA_TYPE = "org.cientopolis.samplers.CameraType";
     private static final int REQUEST_CAMERA_PERMISSION = 1;
+
+    private int cameraType = 0;
 
 
     public PhotoFragment() {
@@ -95,8 +98,8 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
     public void onSaveInstanceState (Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_STATE,fragmentState);
-        /*if(imageURI != null){*/
-            outState.putParcelable(KEY_PHOTOFILEURI, imageURI);//}
+        outState.putParcelable(KEY_PHOTOFILEURI, imageURI);
+        outState.putSerializable(KEY_CAMERA_TYPE, cameraType);
     }
 
     @Override
@@ -104,8 +107,8 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
             fragmentState = (PhotoFragmentState) savedInstanceState.getSerializable(KEY_STATE);
-            /*if(getArguments().containsKey(KEY_PHOTOFILEURI)){*/
-                imageURI = savedInstanceState.getParcelable(KEY_PHOTOFILEURI);//}
+            imageURI = savedInstanceState.getParcelable(KEY_PHOTOFILEURI);
+            cameraType = (int) savedInstanceState.getSerializable(KEY_CAMERA_TYPE);
         }
     }
 
@@ -130,10 +133,12 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
     private void showCamera() {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP){
             Log.d("Photo Fragment", "camera1 selected");
+            cameraType = 1;
             camera_fragment = Camera1Fragment.newInstance(this, getStep().getInstructionsToShow());
             startCameraStreaming();
         }
         else {
+            cameraType = 2;
             //the fragment will return in 'onRequestPermissionsResult'
             if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                 requestCameraPermission(); //if the user does not accept, the app stops
@@ -206,9 +211,11 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
 
     private int getRotation(int cameraOrientation) {
         //now we have to determine frame orientation
+        Log.e("get orient",String.valueOf(cameraOrientation));
         int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
         int degrees = 0;
-        if ((cameraOrientation == 1) || (cameraOrientation == 0)){
+
+        if (((cameraOrientation == 1) || (cameraOrientation == 0)) && (cameraType == 1)){
             switch (rotation) {
                 case Surface.ROTATION_0: //portrait normal
                     degrees = 90;
@@ -224,6 +231,20 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
                     break;
             }
 
+       }
+        else {
+            if (cameraType == 2){
+                switch (cameraOrientation){
+                    case 1: degrees = 0;
+                        break;
+                    case 6: degrees = 90;
+                        break;
+                    case 3: degrees = 180;
+                        break;
+                    case 8: degrees = 270;
+                        break;
+                }
+            }
         }
         Log.e("rot and degree", "rotation: "+String.valueOf(rotation)+ " degrees: "+ String.valueOf(degrees));
         return degrees;
