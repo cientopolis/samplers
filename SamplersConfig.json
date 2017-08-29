@@ -4,7 +4,7 @@
     "package_name" : "com.example.myApplication"
   } ,
 
-  "aplication": {
+  "application": {
     "title" : "Samplers Hello World App",
     "welcomeMessage" : "Welcome to your first Samplers App!",
     "networkConfiguration" : {
