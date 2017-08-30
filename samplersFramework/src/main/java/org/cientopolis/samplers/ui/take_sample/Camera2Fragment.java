@@ -117,6 +117,7 @@ public class Camera2Fragment extends Fragment {
     private String instructions;
     private PhotoFragmentCallbacks mListener;
 
+
     /*dirty, change*/
     private int height;
     private int width;
@@ -212,7 +213,7 @@ public class Camera2Fragment extends Fragment {
         try {
             fragment = new Camera2Fragment();
             Bundle args = new Bundle();
-            args.putSerializable(ARG_CALLBACKS, mListener);
+            //args.putSerializable(ARG_CALLBACKS, mListener);
             args.putString(ARG_INSTRUCTIONS, instructions);
             fragment.setArguments(args);
         } catch (Exception e) {
@@ -692,6 +693,17 @@ public class Camera2Fragment extends Fragment {
         Button b_take_picture = (Button) rootView.findViewById(R.id.b_take_picture);
         b_take_picture.setOnClickListener(new TakePictureClick());
         autoFitTextureView = (AutoFitTextureView) rootView.findViewById(R.id.textureView);
+/**
+ * if (context instanceof StepFragmentInteractionListener) {
+ mListener = (StepFragmentInteractionListener) context;
+ Log.e("MultipleSelectFragment", "mListener asignado");
+ } else {
+ Log.e("MultipleSelectFragment", "mListener NO asignado");
+ throw new RuntimeException(context.toString()
+ + " must implement StepFragmentInteractionListener");
+ }
+ * */
+        /*PhotoFragmentCallbacks*/ mListener = (PhotoFragmentCallbacks) this.getParentFragment();
 
         // TODO set the instructions to show to a TextView
         //instructions

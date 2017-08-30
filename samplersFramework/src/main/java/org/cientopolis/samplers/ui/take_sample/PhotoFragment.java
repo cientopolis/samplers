@@ -144,7 +144,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
                 requestCameraPermission(); //if the user does not accept, the app stops
             } else { //we already have permission, instantiate the fragment
                 Log.d("Photo Fragment", "camera2 selected");
-                camera_fragment = Camera2Fragment.newInstance(this, getStep().getInstructionsToShow());
+                camera_fragment = Camera2Fragment.newInstance(null, getStep().getInstructionsToShow());
                 startCameraStreaming();
             }
         }
