@@ -208,12 +208,11 @@ public class Camera2Fragment extends Fragment {
     }
 
 
-    public static Camera2Fragment newInstance(PhotoFragmentCallbacks mListener, String instructions) {
+    public static Camera2Fragment newInstance(String instructions) {
         Camera2Fragment fragment = null;
         try {
             fragment = new Camera2Fragment();
             Bundle args = new Bundle();
-            //args.putSerializable(ARG_CALLBACKS, mListener);
             args.putString(ARG_INSTRUCTIONS, instructions);
             fragment.setArguments(args);
         } catch (Exception e) {
@@ -228,7 +227,6 @@ public class Camera2Fragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            this.mListener = (PhotoFragmentCallbacks) getArguments().getSerializable(ARG_CALLBACKS);
             this.instructions = getArguments().getString(ARG_INSTRUCTIONS);
         }
 
@@ -693,17 +691,16 @@ public class Camera2Fragment extends Fragment {
         Button b_take_picture = (Button) rootView.findViewById(R.id.b_take_picture);
         b_take_picture.setOnClickListener(new TakePictureClick());
         autoFitTextureView = (AutoFitTextureView) rootView.findViewById(R.id.textureView);
-/**
- * if (context instanceof StepFragmentInteractionListener) {
- mListener = (StepFragmentInteractionListener) context;
- Log.e("MultipleSelectFragment", "mListener asignado");
- } else {
- Log.e("MultipleSelectFragment", "mListener NO asignado");
- throw new RuntimeException(context.toString()
- + " must implement StepFragmentInteractionListener");
- }
- * */
-        /*PhotoFragmentCallbacks*/ mListener = (PhotoFragmentCallbacks) this.getParentFragment();
+
+        if(this.getParentFragment() instanceof  PhotoFragmentCallbacks){
+            mListener = (PhotoFragmentCallbacks) this.getParentFragment();
+            Log.e("Camera2Fragment", "mListener asignado(onClick)");
+        }
+        else {
+            Log.e("Camera2Fragment", "mListener NO asignado");
+            throw new RuntimeException(this.getParentFragment().toString()
+                    + " must implement PhotoFragmentCallbacks");
+        }
 
         // TODO set the instructions to show to a TextView
         //instructions

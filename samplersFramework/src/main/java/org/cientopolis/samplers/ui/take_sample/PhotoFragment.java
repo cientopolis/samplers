@@ -134,7 +134,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP){
             Log.d("Photo Fragment", "camera1 selected");
             cameraType = 1;
-            camera_fragment = Camera1Fragment.newInstance(this, getStep().getInstructionsToShow());
+            camera_fragment = Camera1Fragment.newInstance(getStep().getInstructionsToShow());
             startCameraStreaming();
         }
         else {
@@ -144,7 +144,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
                 requestCameraPermission(); //if the user does not accept, the app stops
             } else { //we already have permission, instantiate the fragment
                 Log.d("Photo Fragment", "camera2 selected");
-                camera_fragment = Camera2Fragment.newInstance(null, getStep().getInstructionsToShow());
+                camera_fragment = Camera2Fragment.newInstance(getStep().getInstructionsToShow());
                 startCameraStreaming();
             }
         }
@@ -154,7 +154,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.d("Photo Fragment", "camera2 selected");
-            camera_fragment = Camera2Fragment.newInstance(this, getStep().getInstructionsToShow());
+            camera_fragment = Camera2Fragment.newInstance(getStep().getInstructionsToShow());
             startCameraStreaming();
         }else{
             //TODO show error message

@@ -45,12 +45,11 @@ public class Camera1Fragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static Camera1Fragment newInstance(PhotoFragmentCallbacks mListener, String instructions) {
+    public static Camera1Fragment newInstance(String instructions) {
         Camera1Fragment fragment = null;
         try {
             fragment = new Camera1Fragment();
             Bundle args = new Bundle();
-            args.putSerializable(ARG_CALLBACKS, mListener);
             args.putString(ARG_INSTRUCTIONS, instructions);
             fragment.setArguments(args);
         } catch (Exception e) {
@@ -65,7 +64,6 @@ public class Camera1Fragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            this.mListener = (PhotoFragmentCallbacks) getArguments().getSerializable(ARG_CALLBACKS);
             this.instructions =  getArguments().getString(ARG_INSTRUCTIONS);
         }
     }
@@ -89,6 +87,17 @@ public class Camera1Fragment extends Fragment {
 
         Button b_takePicture = (Button) rootView.findViewById(R.id.b_take_picture);
         b_takePicture.setOnClickListener(new TakePictureClick());
+
+        /*mListener for takePicture button onClick*/
+        if(this.getParentFragment() instanceof  PhotoFragmentCallbacks){
+            mListener = (PhotoFragmentCallbacks) this.getParentFragment();
+            Log.e("Camera2Fragment", "mListener asignado(onClick)");
+        }
+        else {
+            Log.e("Camera2Fragment", "mListener NO asignado");
+            throw new RuntimeException(this.getParentFragment().toString()
+                    + " must implement PhotoFragmentCallbacks");
+        }
 
         return rootView;
     }
