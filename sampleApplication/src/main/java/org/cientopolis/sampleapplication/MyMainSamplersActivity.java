@@ -3,6 +3,7 @@ package org.cientopolis.sampleapplication;
 import android.os.Bundle;
 
 import org.cientopolis.samplers.model.InformationStep;
+import org.cientopolis.samplers.model.InsertDateStep;
 import org.cientopolis.samplers.model.MultipleSelectStep;
 import org.cientopolis.samplers.model.PhotoStep;
 import org.cientopolis.samplers.model.SelectOneOption;
@@ -39,7 +40,10 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         Step step;
 
         // InformationStep
-        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",2));
+        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",101));
+
+        // Insert Date
+        workflow.addStep(new InsertDateStep(101, "Seleccione la Fecha de la muestra",2));
 
         // SelectOneStep
         ArrayList<SelectOneOption> optionsToSelect2 = new ArrayList<SelectOneOption>();
