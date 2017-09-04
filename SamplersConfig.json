@@ -84,7 +84,29 @@
         {
           "id" : 5,
           "type" : "Photo",
-          "text" : "Take a photo of your cat"
+          "text" : "Take a photo of your cat",
+          "nextStepId": 6
+        },
+        {
+          "id" : 6,
+          "type" : "InsertDate",
+          "text" : "Select the date of the sample",
+          "nextStepId": 7
+        },
+        {
+          "id" : 7,
+          "type" : "InsertTime",
+          "text" : "Select the time of the sample",
+          "nextStepId": 8
+        },
+        {
+          "id" : 8,
+          "type" : "InsertText",
+          "text" : "Insert a comment",
+          "sampleText" : "your comments",
+          "inputType" : "text",
+          "maxLength" : 50,
+          "optional" : true
         }
     ]
   }
