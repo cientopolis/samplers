@@ -99,7 +99,14 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-                StepFragment fragment = StepFragment.newInstance(actualStep.getStepFragmentClass(), actualStep);
+                Class<StepFragment> stepFragmentClass = actualStep.getStepFragmentClass();
+                // Check for StepFragmentClass
+                if (stepFragmentClass == null) {
+                    throw new RuntimeException("StepFragmentClass of step "+actualStep.getClass().getName()+" not defined.");
+                }
+
+                // Create new StepFragment
+                StepFragment fragment = StepFragment.newInstance(stepFragmentClass, actualStep);
 
                 if (fragment != null) {
 

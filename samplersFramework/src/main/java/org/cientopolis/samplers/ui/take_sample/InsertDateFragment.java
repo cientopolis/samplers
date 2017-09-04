@@ -5,7 +5,6 @@ package org.cientopolis.samplers.ui.take_sample;
  */
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TextView;
@@ -13,9 +12,7 @@ import android.widget.TextView;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.InsertDateStep;
 import org.cientopolis.samplers.model.InsertDateStepResult;
-import org.cientopolis.samplers.model.InsertTextStepResult;
 import org.cientopolis.samplers.model.StepResult;
-import org.cientopolis.samplers.ui.ErrorMessaging;
 
 import java.util.GregorianCalendar;
 
@@ -51,14 +48,8 @@ public class InsertDateFragment extends StepFragment {
 
     @Override
     protected boolean validate() {
-        boolean ok = true;
-/*
-        if (getStep().isOptional() && (ed_it_text_to_enter.getText().length() == 0)) {
-            ok = false;
-            ErrorMessaging.showValidationErrorMessage(getActivity(), getResources().getString(R.string.error_must_insert_text));
-        }*/
 
-        return ok;
+        return true; // nothing to validate
     }
 
     @Override
@@ -71,8 +62,6 @@ public class InsertDateFragment extends StepFragment {
     protected StepResult getStepResult() {
         GregorianCalendar calendar =new GregorianCalendar(datePicker.getYear(),
                 datePicker.getMonth(),datePicker.getDayOfMonth());
-
-        Log.e("InsertDateFragment","Date:"+calendar.toString());
 
         return new InsertDateStepResult(getStep().getId(),calendar.getTime());
     }
