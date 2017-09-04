@@ -96,6 +96,18 @@ task samplers_config {
                 case "Location":
                     class_generator.addStep(new org.cientopolis.samplers.LocationStepClassGenerator(step.id, step.nextStepId, step.text))
                     break
+
+                case "InsertText":
+                    class_generator.addStep(new org.cientopolis.samplers.InsertTextStepClassGenerator(step.id, step.nextStepId, step.text, step.sampleText, step.maxLength, step.inputType, step.optional))
+                    break
+
+                case "InsertDate":
+                    class_generator.addStep(new org.cientopolis.samplers.InsertDateStepClassGenerator(step.id, step.nextStepId, step.text))
+                    break
+
+                case "InsertTime":
+                    class_generator.addStep(new org.cientopolis.samplers.InsertTimeStepClassGenerator(step.id, step.nextStepId, step.text))
+                    break
             }
         }
 
