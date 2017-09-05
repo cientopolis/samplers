@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 
 import org.cientopolis.samplers.model.PhotoStepResult;
 import org.cientopolis.samplers.model.Sample;
+import org.cientopolis.samplers.model.Step;
 import org.cientopolis.samplers.model.StepResult;
 
 import java.io.BufferedReader;

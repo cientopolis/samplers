@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.take_sample.InsertTextFragment">
+    tools:context=".ui.take_sample.InsertTimeFragment">
 
 
     <TextView
@@ -10,10 +10,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
+        android:layout_above="@+id/tp_time_to_select"
         android:textAlignment="center"
         android:textSize="@dimen/itf_lb_text_to_show_text_size"
-     />
+        />
+
+    <TimePicker
+        android:id="@+id/tp_time_to_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        />
+
 
     <Button
         android:id="@+id/bt_next"
@@ -27,16 +36,7 @@
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="30dp" />
 
-    <EditText
-        android:id="@+id/ed_it_text_to_enter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/lb_it_text_to_show"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:textSize="@dimen/itf_ed_text_to_enter_text_size"
-        android:ems="10"
-         />
+
+
 
 </RelativeLayout>

@@ -9,16 +9,20 @@ import java.util.List;
 
 public class MultipleSelectStepClassGenerator implements StepClassGenerator {
 
-    private List<SelectOption> optionsToShow;
+    private int id;
+    private Integer nextStepId;
+    private List<MultipleSelectOption> optionsToShow;
     private String title;
 
-    public MultipleSelectStepClassGenerator(String title) {
+    public MultipleSelectStepClassGenerator(int id, Integer nextStepId, String title) {
+        this.id = id;
+        this.nextStepId = nextStepId;
         this.optionsToShow = new ArrayList<>();
         this.title = title;
     }
 
     public void addOptionToSelect(int id, String textToShow) {
-        SelectOption selectOption = new SelectOption(id, textToShow);
+        MultipleSelectOption selectOption = new MultipleSelectOption(id, textToShow);
         optionsToShow.add(selectOption);
     }
 
@@ -32,19 +36,19 @@ public class MultipleSelectStepClassGenerator implements StepClassGenerator {
         XMLManagement.addString(varNameTitle, this.title);
         
         output.add("    String "+varNameTitle +" = getResources().getString(R.string."+varNameTitle+"); ");
-        output.add("    ArrayList<SelectOption> "+varNameOptions +" = new ArrayList<SelectOption>();");
+        output.add("    ArrayList<MultipleSelectOption> "+varNameOptions +" = new ArrayList<MultipleSelectOption>();");
 
         for (int i=0; i<optionsToShow.size(); i++) {
-            SelectOption option = optionsToShow.get(i);
+            MultipleSelectOption option = optionsToShow.get(i);
 
             String varNameOptionText = "multipleSelectOptionText" + String.valueOf(stepIndex)+"_"+String.valueOf(i);
             XMLManagement.addString(varNameOptionText, option.getTextToShow());
 
             output.add("    String "+varNameOptionText +" = getResources().getString(R.string."+varNameOptionText+"); ");
-            output.add("    "+varNameOptions +".add(new SelectOption("+option.getId()+","+varNameOptionText+", false));");
+            output.add("    "+varNameOptions +".add(new MultipleSelectOption("+option.getId()+","+varNameOptionText+"));");
         }
 
-        output.add("    "+workflow_var+".addStep(new MultipleSelectStep("+varNameOptions+","+varNameTitle+")); ");
+        output.add("    "+workflow_var+".addStep(new MultipleSelectStep("+String.valueOf(id)+","+varNameOptions+","+varNameTitle+","+String.valueOf(nextStepId)+")); ");
 
         return output;
     }

@@ -22,10 +22,12 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     public static final String EXTRA_WORKFLOW = "org.cientopolis.samplers.WORKFLOW";
 
     private static final String KEY_SAMPLE = "org.cientopolis.samplers.SAMPLE";
+    private static final String KEY_ACTUAL_STEP = "org.cientopolis.samplers.ACTUAL_STEP";
 
     private TextView lb_step_count;
     protected Workflow workflow;
     protected Sample sample;
+    protected Step actualStep;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,9 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
         if (workflow == null)
             workflow = new Workflow();
 
+        if (!workflow.validate()) {
+            throw new RuntimeException("invalid workflow");
+        }
 
         getFragmentManager().addOnBackStackChangedListener(new MyOnBackStackChangedListener());
 
@@ -69,6 +74,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     public void onSaveInstanceState (Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_SAMPLE, sample);
+        outState.putSerializable(KEY_ACTUAL_STEP, actualStep);
 
         Log.e("TakeSampleActivity", "onSaveInstanceState");
     }
@@ -76,8 +82,10 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     @Override
     public void onRestoreInstanceState (Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             sample = (Sample) savedInstanceState.getSerializable(KEY_SAMPLE);
+            actualStep = (Step) savedInstanceState.getSerializable(KEY_ACTUAL_STEP);
+        }
 
         refreshStepStateOnScreen();
 
@@ -87,19 +95,25 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     private void nextStep() {
         if (workflow != null) {
             if (!workflow.isEnd()) {
-                Step step = workflow.nextStep();
+                actualStep = workflow.nextStep();
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-                StepFragment fragment = StepFragment.newInstance(step.getStepFragmentClass(), step);
+                Class<StepFragment> stepFragmentClass = actualStep.getStepFragmentClass();
+                // Check for StepFragmentClass
+                if (stepFragmentClass == null) {
+                    throw new RuntimeException("StepFragmentClass of step "+actualStep.getClass().getName()+" not defined.");
+                }
+
+                // Create new StepFragment
+                StepFragment fragment = StepFragment.newInstance(stepFragmentClass, actualStep);
 
                 if (fragment != null) {
 
                     transaction.replace(R.id.container, fragment);
-                    Log.e("TakeSampleActivity", "replaced");
+
                     if (workflow.getStepPosition() > 0) {
                         transaction.addToBackStack(null);
-                        Log.e("TakeSampleActivity", "addToBackStack");
                     }
                     transaction.commit();
                 }
@@ -116,7 +130,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
                 DAO_Factory.getSampleDAO(getApplicationContext()).save(sample);
 
                 ErrorMessaging.showInfoMessage(this, getResources().getString(R.string.message_sample_saved));
-                Log.e("TakeSample", "finish");
+                Log.e("TakeSample", "finished");
                 this.finish();
             }
         }
@@ -124,18 +138,21 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     }
 
     private void previuosStep() {
-        workflow.previuosStep();
+        Log.e("TakeSample", "previuosStep()");
+        actualStep = workflow.previuosStep();
         refreshStepStateOnScreen();
     }
 
 
     private void refreshStepStateOnScreen() {
-        lb_step_count.setText(String.valueOf(workflow.getStepPosition()+1) + "/" + String.valueOf(workflow.getStepCount()));
+        lb_step_count.setText(String.valueOf(workflow.getStepPosition()+1));
     }
 
 
     @Override
     public void onStepFinished(StepResult stepResult) {
+        actualStep.setStepResult(stepResult);
+        Log.e("onStepFinished","actualStep:"+actualStep);
         sample.addStepResult(stepResult);
 
         // go to the next step

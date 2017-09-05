@@ -1,79 +1,113 @@
 {
-	"project": {
-		"app_path" : "app/src/main/java/com/example/myApplication/",
-		"package_name" : "com.example.myApplication"
-	} ,
+  "project": {
+    "app_path" : "app/src/main/java/com/example/myApplication/",
+    "package_name" : "com.example.myApplication"
+  } ,
 
-	"aplication": {
-		"title" : "Samplers Hello World App",
-		"welcomeMessage" : "Welcome to your first Samplers App!",
-		"networkConfiguration" : {
-			"url" : "http://192.168.1.10/samplers/upload.php",
-			"paramName" : "sample"
-		},
-		"googleMaps_API_KEY" : "AIzaSyBSdAX453WDiPJmPotF5akUQNQw_W_MzJ4"
-	} ,
+  "application": {
+    "title" : "Samplers Hello World App",
+    "welcomeMessage" : "Welcome to your first Samplers App!",
+    "networkConfiguration" : {
+      "url" : "http://192.168.1.10/samplers/upload.php",
+      "paramName" : "sample"
+    },
+    "googleMaps_API_KEY" : "AIzaSyBSdAX453WDiPJmPotF5akUQNQw_W_MzJ4"
+  } ,
 
-	"workflow": {
-		"actionLabel" : "Take a sample",
-		"tasks": [
-			{
-				"type" : "Information",
-				"text" : "Please, follow the instructions"
-			},
-			{
-				"type" : "Location",
-				"text" : "Please, positionate the sample on the map"
-			},
-			{
-				"type": "MultipleSelect",
-				"title" : "Select what you see",
-				"options" : [
-					{
-						"id":1,
-						"text":"Trees"
-					},
-					{
-						"id":2,
-						"text":"Trash"
-					},
-					{
-						"id":3,
-						"text":"Water"
-					},
-					{
-						"id":4,
-						"text":"Animals"
-					}
-				]
-			},
+  "workflow": {
+    "actionLabel" : "Take a sample",
+    "steps": [
+        {
+          "id":1,
+          "type" : "Information",
+          "text" : "Please, follow the instructions",
+          "nextStepId": 2
+        },
+        {
+          "id":2,
+          "type" : "Location",
+          "text" : "Please, positionate the sample on the map",
+          "nextStepId": 3
+        },
+        {
+          "id":3,
+          "type": "MultipleSelect",
+          "title" : "Select what you see",
+          "nextStepId": 4,
+          "options" : [
+            {
+              "id":1,
+              "text":"Trees"
+            },
+            {
+              "id":2,
+              "text":"Trash"
+            },
+            {
+              "id":3,
+              "text":"Water"
+            },
+            {
+              "id":4,
+              "text":"Animals"
+            }
+          ]
+        },
 
-			{
-				"type": "SelectOne",
-				"title" : "Select one",
-				"options" : [
-					{
-						"id":1,
-						"text":"Option 1"
-					},
-					{
-						"id":2,
-						"text":"Option 2"
-					},
-					{
-						"id":3,
-						"text":"Option 3"
-					},
-					{
-						"id":4,
-						"text":"Option 4"
-					}
-				]
-			},
-			{
-				"type" : "Photo",
-				"text" : "Take a photo of your cat"
-			}
-		]
-	}
+        {
+          "id" : 4,
+          "type": "SelectOne",
+          "title" : "Select one",
+          "options" : [
+            {
+              "id":1,
+              "text":"Option 1",
+              "nextStepId": 5
+            },
+            {
+              "id":2,
+              "text":"Option 2",
+              "nextStepId": 5
+            },
+            {
+              "id":3,
+              "text":"Option 3",
+              "nextStepId": 5
+            },
+            {
+              "id":4,
+              "text":"Option 4",
+              "nextStepId": 5
+            }
+          ]
+        },
+        {
+          "id" : 5,
+          "type" : "Photo",
+          "text" : "Take a photo of your cat",
+          "nextStepId": 6
+        },
+        {
+          "id" : 6,
+          "type" : "InsertDate",
+          "text" : "Select the date of the sample",
+          "nextStepId": 7
+        },
+        {
+          "id" : 7,
+          "type" : "InsertTime",
+          "text" : "Select the time of the sample",
+          "nextStepId": 8
+        },
+        {
+          "id" : 8,
+          "type" : "InsertText",
+          "text" : "Insert a comment",
+          "sampleText" : "your comments",
+          "inputType" : "text",
+          "maxLength" : 50,
+          "optional" : true
+        }
+    ]
+  }
 }

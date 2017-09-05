@@ -20,11 +20,11 @@ task samplers_config {
     println json.project.app_path
     println json.project.package_name
 
-    // APLICATION
-    println json.aplication.title
-    println json.aplication.welcomeMessage
-    println json.aplication.networkConfiguration.url
-    println json.aplication.networkConfiguration.paramName
+    // APPLICATION
+    println json.application.title
+    println json.application.welcomeMessage
+    println json.application.networkConfiguration.url
+    println json.application.networkConfiguration.paramName
 
     // WORKFLOW
     println json.workflow.actionLabel
@@ -55,23 +55,23 @@ task samplers_config {
         def class_generator = new org.cientopolis.samplers.SamplersClassGenerator(package_name, manifest_path, strings_path);
 
 
-        if (json.aplication.googleMaps_API_KEY != null) {
-            class_generator.setGoogleMaps_API_KEY(json.aplication.googleMaps_API_KEY)
+        if (json.application.googleMaps_API_KEY != null) {
+            class_generator.setGoogleMaps_API_KEY(json.application.googleMaps_API_KEY)
             println "Google maps API KEY added"
         } else
             println "No google maps API KEY found"
 
         // Workflow
-        json.workflow.tasks.eachWithIndex { task, i ->
-            switch (task.type) {
+        json.workflow.steps.eachWithIndex { step, i ->
+            switch (step.type) {
                 case "Information":
-                    class_generator.addStep(new org.cientopolis.samplers.InformationStepClassGenerator(task.text))
+                    class_generator.addStep(new org.cientopolis.samplers.InformationStepClassGenerator(step.id, step.nextStepId, step.text))
                     break
 
                 case "MultipleSelect":
-                    org.cientopolis.samplers.MultipleSelectStepClassGenerator stepMutipleSelect = new org.cientopolis.samplers.MultipleSelectStepClassGenerator(task.title)
+                    org.cientopolis.samplers.MultipleSelectStepClassGenerator stepMutipleSelect = new org.cientopolis.samplers.MultipleSelectStepClassGenerator(step.id, step.nextStepId, step.title)
 
-                    task.options.each { option ->
+                    step.options.each { option ->
                         stepMutipleSelect.addOptionToSelect(option.id, option.text)
                     }
 
@@ -79,10 +79,10 @@ task samplers_config {
                     break
 
                 case "SelectOne":
-                    org.cientopolis.samplers.SelectOneStepClassGenerator stepSelectOne = new org.cientopolis.samplers.SelectOneStepClassGenerator(task.title)
+                    org.cientopolis.samplers.SelectOneStepClassGenerator stepSelectOne = new org.cientopolis.samplers.SelectOneStepClassGenerator(step.id, step.title)
 
-                    task.options.each { option ->
-                        stepSelectOne.addOptionToSelect(option.id, option.text)
+                    step.options.each { option ->
+                        stepSelectOne.addOptionToSelect(option.id, option.text, option.nextStepId)
                     }
 
                     class_generator.addStep(stepSelectOne)
@@ -90,19 +90,31 @@ task samplers_config {
 
                 case "Photo":
                     // TODO add functionality to overlay image
-                    class_generator.addStep(new org.cientopolis.samplers.PhotoStepClassGenerator(task.text, ""))
+                    class_generator.addStep(new org.cientopolis.samplers.PhotoStepClassGenerator(step.id, step.nextStepId, step.text, ""))
                     break
 
                 case "Location":
-                    class_generator.addStep(new org.cientopolis.samplers.LocationStepClassGenerator(task.text))
+                    class_generator.addStep(new org.cientopolis.samplers.LocationStepClassGenerator(step.id, step.nextStepId, step.text))
+                    break
+
+                case "InsertText":
+                    class_generator.addStep(new org.cientopolis.samplers.InsertTextStepClassGenerator(step.id, step.nextStepId, step.text, step.sampleText, step.maxLength, step.inputType, step.optional))
+                    break
+
+                case "InsertDate":
+                    class_generator.addStep(new org.cientopolis.samplers.InsertDateStepClassGenerator(step.id, step.nextStepId, step.text))
+                    break
+
+                case "InsertTime":
+                    class_generator.addStep(new org.cientopolis.samplers.InsertTimeStepClassGenerator(step.id, step.nextStepId, step.text))
                     break
             }
         }
 
         def activity_name = "MyMainSamplersActivity"
-        def welcomeMessage = json.aplication.welcomeMessage
-        def net_config_url = json.aplication.networkConfiguration.url
-        def net_config_paramName = json.aplication.networkConfiguration.paramName
+        def welcomeMessage = json.application.welcomeMessage
+        def net_config_url = json.application.networkConfiguration.url
+        def net_config_paramName = json.application.networkConfiguration.paramName
 
         class_generator.generateMainActivity(app_path, activity_name, welcomeMessage, net_config_url, net_config_paramName)
     }

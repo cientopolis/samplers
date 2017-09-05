@@ -9,9 +9,13 @@ import java.util.List;
 
 public class LocationStepClassGenerator implements StepClassGenerator {
 
+    private int id;
+    private Integer nextStepId;
     private String textToShow;
 
-    public LocationStepClassGenerator(String textToShow) {
+    public LocationStepClassGenerator(int id, Integer nextStepId, String textToShow) {
+        this.id = id;
+        this.nextStepId = nextStepId;
         this.textToShow = textToShow;
     }
 
@@ -21,12 +25,12 @@ public class LocationStepClassGenerator implements StepClassGenerator {
 
         List<String> output = new ArrayList<>();
 
-        String varName = "textToShow"+ String.valueOf(stepIndex);
+        String varName = "textToShowLocation"+ String.valueOf(stepIndex);
 
         XMLManagement.addString(varName, this.textToShow);
 
         output.add("    String "+varName +" = getResources().getString(R.string."+varName+"); ");
-        output.add("    "+workflow_var+".addStep(new LocationStep("+varName+")); ");
+        output.add("    "+workflow_var+".addStep(new LocationStep("+String.valueOf(id)+","+varName+","+String.valueOf(nextStepId)+")); ");
 
         return output;
     }

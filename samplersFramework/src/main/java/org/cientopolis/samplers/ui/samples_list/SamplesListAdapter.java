@@ -1,6 +1,7 @@
 package org.cientopolis.samplers.ui.samples_list;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +10,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.model.Sample;
-
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
 import java.util.List;
-import java.util.Locale;
+
 
 /**
  * Created by Xavier on 27/02/2017.
@@ -23,11 +23,23 @@ public class SamplesListAdapter extends BaseAdapter{
     private List<Sample> samples;
     private Context myContext;
     private SamplesListAdapterListener listener;
+    private int LIST_ITEM_BACK_COLOR_0;
+    private int LIST_ITEM_BACK_COLOR_1;
 
     public SamplesListAdapter(Context context, List<Sample> samples, SamplesListAdapterListener listener) {
         this.samples = samples;
         this.myContext = context;
         this.listener = listener;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            LIST_ITEM_BACK_COLOR_0 = context.getResources().getColor(R.color.list_item_back_color_0, context.getTheme());
+            LIST_ITEM_BACK_COLOR_1 = context.getResources().getColor(R.color.list_item_back_color_1, context.getTheme());
+        }
+        else {
+            LIST_ITEM_BACK_COLOR_0 = context.getResources().getColor(R.color.list_item_back_color_0);
+            LIST_ITEM_BACK_COLOR_1 = context.getResources().getColor(R.color.list_item_back_color_1);
+        }
+
     }
 
     @Override
@@ -73,34 +85,21 @@ public class SamplesListAdapter extends BaseAdapter{
             viewHolder = (SamplesListAdapterViewHolder) resultView.getTag();
         }
 
-        // // TODO: 27/02/2017 Add code to see prety list
-        /*
+
         if ((position % 2) == 0) {
-            resultView.setBackgroundColor(COLOR_RENGLON_0);
+            resultView.setBackgroundColor(LIST_ITEM_BACK_COLOR_0);
         }
         else {
-            resultView.setBackgroundColor(COLOR_RENGLON_1);
+            resultView.setBackgroundColor(LIST_ITEM_BACK_COLOR_1);
         }
-        */
+
 
         Sample sample = samples.get(position);
 
         viewHolder.lb_id.setText(String.valueOf(sample.getId()));
-        // // TODO: 27/02/2017 See date/time formats to display
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm", Locale.US);
-        viewHolder.lb_datetime.setText(sdf.format(sample.getStartDateTime()));
+        viewHolder.lb_datetime.setText(DateFormat.getDateTimeInstance().format(sample.getStartDateTime()));
         viewHolder.img_status.setOnClickListener(new UploadSampleClickListener(sample));
         viewHolder.delete_sample.setOnClickListener(new DeleteSampleClickListener(sample));
-
-        /*
-        if (fechas.get(position).isPagadoOK()) {
-            viewHolder.img_ok.setImageResource(R.drawable.ic_check_green_36dp);
-        }
-        else {
-            viewHolder.img_ok.setImageResource(R.drawable.ic_clear_red_36dp);
-        }
-
-        */
 
         return resultView;
     }

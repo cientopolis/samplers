@@ -52,6 +52,9 @@
 
     <item name="list_selected_item" type="color">@color/indigoA100</item>
 
+    <item name="list_item_back_color_0" type="color">@color/white</item>
+    <item name="list_item_back_color_1" type="color">@color/grey200</item>
+
 
     <!-- Information and Error Messaging ======================================================= -->
     <item name="toast_back_color_info" type="color">@color/bluegrey600</item>

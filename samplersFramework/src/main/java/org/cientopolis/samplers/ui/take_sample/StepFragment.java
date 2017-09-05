@@ -40,7 +40,7 @@ public abstract class StepFragment extends Fragment {
      * @return A new instance of the subclass of StepFragment provided.
      */
     public static <T extends StepFragment> T newInstance(Class<T> type, Step step) {
-        T fragment = null;
+        T fragment;
         try {
             fragment = type.newInstance();
             Bundle args = new Bundle();
@@ -48,6 +48,7 @@ public abstract class StepFragment extends Fragment {
             fragment.setArguments(args);
         } catch (Exception e) {
             e.printStackTrace();
+            throw new RuntimeException("Error while instantiating a new StepFragment");
         }
 
         return fragment;

@@ -117,6 +117,7 @@ public class LocationFragment extends StepFragment {
 
     @Override
     public void onSaveInstanceState (Bundle outState) {
+        // TODO check if this method is called
         super.onSaveInstanceState(outState);
         outState.putParcelable(KEY_LOCATION,mLocation);
         if (mMapView != null)
@@ -183,7 +184,7 @@ public class LocationFragment extends StepFragment {
 
     @Override
     protected StepResult getStepResult() {
-        return new LocationStepResult(mLocation.getLatitude(), mLocation.getLongitude());
+        return new LocationStepResult(getStep().getId(),mLocation.getLatitude(), mLocation.getLongitude());
     }
 
 

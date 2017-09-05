@@ -10,40 +10,39 @@ import java.util.ArrayList;
  */
 public class SelectOneStep extends BaseStep {
 
-    private ArrayList<SelectOption> optionsToSelect;
+    private ArrayList<SelectOneOption> optionsToSelect;
     private String title;
 
 
-    public SelectOneStep() {
+    public SelectOneStep(int id) {
 
-        this(new ArrayList<SelectOption>(),"");
+        this(id,new ArrayList<SelectOneOption>(),"");
     }
 
-    public SelectOneStep(ArrayList<SelectOption> anOptionsToSelect, String title) {
+    public SelectOneStep(int id, ArrayList<SelectOneOption> anOptionsToSelect, String title) {
+        super(id);
         stepFragmentClass = SelectOneFragment.class;
         optionsToSelect = anOptionsToSelect;
         this.title = title;
     }
 
-    public ArrayList<SelectOption> getOptionsToSelect() {
+    public ArrayList<SelectOneOption> getOptionsToSelect() {
         return optionsToSelect;
     }
 
-    public SelectOption getSelectedOption() {
-        SelectOption selectedOption = null;
-
-        for (SelectOption option: optionsToSelect) {
-            if (option.isSelected()) {
-                selectedOption = option;
-                break;
-            }
-        }
-
-        return selectedOption;
-    }
 
     public String getTitle() {
         return title;
+    }
+
+    @Override
+    public Integer getNextStepId() {
+        if (stepResult == null) {
+            throw new RuntimeException("You must set the StepResult first");
+        }
+
+        // NextStepId depends on the selected option
+        return ((SelectOneStepResult) stepResult).getSelectedOption().getNextStepId();
     }
 
 

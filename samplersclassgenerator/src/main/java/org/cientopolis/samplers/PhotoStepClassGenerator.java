@@ -9,10 +9,14 @@ import java.util.List;
 
 public class PhotoStepClassGenerator implements StepClassGenerator {
 
+    private int id;
+    private Integer nextStepId;
     private String photoInstructions;
     private String overload_image_name;
 
-    public PhotoStepClassGenerator(String photoInstructions, String overload_image_name) {
+    public PhotoStepClassGenerator(int id, Integer nextStepId, String photoInstructions, String overload_image_name) {
+        this.id = id;
+        this.nextStepId = nextStepId;
         this.photoInstructions = photoInstructions;
         this.overload_image_name = overload_image_name;
     }
@@ -30,7 +34,7 @@ public class PhotoStepClassGenerator implements StepClassGenerator {
 
         output.add("    String "+varNameInstructions +" = getResources().getString(R.string."+varNameInstructions+"); ");
         output.add("    String "+varNameImageToOverly +" = getResources().getString(R.string."+varNameImageToOverly+"); ");
-        output.add("    "+workflow_var+".addStep(new PhotoStep("+varNameInstructions+","+varNameImageToOverly+")); ");
+        output.add("    "+workflow_var+".addStep(new PhotoStep("+String.valueOf(id)+","+varNameInstructions+","+varNameImageToOverly+","+String.valueOf(nextStepId)+")); ");
 
         return output;
     }

@@ -10,40 +10,40 @@ import java.util.ArrayList;
  */
 public class MultipleSelectStep extends BaseStep {
 
-    private ArrayList<SelectOption> optionsToSelect;
+    private ArrayList<MultipleSelectOption> optionsToSelect;
     private String title;
+    private Integer nextStepId;
 
 
-    public MultipleSelectStep() {
+    public MultipleSelectStep(int id, String title, Integer nextStepId) {
 
-        this(new ArrayList<SelectOption>(), "");
+        this(id, new ArrayList<MultipleSelectOption>(), title, nextStepId);
     }
 
-    public MultipleSelectStep(ArrayList<SelectOption> anOptionsToSelect, String title) {
+    public MultipleSelectStep(int id, ArrayList<MultipleSelectOption> anOptionsToSelect, String title, Integer nextStepId) {
+        super(id);
         stepFragmentClass = MultipleSelectFragment.class;
         this.optionsToSelect = anOptionsToSelect;
         this.title = title;
+        this.nextStepId = nextStepId;
     }
 
-    public ArrayList<SelectOption> getOptionsToSelect() {
+    public ArrayList<MultipleSelectOption> getOptionsToSelect() {
         return optionsToSelect;
     }
 
-    public ArrayList<SelectOption> getSelectedOptions() {
-
-        ArrayList<SelectOption> options = new ArrayList<>();
-
-        for (SelectOption option: optionsToSelect) {
-            if (option.isSelected()) {
-                options.add(option);
-            }
-        }
-        return options;
-    }
 
     public String getTitle() {
         return title;
     }
 
 
+    @Override
+    public Integer getNextStepId() {
+        return nextStepId;
+    }
+
+    public void setNextStepId(Integer nextStepId) {
+        this.nextStepId = nextStepId;
+    }
 }

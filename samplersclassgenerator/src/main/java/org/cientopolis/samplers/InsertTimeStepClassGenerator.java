@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Xavier on 02/06/2017.
+ * Created by Xavier on 03/09/2017.
  */
 
-public class InformationStepClassGenerator implements StepClassGenerator {
+public class InsertTimeStepClassGenerator implements StepClassGenerator {
 
     private int id;
     private Integer nextStepId;
     private String textToShow;
 
-    public InformationStepClassGenerator(int id, Integer nextStepId, String textToShow) {
+    public InsertTimeStepClassGenerator(int id, Integer nextStepId, String textToShow) {
         this.id = id;
         this.nextStepId = nextStepId;
         this.textToShow = textToShow;
@@ -24,14 +24,13 @@ public class InformationStepClassGenerator implements StepClassGenerator {
     public List<String> generateStep(int stepIndex, String workflow_var) {
 
         List<String> output = new ArrayList<>();
-        String varName = "textToShow"+ String.valueOf(stepIndex);
+        String varName = "textToShowInsertTime"+ String.valueOf(stepIndex);
 
         XMLManagement.addString(varName, this.textToShow);
 
         output.add("    String "+varName +" = getResources().getString(R.string."+varName+"); ");
-        output.add("    "+workflow_var+".addStep(new InformationStep("+String.valueOf(id)+","+varName+","+String.valueOf(nextStepId)+")); ");
+        output.add("    "+workflow_var+".addStep(new InsertTimeStep("+String.valueOf(id)+","+varName+","+String.valueOf(nextStepId)+")); ");
 
         return output;
     }
-
 }
