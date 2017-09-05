@@ -1,7 +1,7 @@
 # Samplers
 Samplers is a framework to build mobile citizen science applications.
 
-# UNDER DEVELOPMENT v0.3
+# UNDER DEVELOPMENT v0.4
 
 ## Steps to use the framework
 
@@ -24,6 +24,7 @@ Samplers is a framework to build mobile citizen science applications.
         // if not added automatically, add this dependency 
         // you should use the latest version e.j. 25.+
         compile 'com.android.support:design:24.2.1' 
+        compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
         // if you will use maps and location services, add this dependencies 
         // you should use the latest version 
