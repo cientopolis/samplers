@@ -45,3 +45,9 @@ captures/
 
 # Readme file
 README.md
+
+# Images
+images/*
+
+# JavaDoc
+javadoc/*
