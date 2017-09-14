@@ -80,7 +80,7 @@ public class SamplersClassGenerator {
         saveFile(output, path+activity_name+".java");
 
         // TODO Parametrize Label and Theme
-        XMLManagement.addMainActivity(activity_name,"@string/app_name", "@style/AppTheme");
+        XMLManagement.addMainActivity(activity_name,"@string/app_name", "@style/SamplersFrameworkAppTheme");
 
     }
 

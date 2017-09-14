@@ -6,7 +6,7 @@
     parent="Theme.AppCompat.Light.DarkActionBar"
     -->
 
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
+    <style name="SamplersFrameworkAppTheme" parent="android:Theme.Holo.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="android:actionBarStyle">@style/MyActionBar</item>
         <item name="android:popupMenuStyle">@style/MyActionPopUp</item>
@@ -51,7 +51,7 @@
         <!-- <item name="android:textAppearance">@android:attr/textAppearanceLarge</item> -->
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="SamplersFrameworkAppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
