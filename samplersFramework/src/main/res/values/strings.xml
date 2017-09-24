@@ -1,15 +1,18 @@
 <resources>
-    <string name="app_name">Registro Regional de Gatos</string>
+    <string name="app_name">Samplers Application</string>
+
     <string name="action_settings">Configuracion</string>
     <string name="action_samples">Muestras</string>
-    <string name="title_activity_take_sample">Tomar Muestra</string>
-    <string name="title_activity_samples_list">Mestras tomadas</string>
+
+    <string name="yesString">Si</string>
+    <string name="noString">No</string>
 
     <!-- Main Activity -->
     <string name="txt_welcome_message">Bienvenidos al registro regional de gatos</string>
     <string name="bt_take_sample">Tomar Muestra</string>
 
     <!-- Take Sample Activity -->
+    <string name="title_activity_take_sample">Tomar Muestra</string>
     <string name="message_sample_saved">Muestra guardada</string>
 
     <!-- Step Fragments -->
@@ -34,7 +37,9 @@
     <!-- InsertText Fragment -->
     <string name="error_must_insert_text">Debe ingresar algo</string>
 
-
+    <!-- SamplesList Activity -->
+    <string name="title_activity_samples_list">Mestras tomadas</string>
+    <string name="delete_sample_confirmation_message">¿Confirma que elimina la muestra?</string>
 
 
 </resources>

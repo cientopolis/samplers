@@ -141,8 +141,8 @@ public class SamplesListAdapter extends BaseAdapter{
     }
 
     public interface SamplesListAdapterListener {
-        public void onUploadSampleClick(Sample sample);
 
+        public void onUploadSampleClick(Sample sample);
 
         public void onDeleteSampleClick(Sample mySample);
     }

@@ -1,7 +1,9 @@
 package org.cientopolis.samplers.ui.samples_list;
 
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,8 +27,6 @@ public class SamplesListFragment extends Fragment implements SamplesListAdapter.
 
     public SamplesListFragment() {
         // Required empty public constructor
-
-
     }
 
 
@@ -58,10 +58,34 @@ public class SamplesListFragment extends Fragment implements SamplesListAdapter.
 
     @Override
     public void onDeleteSampleClick(Sample mySample) {
+        String message =  getResources().getString(R.string.delete_sample_confirmation_message);
+        String yesString = getResources().getString(R.string.yesString);
+        String noString = getResources().getString(R.string.noString);
 
-        DAO_Factory.getSampleDAO(getActivity().getApplicationContext()).delete(mySample);
-        samples.remove(mySample);
-        adapter.notifyDataSetChanged();
+        // Ask for confirmation before deleting
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(message).setPositiveButton(yesString, new ConfirmationYesOnClickListener(mySample))
+                .setNegativeButton(noString, null).show();
 
+
+    }
+
+    private class ConfirmationYesOnClickListener implements DialogInterface.OnClickListener {
+
+        private Sample sample;
+
+        public ConfirmationYesOnClickListener(Sample sample) {
+            this.sample = sample;
+        }
+
+
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+                DAO_Factory.getSampleDAO(getActivity().getApplicationContext()).delete(this.sample);
+                samples.remove(this.sample);
+                adapter.notifyDataSetChanged();
+            }
+        }
     }
 }
