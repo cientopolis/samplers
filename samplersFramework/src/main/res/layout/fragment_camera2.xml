@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.take_sample.Camera2Fragment">
+    tools:context=".framework.photo.Camera2Fragment">
 
 
    <!-- <RelativeLayout
@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"> -->
 
-        <org.cientopolis.samplers.ui.take_sample.AutoFitTextureView
+        <org.cientopolis.samplers.framework.photo.AutoFitTextureView
             android:id="@+id/textureView"
             android:layout_width="0dp"
             android:layout_height="0dp"

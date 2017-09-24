@@ -9,9 +9,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import org.cientopolis.samplers.R;
-import org.cientopolis.samplers.model.Workflow;
+import org.cientopolis.samplers.framework.Workflow;
 import org.cientopolis.samplers.ui.samples_list.SamplesListActivity;
-import org.cientopolis.samplers.ui.take_sample.TakeSampleActivity;
 
 
 public abstract class SamplersMainActivity extends Activity {

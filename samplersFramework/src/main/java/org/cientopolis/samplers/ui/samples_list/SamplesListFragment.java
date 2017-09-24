@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import org.cientopolis.samplers.R;
-import org.cientopolis.samplers.model.Sample;
+import org.cientopolis.samplers.framework.Sample;
 import org.cientopolis.samplers.network.SendSample;
 import org.cientopolis.samplers.persistence.DAO_Factory;
 

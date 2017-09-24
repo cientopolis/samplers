@@ -4,7 +4,7 @@
     android:id="@+id/child_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.take_sample.PhotoFragment"
+    tools:context=".framework.photo.PhotoFragment"
     android:weightSum="1">
 
    <!-- <ImageView

@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.take_sample.TakeSampleActivity"
+            android:name=".ui.TakeSampleActivity"
             android:label="@string/title_activity_take_sample"
             android:theme="@style/SamplersFrameworkAppTheme">
         </activity>

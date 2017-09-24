@@ -1,13 +1,13 @@
 package org.cientopolis.samplers;
 
-import org.cientopolis.samplers.model.InformationStep;
-import org.cientopolis.samplers.model.MultipleSelectOption;
-import org.cientopolis.samplers.model.MultipleSelectStep;
-import org.cientopolis.samplers.model.PhotoStep;
-import org.cientopolis.samplers.model.SelectOneOption;
-import org.cientopolis.samplers.model.SelectOneStep;
-import org.cientopolis.samplers.model.Step;
-import org.cientopolis.samplers.model.Workflow;
+import org.cientopolis.samplers.framework.information.InformationStep;
+import org.cientopolis.samplers.framework.multipleSelect.MultipleSelectOption;
+import org.cientopolis.samplers.framework.multipleSelect.MultipleSelectStep;
+import org.cientopolis.samplers.framework.photo.PhotoStep;
+import org.cientopolis.samplers.framework.selectOne.SelectOneOption;
+import org.cientopolis.samplers.framework.selectOne.SelectOneStep;
+import org.cientopolis.samplers.framework.Step;
+import org.cientopolis.samplers.framework.Workflow;
 import org.junit.Test;
 
 import java.util.ArrayList;

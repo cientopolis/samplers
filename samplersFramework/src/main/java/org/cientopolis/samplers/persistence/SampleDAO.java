@@ -1,6 +1,6 @@
 package org.cientopolis.samplers.persistence;
 
-import org.cientopolis.samplers.model.Sample;
+import org.cientopolis.samplers.framework.Sample;
 
 import java.io.File;
 

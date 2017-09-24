@@ -3,7 +3,7 @@ package org.cientopolis.samplers.network;
 import android.content.Context;
 import android.util.Log;
 
-import org.cientopolis.samplers.model.Sample;
+import org.cientopolis.samplers.framework.Sample;
 import org.cientopolis.samplers.persistence.DAO_Factory;
 import org.cientopolis.samplers.persistence.ZipUtilities;
 

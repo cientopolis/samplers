@@ -2,16 +2,16 @@ package org.cientopolis.sampleapplication;
 
 import android.os.Bundle;
 
-import org.cientopolis.samplers.model.InformationStep;
-import org.cientopolis.samplers.model.InsertDateStep;
-import org.cientopolis.samplers.model.InsertTimeStep;
-import org.cientopolis.samplers.model.MultipleSelectStep;
-import org.cientopolis.samplers.model.PhotoStep;
-import org.cientopolis.samplers.model.SelectOneOption;
-import org.cientopolis.samplers.model.SelectOneStep;
-import org.cientopolis.samplers.model.MultipleSelectOption;
-import org.cientopolis.samplers.model.Step;
-import org.cientopolis.samplers.model.Workflow;
+import org.cientopolis.samplers.framework.information.InformationStep;
+import org.cientopolis.samplers.framework.insertDate.InsertDateStep;
+import org.cientopolis.samplers.framework.insertTime.InsertTimeStep;
+import org.cientopolis.samplers.framework.multipleSelect.MultipleSelectStep;
+import org.cientopolis.samplers.framework.photo.PhotoStep;
+import org.cientopolis.samplers.framework.selectOne.SelectOneOption;
+import org.cientopolis.samplers.framework.selectOne.SelectOneStep;
+import org.cientopolis.samplers.framework.multipleSelect.MultipleSelectOption;
+import org.cientopolis.samplers.framework.Step;
+import org.cientopolis.samplers.framework.Workflow;
 import org.cientopolis.samplers.network.NetworkConfiguration;
 import org.cientopolis.samplers.ui.SamplersMainActivity;
 

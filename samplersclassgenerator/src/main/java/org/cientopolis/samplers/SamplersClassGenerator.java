@@ -41,7 +41,7 @@ public class SamplersClassGenerator {
         output.add("import java.util.ArrayList;");
         output.add("import org.cientopolis.samplers.ui.SamplersMainActivity;");
         output.add("import org.cientopolis.samplers.network.NetworkConfiguration;");
-        output.add("import org.cientopolis.samplers.model.*;");
+        output.add("import org.cientopolis.samplers.framework.*;");
         output.add("");
         output.add("public class "+activity_name+" extends SamplersMainActivity {");
         output.add("");
