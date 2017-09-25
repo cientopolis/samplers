@@ -8,6 +8,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.framework.Sample;
@@ -24,7 +28,7 @@ import java.util.Date;
 
 public class TakeSampleActivity extends Activity implements StepFragmentInteractionListener {
 
-    public static final String EXTRA_WORKFLOW = "org.cientopolis.samplers.WORKFLOW";
+    public static final String EXTRA_WORKFLOW = "org.cientopolis.samplers.EXTRA_WORKFLOW";
 
     private static final String KEY_SAMPLE = "org.cientopolis.samplers.SAMPLE";
     private static final String KEY_ACTUAL_STEP = "org.cientopolis.samplers.ACTUAL_STEP";
@@ -53,7 +57,13 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
 
         getFragmentManager().addOnBackStackChangedListener(new MyOnBackStackChangedListener());
 
+        // Step count TextView
         lb_step_count = (TextView) findViewById(R.id.lb_step_count);
+
+        // Help Button
+        ImageView bt_help = (ImageView) findViewById(R.id.img_take_sample_help);
+        bt_help.setOnClickListener(new HelpClickListener(this));
+
 
         if (savedInstanceState == null) { // First execution
             sample = new Sample();
@@ -189,6 +199,25 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
             //workflow.setStepPosition(getFragmentManager().getBackStackEntryCount());
 
             //refreshStepStateOnScreen();
+        }
+    }
+
+    private class HelpClickListener implements View.OnClickListener{
+        TakeSampleActivity activity;
+
+        public HelpClickListener(TakeSampleActivity activity) {
+            this.activity = activity;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (true) {
+                Integer help_resource_id = null;
+
+                Intent intent = new Intent(activity, HelpActivity.class);
+                intent.putExtra(HelpActivity.HELP_RESOURCE_ID, help_resource_id);
+                startActivity(intent);
+            }
         }
     }
 }

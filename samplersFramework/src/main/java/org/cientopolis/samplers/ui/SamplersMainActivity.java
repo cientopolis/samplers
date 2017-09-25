@@ -39,14 +39,16 @@ public abstract class SamplersMainActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        // // TODO: 27/02/2017 Refactor: use case statement
         if (id == R.id.action_settings) {
             ErrorMessaging.showInfoMessage(this, "Settings");
             return true;
         }
         else if (id == R.id.action_samples) {
             startSamplesListActivity();
+            return true;
+        }
+        else if (id == R.id.action_help) {
+            startHelpActivity();
             return true;
         }
 
@@ -82,5 +84,15 @@ public abstract class SamplersMainActivity extends Activity {
         Intent intent = new Intent(this, SamplesListActivity.class);
         startActivity(intent);
     }
+
+    protected void startHelpActivity() {
+        Integer help_resource_id = getMainHelpResourceId();
+
+        Intent intent = new Intent(this, HelpActivity.class);
+        intent.putExtra(HelpActivity.HELP_RESOURCE_ID, help_resource_id);
+        startActivity(intent);
+    }
+
+    protected abstract Integer getMainHelpResourceId();
 
 }

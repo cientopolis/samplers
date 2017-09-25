@@ -82,4 +82,9 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
 
         return workflow;
     }
+
+    @Override
+    protected Integer getMainHelpResourceId() {
+        return R.raw.mainhelp;
+    }
 }

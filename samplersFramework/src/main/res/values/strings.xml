@@ -3,6 +3,7 @@
 
     <string name="action_settings">Configuracion</string>
     <string name="action_samples">Muestras</string>
+    <string name="action_help">Ayuda</string>
 
     <string name="yesString">Si</string>
     <string name="noString">No</string>
@@ -40,6 +41,9 @@
     <!-- SamplesList Activity -->
     <string name="title_activity_samples_list">Mestras tomadas</string>
     <string name="delete_sample_confirmation_message">¿Confirma que elimina la muestra?</string>
+
+    <!-- Help Activity -->
+    <string name="title_activity_help">Ayuda</string>
 
 
 </resources>

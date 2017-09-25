@@ -11,7 +11,7 @@
 
 
     <!-- TakeSample Activity -->
-    <dimen name="tsa_activity_bar_vertical_padding">8dp</dimen>
+    <dimen name="tsa_activity_bar_vertical_padding">0dp</dimen>
     <dimen name="tsa_activity_bar_horizontal_padding">16dp</dimen>
     <dimen name="tsa_activity_bar_height">60dp</dimen>
     <dimen name="tsa_step_count_text_size">30sp</dimen>
