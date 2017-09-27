@@ -30,6 +30,8 @@ public class HelpActivity extends Activity {
             Scanner s = new Scanner(inputStream).useDelimiter("\\A");
             String html_text = s.hasNext() ? s.next() : "";
 
+            //Log.e("HTML",html_text);
+
             // Load the html text in the WebView
             WebView webView = (WebView) findViewById(R.id.help_web_view);
             webView.loadData(html_text, "text/html", null);

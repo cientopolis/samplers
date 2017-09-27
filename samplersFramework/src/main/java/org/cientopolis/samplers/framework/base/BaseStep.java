@@ -13,6 +13,7 @@ public abstract class BaseStep implements Step, Serializable {
     protected Class stepFragmentClass;
     protected int id;
     protected StepResult stepResult;
+    protected Integer helpResourseId;
 
     public BaseStep(int id) {
         this.id = id;
@@ -53,5 +54,13 @@ public abstract class BaseStep implements Step, Serializable {
                 ", stepFragmentClass=" + stepFragmentClass.getSimpleName() +
                 ", stepResult=" + stepResult +
                 '}';
+    }
+
+    public void setHelpResourseId(Integer helpResourseId) {
+        this.helpResourseId = helpResourseId;
+    }
+
+    public Integer getHelpResourseId() {
+        return this.helpResourseId;
     }
 }

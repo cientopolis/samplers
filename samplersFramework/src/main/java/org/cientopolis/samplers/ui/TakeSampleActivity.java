@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import org.cientopolis.samplers.R;
@@ -37,6 +35,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     protected Workflow workflow;
     protected Sample sample;
     protected Step actualStep;
+    protected ImageView img_help;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +60,8 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
         lb_step_count = (TextView) findViewById(R.id.lb_step_count);
 
         // Help Button
-        ImageView bt_help = (ImageView) findViewById(R.id.img_take_sample_help);
-        bt_help.setOnClickListener(new HelpClickListener(this));
+        img_help = (ImageView) findViewById(R.id.img_take_sample_help);
+        img_help.setOnClickListener(new HelpClickListener(this));
 
 
         if (savedInstanceState == null) { // First execution
@@ -110,7 +109,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     private void nextStep() {
         if (workflow != null) {
             if (!workflow.isEnd()) {
-                actualStep = workflow.nextStep();
+                setActualStep(workflow.nextStep());
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
@@ -154,10 +153,20 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
 
     private void previuosStep() {
         Log.e("TakeSample", "previuosStep()");
-        actualStep = workflow.previuosStep();
+        setActualStep(workflow.previuosStep());
         refreshStepStateOnScreen();
     }
 
+    private void setActualStep(Step newActualStep) {
+        this.actualStep = newActualStep;
+
+        if (this.actualStep != null) {
+            if (this.actualStep.getHelpResourseId() != null)
+                img_help.setVisibility(View.VISIBLE);
+            else
+                img_help.setVisibility(View.INVISIBLE);
+        }
+    }
 
     private void refreshStepStateOnScreen() {
         lb_step_count.setText(String.valueOf(workflow.getStepPosition()+1));
@@ -212,7 +221,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
         @Override
         public void onClick(View v) {
             if (true) {
-                Integer help_resource_id = null;
+                Integer help_resource_id = actualStep.getHelpResourseId();
 
                 Intent intent = new Intent(activity, HelpActivity.class);
                 intent.putExtra(HelpActivity.HELP_RESOURCE_ID, help_resource_id);

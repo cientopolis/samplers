@@ -17,4 +17,7 @@ public interface Step extends Serializable{
 
     public void setStepResult(StepResult stepResult);
     public StepResult getStepResult();
+
+    public void setHelpResourseId(Integer helpResourseId);
+    public Integer getHelpResourseId();
 }

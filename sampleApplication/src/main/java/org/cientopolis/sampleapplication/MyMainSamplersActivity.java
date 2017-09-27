@@ -62,7 +62,9 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         //workflow.addStep(new LocationStep(4, "Seleccione la posicion de la muestra",4));
 
         // PhotoStep
-        workflow.addStep(new PhotoStep(5, "Instrucciones para mostrar","",6));
+        PhotoStep photoStep = new PhotoStep(5, "Instrucciones para mostrar","",6);
+        photoStep.setHelpResourseId(R.raw.photohelp);
+        workflow.addStep(photoStep);
 
         // MultipleSelectStep
         ArrayList<MultipleSelectOption> optionsToSelect = new ArrayList<MultipleSelectOption>();
