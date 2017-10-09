@@ -11,7 +11,8 @@
       "url" : "http://192.168.1.10/samplers/upload.php",
       "paramName" : "sample"
     },
-    "googleMaps_API_KEY" : "AIzaSyBSdAX453WDiPJmPotF5akUQNQw_W_MzJ4"
+    "googleMaps_API_KEY" : "AIzaSyBSdAX453WDiPJmPotF5akUQNQw_W_MzJ4",
+    "mainHelpFileName" : "mainhelp.html"
   } ,
 
   "workflow": {
@@ -27,7 +28,8 @@
           "id":2,
           "type" : "Location",
           "text" : "Please, positionate the sample on the map",
-          "nextStepId": 3
+          "nextStepId": 3,
+          "helpFileName" : "locationhelp.html"
         },
         {
           "id":3,
@@ -85,7 +87,8 @@
           "id" : 5,
           "type" : "Photo",
           "text" : "Take a photo of your cat",
-          "nextStepId": 6
+          "nextStepId": 6,
+          "helpFileName" : "photohelp.html"
         },
         {
           "id" : 6,

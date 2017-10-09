@@ -7,9 +7,8 @@ import java.util.List;
  * Created by Xavier on 03/09/2017.
  */
 
-public class InsertTextStepClassGenerator implements StepClassGenerator {
+public class InsertTextStepClassGenerator extends BaseStepClassGenerator {
 
-    private int id;
     private Integer nextStepId;
     private String textToShow;
     private String sampleText;
@@ -19,13 +18,13 @@ public class InsertTextStepClassGenerator implements StepClassGenerator {
 
 
     public InsertTextStepClassGenerator(int id, Integer nextStepId, String textToShow, String sampleText, int maxLength, String inputType, boolean optional) {
+        super(id);
 
         // Checks for valid inputType
         if ((!inputType.equals("text")) && (!inputType.equals("number")) && (!inputType.equals("decimal"))) {
             throw new RuntimeException("Invalid inputType: "+inputType+". InputType mut be one of [text, number, decimal]");
         }
 
-        this.id = id;
         this.nextStepId = nextStepId;
         this.textToShow = textToShow;
         this.sampleText = sampleText;
@@ -39,6 +38,7 @@ public class InsertTextStepClassGenerator implements StepClassGenerator {
     public List<String> generateStep(int stepIndex, String workflow_var) {
 
         List<String> output = new ArrayList<>();
+        String varNameStep = "step"+ String.valueOf(stepIndex);
         String varNameTextToShow = "textToShowInsertText"+ String.valueOf(stepIndex);
         String varNameSampleText = "sampleTextInsertText"+ String.valueOf(stepIndex);
 
@@ -48,7 +48,12 @@ public class InsertTextStepClassGenerator implements StepClassGenerator {
 
         output.add("    String "+varNameTextToShow +" = getResources().getString(R.string."+varNameTextToShow+"); ");
         output.add("    String "+varNameSampleText +" = getResources().getString(R.string."+varNameSampleText+"); ");
-        output.add("    "+workflow_var+".addStep(new InsertTextStep("+String.valueOf(id)+","+varNameTextToShow+","+varNameSampleText+","+String.valueOf(maxLength)+","+inputTypeToEnum(inputType)+","+String.valueOf(optional)+","+String.valueOf(nextStepId)+")); ");
+        output.add("    InsertTextStep "+varNameStep+" = new InsertTextStep("+String.valueOf(id)+","+varNameTextToShow+","+varNameSampleText+","+String.valueOf(maxLength)+","+inputTypeToEnum(inputType)+","+String.valueOf(optional)+","+String.valueOf(nextStepId)+"); ");
+
+        // Help file
+        addHelpFile(output, varNameStep);
+
+        output.add("    "+workflow_var+".addStep("+varNameStep+"); ");
 
         return output;
     }

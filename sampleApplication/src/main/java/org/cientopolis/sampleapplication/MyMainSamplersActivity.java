@@ -5,6 +5,7 @@ import android.os.Bundle;
 import org.cientopolis.samplers.framework.information.InformationStep;
 import org.cientopolis.samplers.framework.insertDate.InsertDateStep;
 import org.cientopolis.samplers.framework.insertTime.InsertTimeStep;
+import org.cientopolis.samplers.framework.location.LocationStep;
 import org.cientopolis.samplers.framework.multipleSelect.MultipleSelectStep;
 import org.cientopolis.samplers.framework.photo.PhotoStep;
 import org.cientopolis.samplers.framework.selectOne.SelectOneOption;
@@ -59,10 +60,13 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         //workflow.addStep(new InsertTextStep(3, "Escriba algo","cualquier cosa",50, InsertTextStep.InputType.TYPE_TEXT, true, 3));
 
         // LocationStep
-        //workflow.addStep(new LocationStep(4, "Seleccione la posicion de la muestra",4));
+        workflow.addStep(new LocationStep(4, "Seleccione la posicion de la muestra",4));
 
         // PhotoStep
-        workflow.addStep(new PhotoStep(5, "Instrucciones para mostrar","",6));
+        PhotoStep photoStep = new PhotoStep(5, "Saque una foto de su gato","",6);
+        // set help resource
+        photoStep.setHelpResourseId(R.raw.photohelp);
+        workflow.addStep(photoStep);
 
         // MultipleSelectStep
         ArrayList<MultipleSelectOption> optionsToSelect = new ArrayList<MultipleSelectOption>();
@@ -81,5 +85,10 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         workflow.addStep(new SelectOneStep(7, optionsToSelect2, "Seleccione solo uno"));
 
         return workflow;
+    }
+
+    @Override
+    protected Integer getMainHelpResourceId() {
+        return R.raw.mainhelp;
     }
 }

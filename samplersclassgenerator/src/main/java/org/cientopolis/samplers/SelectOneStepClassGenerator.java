@@ -7,15 +7,14 @@ import java.util.List;
  * Created by Xavier on 09/06/2017.
  */
 
-public class SelectOneStepClassGenerator implements StepClassGenerator {
+public class SelectOneStepClassGenerator extends BaseStepClassGenerator {
 
-    private int id;
     private List<SelectOneOption> optionsToShow;
     private String title;
 
 
     public SelectOneStepClassGenerator(int id, String title) {
-        this.id = id;
+        super(id);
         this.optionsToShow = new ArrayList<>();
         this.title = title;
     }
@@ -29,6 +28,7 @@ public class SelectOneStepClassGenerator implements StepClassGenerator {
     public List<String> generateStep(int stepIndex, String workflow_var) {
 
         List<String> output = new ArrayList<>();
+        String varNameStep = "step"+ String.valueOf(stepIndex);
         String varNameTitle = "selectOneTitle"+ String.valueOf(stepIndex);
         String varNameOptions = "optionsToSelectOne" + String.valueOf(stepIndex);
 
@@ -47,7 +47,12 @@ public class SelectOneStepClassGenerator implements StepClassGenerator {
             output.add("    "+varNameOptions +".add(new SelectOneOption("+option.getId()+","+varNameOptionText+", "+String.valueOf(option.getNextStepId())+"));");
         }
 
-        output.add("    "+workflow_var+".addStep(new SelectOneStep("+String.valueOf(id)+","+varNameOptions+","+varNameTitle+")); ");
+        output.add("    SelectOneStep "+varNameStep+" = new SelectOneStep("+String.valueOf(id)+","+varNameOptions+","+varNameTitle+"); ");
+
+        // Help file
+        addHelpFile(output, varNameStep);
+
+        output.add("    "+workflow_var+".addStep("+varNameStep+"); ");
 
         return output;
     }

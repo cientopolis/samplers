@@ -7,15 +7,14 @@ import java.util.List;
  * Created by Xavier on 09/06/2017.
  */
 
-public class PhotoStepClassGenerator implements StepClassGenerator {
+public class PhotoStepClassGenerator extends BaseStepClassGenerator {
 
-    private int id;
     private Integer nextStepId;
     private String photoInstructions;
     private String overload_image_name;
 
     public PhotoStepClassGenerator(int id, Integer nextStepId, String photoInstructions, String overload_image_name) {
-        this.id = id;
+        super(id);
         this.nextStepId = nextStepId;
         this.photoInstructions = photoInstructions;
         this.overload_image_name = overload_image_name;
@@ -26,6 +25,7 @@ public class PhotoStepClassGenerator implements StepClassGenerator {
     public List<String> generateStep(int stepIndex, String workflow_var) {
 
         List<String> output = new ArrayList<>();
+        String varNameStep = "step"+ String.valueOf(stepIndex);
         String varNameInstructions = "photoInstructions"+ String.valueOf(stepIndex);
         String varNameImageToOverly = "photoImageToOverly"+ String.valueOf(stepIndex);
 
@@ -34,7 +34,12 @@ public class PhotoStepClassGenerator implements StepClassGenerator {
 
         output.add("    String "+varNameInstructions +" = getResources().getString(R.string."+varNameInstructions+"); ");
         output.add("    String "+varNameImageToOverly +" = getResources().getString(R.string."+varNameImageToOverly+"); ");
-        output.add("    "+workflow_var+".addStep(new PhotoStep("+String.valueOf(id)+","+varNameInstructions+","+varNameImageToOverly+","+String.valueOf(nextStepId)+")); ");
+        output.add("    PhotoStep "+varNameStep+" = new PhotoStep("+String.valueOf(id)+","+varNameInstructions+","+varNameImageToOverly+","+String.valueOf(nextStepId)+"); ");
+
+        // Help file
+        addHelpFile(output, varNameStep);
+
+        output.add("    "+workflow_var+".addStep("+varNameStep+"); ");
 
         return output;
     }

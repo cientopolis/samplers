@@ -11,10 +11,14 @@ public class SamplersClassGenerator {
     private String package_name;
     private String googleMaps_API_KEY;
     private List<StepClassGenerator> steps;
+    private String mainHelpFileName;
 
-    public SamplersClassGenerator(String package_name, String manifest_path, String strings_path) {
+    public SamplersClassGenerator(String package_name, String manifest_path, String strings_path, String raw_path) {
         this.package_name = package_name;
         this.steps = new ArrayList<>();
+
+        RawFilesManagement.setRawPath(raw_path);
+
         XMLManagement.setManifestFileName(manifest_path+"AndroidManifest.xml");
         XMLManagement.setStringsFileName(strings_path+"strings.xml");
     }
@@ -30,6 +34,10 @@ public class SamplersClassGenerator {
         steps.add(step);
     }
 
+    public void setMainHelpFileName(String mainHelpFileName) {
+        this.mainHelpFileName = mainHelpFileName;
+    }
+
     public void generateMainActivity(String path, String activity_name, String welcomeMessage, String net_config_url, String net_config_paramName) {
 
         List<String> output = new ArrayList<>();
@@ -42,6 +50,15 @@ public class SamplersClassGenerator {
         output.add("import org.cientopolis.samplers.ui.SamplersMainActivity;");
         output.add("import org.cientopolis.samplers.network.NetworkConfiguration;");
         output.add("import org.cientopolis.samplers.framework.*;");
+        output.add("import org.cientopolis.samplers.framework.information.*;");
+        output.add("import org.cientopolis.samplers.framework.insertDate.*;");
+        output.add("import org.cientopolis.samplers.framework.insertText.*;");
+        output.add("import org.cientopolis.samplers.framework.insertTime.*;");
+        output.add("import org.cientopolis.samplers.framework.location.*;");
+        output.add("import org.cientopolis.samplers.framework.multipleSelect.*;");
+        output.add("import org.cientopolis.samplers.framework.selectOne.*;");
+        output.add("import org.cientopolis.samplers.framework.photo.*;");
+
         output.add("");
         output.add("public class "+activity_name+" extends SamplersMainActivity {");
         output.add("");
@@ -53,7 +70,7 @@ public class SamplersClassGenerator {
         output.add("        NetworkConfiguration.setURL(\"" + net_config_url + "\");");
         output.add("        NetworkConfiguration.setPARAM_NAME(\"" + net_config_paramName + "\");");
 
-        // Set Welcome Message
+        // Set Welcome Message ---------------------------------------------------------------------
         String varName = "welcomeMessage";
         XMLManagement.addString(varName, welcomeMessage);
 
@@ -63,6 +80,7 @@ public class SamplersClassGenerator {
         output.add("    }");
         output.add("");
 
+        // getWorkflow() ---------------------------------------------------------------------------
         output.add("    @Override");
         output.add("    protected Workflow getWorkflow() {");
         output.add("        Workflow workflow = new Workflow();");
@@ -74,6 +92,21 @@ public class SamplersClassGenerator {
         output.add("        return workflow;");
         output.add("    }");
 
+        // getMainHelpResourceId() Help File -------------------------------------------------------
+        output.add("    @Override");
+        output.add("    protected Integer getMainHelpResourceId() {");
+
+        String returnValue = "null";
+        if (this.mainHelpFileName != null) {
+            String resourceFileName = RawFilesManagement.copyRawResourceFile(this.mainHelpFileName);
+            if (resourceFileName != "") {
+                returnValue = resourceFileName;
+            }
+        }
+
+        output.add("        return "+returnValue+";");
+        output.add("    }");
+        // -----------------------------------------------------------------------------------------
 
         output.add("}");
 
@@ -104,4 +137,9 @@ public class SamplersClassGenerator {
         }
 
     }
+
+
+
+
+
 }
