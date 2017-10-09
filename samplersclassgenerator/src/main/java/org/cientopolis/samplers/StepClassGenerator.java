@@ -8,5 +8,8 @@ import java.util.List;
 
 public interface StepClassGenerator {
 
+    public void setHelpFile(String helpFileName);
+    public String getHelpFile();
     public List<String> generateStep(int stepIndex, String workflow_var);
+
 }
