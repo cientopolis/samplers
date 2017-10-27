@@ -12,6 +12,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
      />
 
     <TextView
