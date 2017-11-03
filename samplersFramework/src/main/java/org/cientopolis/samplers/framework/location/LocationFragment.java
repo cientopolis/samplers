@@ -1,8 +1,12 @@
 package org.cientopolis.samplers.framework.location;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -45,6 +49,7 @@ import org.cientopolis.samplers.framework.base.StepFragmentInteractionListener;
 public class LocationFragment extends StepFragment {
 
     private static final String KEY_LOCATION = "org.cientopolis.samplers.LOCATION";
+    private static final int REQUEST_LOCATION_PERMISSION = 10;
 
     private GoogleApiClient mGoogleApiClient;
     private GoogleApiConnectionCallbacks googleApiConnectionCallbacks;
@@ -193,20 +198,55 @@ public class LocationFragment extends StepFragment {
         lb_longitude.setText(String.valueOf(mLocation.getLongitude()));
     }
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                requestLocation();
+            } else {
+                //TODO show error message
+            }
+        }
+    }
+
+    private void requestLocation() {
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setNumUpdates(1);
+
+        try {
+           LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest ,new MyLocationListener());
+        }
+        catch (SecurityException e) {
+            Log.e("LocationFragment", "SecurityException accesing Location");
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void requestLocationPermission() {
+        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            //if (this.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+            //    new ConfirmationDialog().show(getChildFragmentManager(), "dialog");
+            //} else {
+            getActivity().requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+            //  result on onRequestPermissionsResult()
+            //}
+
+        } else { //we already have permission, instantiate the fragment
+            requestLocation();
+        }
+    }
+
     private class GoogleApiConnectionCallbacks implements ConnectionCallbacks, OnConnectionFailedListener {
 
         @Override
         public void onConnected(@Nullable Bundle bundle) {
-
-            LocationRequest locationRequest = new LocationRequest();
-            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            locationRequest.setNumUpdates(1);
-
-            try {
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest ,new MyLocationListener());
-            }
-            catch (SecurityException e) {
-                Log.e("LocationFragment", "SecurityException accesing Location");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestLocationPermission();
+            } else {
+                requestLocation();
             }
 
         }

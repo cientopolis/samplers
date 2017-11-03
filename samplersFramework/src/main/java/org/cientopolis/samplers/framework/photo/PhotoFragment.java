@@ -128,33 +128,65 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
     }
 
     private void showCamera() {
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP){
-            Log.d("Photo Fragment", "camera1 selected");
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
             cameraType = 1;
-            camera_fragment = Camera1Fragment.newInstance(getStep().getInstructionsToShow());
-            startCameraStreaming();
+            startCamera1();
         }
         else {
             cameraType = 2;
-            //the fragment will return in 'onRequestPermissionsResult'
-            if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                requestCameraPermission(); //if the user does not accept, the app stops
-            } else { //we already have permission, instantiate the fragment
-                Log.d("Photo Fragment", "camera2 selected");
-                camera_fragment = Camera2Fragment.newInstance(getStep().getInstructionsToShow());
-                startCameraStreaming();
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // Need to request permission at run time
+                requestCameraPermission();
             }
+            else { // Build.VERSION_CODES.LOLLIPOP and Build.VERSION_CODES.LOLLIPOP_MR1
+                startCamera2();
+            }
+
         }
+    }
+
+    private void startCamera1() {
+        Log.e("Photo Fragment", "camera1 selected");
+
+        camera_fragment = Camera1Fragment.newInstance(getStep().getInstructionsToShow());
+        startCameraStreaming();
+    }
+
+    private void startCamera2() {
+        Log.e("Photo Fragment", "camera2 selected");
+
+        camera_fragment = Camera2Fragment.newInstance(getStep().getInstructionsToShow());
+        startCameraStreaming();
+    }
+
+    /*code testing*/
+    @TargetApi(Build.VERSION_CODES.M)
+    private void requestCameraPermission() {
+
+        if (getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+
+            //if (this.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+            //    new ConfirmationDialog().show(getChildFragmentManager(), "dialog");
+            //} else {
+            getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+            //  result on onRequestPermissionsResult()
+            //}
+
+        } else { //we already have permission, instantiate the fragment
+            startCamera2();
+        }
+
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Log.d("Photo Fragment", "camera2 selected");
-            camera_fragment = Camera2Fragment.newInstance(getStep().getInstructionsToShow());
-            startCameraStreaming();
-        }else{
-            //TODO show error message
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startCamera2();
+            } else {
+                //TODO show error message
+            }
         }
     }
 
@@ -171,15 +203,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         showPreviewLayout(imageURI.getPath());
     }
 
-    /*code testing*/
-    @TargetApi(Build.VERSION_CODES.M)
-    private void requestCameraPermission() {
-        if (this.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-            new ConfirmationDialog().show(getChildFragmentManager(), "dialog");
-        } else {
-            getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-        }
-    }
+
 
     @Override
     public void onPhotoTaked(Uri imageURI) {
