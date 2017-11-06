@@ -1,8 +1,12 @@
 package org.cientopolis.samplers.framework.location;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -45,6 +49,7 @@ import org.cientopolis.samplers.framework.base.StepFragmentInteractionListener;
 public class LocationFragment extends StepFragment {
 
     private static final String KEY_LOCATION = "org.cientopolis.samplers.LOCATION";
+    private static final int REQUEST_LOCATION_PERMISSION = 10;
 
     private GoogleApiClient mGoogleApiClient;
     private GoogleApiConnectionCallbacks googleApiConnectionCallbacks;
@@ -193,6 +198,51 @@ public class LocationFragment extends StepFragment {
         lb_longitude.setText(String.valueOf(mLocation.getLongitude()));
     }
 
+
+    private void requestLocation() {
+        mGoogleApiClient.connect(); // onConnect retrives the location
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void requestLocationPermission() {
+        if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+            //  result on onRequestPermissionsResult()
+
+        } else { //we already have permission, instantiate the fragment
+
+            requestLocation();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                requestLocation();
+            } else {
+                // Send a message to the user that we need permissions to access the location to get the gps position
+                ErrorMessaging.showValidationErrorMessage(getActivity().getApplicationContext(),getResources().getString(R.string.location_permissions_needed));
+            }
+        }
+    }
+
+    private class GetPositionClickListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // Need to request permission at run time
+                requestLocationPermission();
+            }
+            else {
+                requestLocation();
+            }
+        }
+    }
+
     private class GoogleApiConnectionCallbacks implements ConnectionCallbacks, OnConnectionFailedListener {
 
         @Override
@@ -273,14 +323,6 @@ public class LocationFragment extends StepFragment {
         // For zooming automatically to the location of the marker
         CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();
         mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    }
-
-    private class GetPositionClickListener implements View.OnClickListener{
-
-        @Override
-        public void onClick(View v) {
-            mGoogleApiClient.connect(); // onConnect retrives the location
-        }
     }
 
 

@@ -42,7 +42,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         Step step;
 
         // InformationStep
-        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",101));
+        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",4));
 
         // Insert Time
         workflow.addStep(new InsertTimeStep(101, "Seleccione la Hora de la muestra",102));
@@ -60,7 +60,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         //workflow.addStep(new InsertTextStep(3, "Escriba algo","cualquier cosa",50, InsertTextStep.InputType.TYPE_TEXT, true, 3));
 
         // LocationStep
-        workflow.addStep(new LocationStep(4, "Seleccione la posicion de la muestra",4));
+        workflow.addStep(new LocationStep(4, "Seleccione la posicion de la muestra",7));
 
         // PhotoStep
         PhotoStep photoStep = new PhotoStep(5, "Saque una foto de su gato","",6);
@@ -74,7 +74,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         optionsToSelect.add(new MultipleSelectOption(2,"Basura"));
         optionsToSelect.add(new MultipleSelectOption(3,"Arroyo"));
         optionsToSelect.add(new MultipleSelectOption(4,"Animales"));
-        workflow.addStep(new MultipleSelectStep(6, optionsToSelect, "Seleccione si observa algo de esto",7));
+        workflow.addStep(new MultipleSelectStep(6, optionsToSelect, "Seleccione si observa algo de esto",4));
 
         // SelectOneStep
         optionsToSelect2 = new ArrayList<SelectOneOption>();
