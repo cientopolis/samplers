@@ -199,43 +199,47 @@ public class LocationFragment extends StepFragment {
     }
 
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_LOCATION_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                requestLocation();
-            } else {
-                //TODO show error message
-            }
-        }
-    }
-
     private void requestLocation() {
-        LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setNumUpdates(1);
+        mGoogleApiClient.connect(); // onConnect retrives the location
 
-        try {
-           LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest ,new MyLocationListener());
-        }
-        catch (SecurityException e) {
-            Log.e("LocationFragment", "SecurityException accesing Location");
-        }
     }
 
     @TargetApi(Build.VERSION_CODES.M)
     private void requestLocationPermission() {
         if (getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            //if (this.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-            //    new ConfirmationDialog().show(getChildFragmentManager(), "dialog");
-            //} else {
-            getActivity().requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
             //  result on onRequestPermissionsResult()
-            //}
 
         } else { //we already have permission, instantiate the fragment
+
             requestLocation();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                requestLocation();
+            } else {
+                // Send a message to the user that we need permissions to access the location to get the gps position
+                ErrorMessaging.showValidationErrorMessage(getActivity().getApplicationContext(),getResources().getString(R.string.location_permissions_needed));
+            }
+        }
+    }
+
+    private class GetPositionClickListener implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // Need to request permission at run time
+                requestLocationPermission();
+            }
+            else {
+                requestLocation();
+            }
         }
     }
 
@@ -243,10 +247,16 @@ public class LocationFragment extends StepFragment {
 
         @Override
         public void onConnected(@Nullable Bundle bundle) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestLocationPermission();
-            } else {
-                requestLocation();
+
+            LocationRequest locationRequest = new LocationRequest();
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setNumUpdates(1);
+
+            try {
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest ,new MyLocationListener());
+            }
+            catch (SecurityException e) {
+                Log.e("LocationFragment", "SecurityException accesing Location");
             }
 
         }
@@ -313,14 +323,6 @@ public class LocationFragment extends StepFragment {
         // For zooming automatically to the location of the marker
         CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();
         mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    }
-
-    private class GetPositionClickListener implements View.OnClickListener{
-
-        @Override
-        public void onClick(View v) {
-            mGoogleApiClient.connect(); // onConnect retrives the location
-        }
     }
 
 

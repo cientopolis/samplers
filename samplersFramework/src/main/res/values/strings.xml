@@ -28,11 +28,13 @@
 
     <!-- Photo Fragment -->
     <string name="bt_retake_photo">Volver a tomar foto</string>
-    <string name="camera_request_permission">Esta muestra necesita permisos de acceso a la camara.</string>
+    <string name="camera_permissions_needed">Se necesitan permisos de acceso a la camara para tomar la foto.</string>
+    <string name="error_must_take_photo">Debe tomar la foto</string>
 
     <!-- Location Fragment -->
     <string name="lb_latitude">Latitud:</string>
     <string name="lb_longitude">Longitud:</string>
+    <string name="location_permissions_needed">Se necesitan permisos de acceso a la ubicacion para obtener la posición.</string>
     <string name="error_must_take_location">Debe tomar la posición</string>
 
     <!-- InsertText Fragment -->

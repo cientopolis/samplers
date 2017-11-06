@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.framework.StepResult;
 import org.cientopolis.samplers.framework.base.StepFragment;
+import org.cientopolis.samplers.ui.ErrorMessaging;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -76,7 +77,13 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
 
     @Override
     protected boolean validate() {
-        return true;
+        boolean ok = true;
+        if (imageURI == null) {
+            ok = false;
+            ErrorMessaging.showValidationErrorMessage(getActivity().getApplicationContext(),getResources().getString(R.string.error_must_take_photo));
+        }
+
+        return ok;
     }
 
     @Override
@@ -114,36 +121,19 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         super.onResume();
         if (fragmentState == PhotoFragmentState.TAKING_PHOTO) {
             showCamera();
-        }else{
+        } else if (fragmentState == PhotoFragmentState.SHOWING_PREVIEW) {
             showPreview();
 
         }
     }
 
-    private void startCameraStreaming(){
+    private void startCameraStreaming() {
+        Log.e("Photo Fragment", "startCameraStreaming");
+
         fragmentState = PhotoFragmentState.TAKING_PHOTO;
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.child_container, camera_fragment);
         transaction.commit();
-    }
-
-    private void showCamera() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
-            cameraType = 1;
-            startCamera1();
-        }
-        else {
-            cameraType = 2;
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                // Need to request permission at run time
-                requestCameraPermission();
-            }
-            else { // Build.VERSION_CODES.LOLLIPOP and Build.VERSION_CODES.LOLLIPOP_MR1
-                startCamera2();
-            }
-
-        }
     }
 
     private void startCamera1() {
@@ -160,18 +150,33 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         startCameraStreaming();
     }
 
-    /*code testing*/
+    private void showCamera() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            cameraType = 1;
+            startCamera1();
+        }
+        else {
+            cameraType = 2;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // Need to request permission at run time
+                requestCameraPermission();
+            }
+            else { // Build.VERSION_CODES.LOLLIPOP and LOLLIPOP_MR1 dont need to request permissions and have camera2
+                startCamera2();
+            }
+
+        }
+    }
+
+
     @TargetApi(Build.VERSION_CODES.M)
     private void requestCameraPermission() {
 
         if (getActivity().checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            fragmentState = PhotoFragmentState.REQUESTING_PERMISSIONS;
 
-            //if (this.shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-            //    new ConfirmationDialog().show(getChildFragmentManager(), "dialog");
-            //} else {
-            getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-            //  result on onRequestPermissionsResult()
-            //}
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
 
         } else { //we already have permission, instantiate the fragment
             startCamera2();
@@ -181,11 +186,16 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startCamera2();
+                // Dont start camer here, this method is called before the fragment is resumed
+                // The camera will start in onResume() method, so we change the fragment's state here
+                fragmentState = PhotoFragmentState.TAKING_PHOTO;
+
             } else {
-                //TODO show error message
+                // Send a message to the user that we need permissions to access the camera to take the photo
+                ErrorMessaging.showValidationErrorMessage(getActivity().getApplicationContext(),getResources().getString(R.string.camera_permissions_needed));
             }
         }
     }
@@ -317,38 +327,10 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
 
     private enum PhotoFragmentState implements Serializable {
         TAKING_PHOTO,
-        SHOWING_PREVIEW
+        SHOWING_PREVIEW,
+        REQUESTING_PERMISSIONS
     }
 
-    /**
-     * Shows OK/Cancel confirmation dialog about camera permission.
-     */
-    public static class ConfirmationDialog extends DialogFragment {
 
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            //final Fragment parent = getParentFragment();
-            return new AlertDialog.Builder(getActivity()).setMessage(R.string.camera_request_permission).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener()
-            { //onClick listener accept
-
-                @RequiresApi(api = Build.VERSION_CODES.M)
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    getActivity().requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
-                }
-            })
-                    .setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener()
-                    { //onClick listener cancel
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Activity activity = getActivity();
-                            if (activity != null) {
-                                activity.finish();
-                            }
-                        }
-                    })
-                    .create();
-        }
-    }
 
 }
