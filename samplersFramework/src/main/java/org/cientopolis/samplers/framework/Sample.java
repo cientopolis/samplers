@@ -17,39 +17,87 @@ public class Sample implements Serializable {
     private Date startDateTime;
     private Date endDateTime;
 
+    /**
+     * Default constructor.
+     *
+     * @return A new instance of {@link Sample}.
+     */
     public Sample(){
         startDateTime = new Date();
         steps = new ArrayList<StepResult>();
     }
 
+    /**
+     * Adds a {@link StepResult} to the list.
+     *
+     * @param stepResult The {@link StepResult} to add.
+     */
     public void addStepResult(StepResult stepResult) {
         steps.add(stepResult);
     }
 
+    /**
+     * Returns the list of the {@link StepResult} that conform the Sample.
+     *
+     * @return The list of the {@link StepResult}.
+     */
     public List<StepResult> getStepResults() {
         return steps;
     }
 
+    /**
+     * Returns the start timestamp of the sample.
+     * By default it is setted in {@link Sample#Sample()} but you can change it.
+     * Used with {@link Sample#getEndDateTime()} you can calculate the time it took the user to take the sample.
+     *
+     * @return The start timestamp of the sample.
+     */
     public Date getStartDateTime() {
         return startDateTime;
     }
 
+    /**
+     * Sets the start timestamp of the sample
+     *
+     * @param startDateTime The timestamp to set.
+     */
     public void setStartDateTime(Date startDateTime) {
         this.startDateTime = startDateTime;
     }
 
+    /**
+     * Returns the end timestamp of the sample.
+     * Used with {@link Sample#getStartDateTime()} you can calculate the time it took the user to take the sample.
+     *
+     * @return The end timestamp of the sample.
+     */
     public Date getEndDateTime() {
         return endDateTime;
     }
 
+    /**
+     * Sets the end timestamp of the sample
+     *
+     * @param endDateTime The timestamp to set.
+     */
     public void setEndDateTime(Date endDateTime) {
         this.endDateTime = endDateTime;
     }
 
+    /**
+     * Returns the id of the sample.
+     *
+     * @return The id of the sample.
+     */
     public Long getId() {
         return id;
     }
 
+    /**
+     * Sets the end id of the sample
+     *
+     * @param id The id to set.
+     */
     public void setId(Long id) {
         this.id = id;
     }

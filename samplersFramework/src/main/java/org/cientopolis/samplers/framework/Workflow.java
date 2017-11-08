@@ -12,6 +12,7 @@ import java.util.Map;
 
 /**
  * Created by Xavier on 06/06/2016.
+ * A Workflow contains the collection of {@link Step} to collect a {@link Sample}
  */
 public class Workflow implements Serializable {
 
