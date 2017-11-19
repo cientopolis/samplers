@@ -21,6 +21,7 @@ import java.io.OutputStream;
 public class MultimediaIOManagement {
 
     public static final String PHOTO_EXTENSION = "jpg";
+    public static final String SOUND_EXTENSION = "mp4";
 
     private static final String TEMP_DIR = "tmp";
 
@@ -30,6 +31,17 @@ public class MultimediaIOManagement {
         tmpDir.mkdirs();
 
         return tmpDir;
+    }
+
+    public static File saveTempAudioFile(Context context, String fileExtension) throws IOException{
+        // Generate the file name with the system current date/time
+        String filename = String.format("%d."+fileExtension, System.currentTimeMillis());
+
+        // Get the temp directory
+        File directory = MultimediaIOManagement.getTempDir(context);
+
+        // create the file
+        return new File(directory,filename);
     }
 
     public static File saveTempFile(Context context, String fileExtension, byte[] data) throws IOException {

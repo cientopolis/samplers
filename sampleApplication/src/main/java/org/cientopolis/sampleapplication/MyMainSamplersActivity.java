@@ -13,6 +13,7 @@ import org.cientopolis.samplers.framework.selectOne.SelectOneStep;
 import org.cientopolis.samplers.framework.multipleSelect.MultipleSelectOption;
 import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.Workflow;
+import org.cientopolis.samplers.framework.soundRecord.SoundRecordStep;
 import org.cientopolis.samplers.network.NetworkConfiguration;
 import org.cientopolis.samplers.ui.SamplersMainActivity;
 
@@ -42,13 +43,16 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         Step step;
 
         // InformationStep
-        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",4));
+        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",103));
 
         // Insert Time
         workflow.addStep(new InsertTimeStep(101, "Seleccione la Hora de la muestra",102));
 
         // Insert Date
         workflow.addStep(new InsertDateStep(102, "Seleccione la Fecha de la muestra",2));
+
+        // Sound
+        workflow.addStep(new SoundRecordStep(103, "Grabe algo",4));
 
         // SelectOneStep
         ArrayList<SelectOneOption> optionsToSelect2 = new ArrayList<SelectOneOption>();
