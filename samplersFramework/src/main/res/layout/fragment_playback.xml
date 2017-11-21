@@ -6,15 +6,7 @@
     android:layout_height="wrap_content"
     tools:context="org.cientopolis.samplers.framework.soundRecord.PlaybackFragment">
 
-    <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/mediaplayer_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        card_view:cardElevation="3dp"
-        android:transitionName="open_mediaplayer"
-        android:layout_centerHorizontal="true">
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,6 +70,5 @@
 
         </LinearLayout>
 
-    </android.support.v7.widget.CardView>
 
 </RelativeLayout>

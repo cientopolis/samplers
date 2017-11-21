@@ -4,42 +4,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageButton
-        android:id="@+id/btn_play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_media_play"
-        android:layout_below="@+id/current_progress_text_view"
-        android:layout_alignStart="@+id/btnStart" />
-
-    <TextView
-        android:id="@+id/current_progress_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:text="00:00"
-        android:layout_below="@+id/linearLayout"
-        android:layout_alignStart="@+id/linearLayout" />
-
-    <TextView
-        android:id="@+id/file_length_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="10dp"
-        android:text="00:00"
-        android:layout_below="@+id/linearLayout"
-        android:layout_alignEnd="@+id/linearLayout" />
-
-    <Button
-        android:id="@+id/bt_next"
-        app:srcCompat="@drawable/ic_media_play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="30dp"
-        android:text="@string/bt_next" />
 
     <ProgressBar
         style="?android:attr/progressBarStyleHorizontal"
@@ -52,6 +16,7 @@
         android:max="100"
         android:progress="0"
         android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true" />
 
     <Chronometer
@@ -60,26 +25,15 @@
         android:id="@+id/chronometer"
         android:textSize="60sp"
         android:fontFamily="sans-serif-light"
-        android:layout_marginTop="42dp"
+        android:layout_marginTop="50dp"
         android:layout_alignTop="@+id/progressBar"
         android:layout_centerHorizontal="true" />
 
-    <!--  <Button
-           android:id="@+id/btnStart"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:drawablePadding="-10dp"
-           android:layout_marginBottom="42dp"
-           android:layout_above="@+id/btnPlay"
-          android:drawableTop="@drawable/ic_launcher"
-           android:layout_alignEnd="@+id/chronometer" /> -->
-         <!--  android:drawableTop="@drawable/ic_launcher" -->
-
 
     <TextView
+        android:id="@+id/recording_status_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/recording_status_text"
         android:text="@string/record_prompt"
         android:textStyle="bold"
         android:textSize="17sp"
@@ -93,43 +47,57 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_launcher"
-        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/recording_status_text"
+        android:layout_marginTop="10dp"/>
+
+
+    <SeekBar
+        android:id="@+id/seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btnStart"
+        android:layout_marginTop="20dp"/>
+
+
+    <TextView
+        android:id="@+id/current_progress_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:text="00:00"
+        android:layout_below="@+id/seekbar"
+        android:layout_alignStart="@+id/seekbar" />
+
+    <TextView
+        android:id="@+id/file_length_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:text="00:00"
+        android:layout_below="@+id/seekbar"
+        android:layout_alignEnd="@+id/seekbar" />
+
+
+    <ImageButton
+        android:id="@+id/btn_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_media_play"
+        android:layout_below="@+id/seekbar"
+        android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true" />
 
-    <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/mediaplayer_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        card_view:cardElevation="3dp"
-        android:transitionName="open_mediaplayer"
-        android:layout_centerHorizontal="true">
 
-    </android.support.v7.widget.CardView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/bt_next"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="7dp"
-        android:layout_marginRight="7dp"
-        android:layout_marginTop="16dp"
-        android:orientation="vertical"
-        android:layout_below="@+id/btnStart"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:id="@+id/linearLayout">
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="30dp"
+        android:text="@string/bt_next" />
 
-        <SeekBar
-            android:id="@+id/seekbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </RelativeLayout>
-
-    </LinearLayout>
 
 </RelativeLayout>
