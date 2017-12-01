@@ -1,7 +1,6 @@
 package org.cientopolis.samplers.framework.soundRecord;
 
 import android.Manifest;
-import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -17,7 +16,6 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -37,33 +35,31 @@ import java.util.concurrent.TimeUnit;
 
 public class SoundRecordFragment extends StepFragment {
 
-    private Chronometer mChronometer;
-    private TextView mRecordingPrompt;
-   // private Button mRecordButton;
+    private static final String KEY_RECORDING_ITEM = "org.cientopolis.samplers.SoundRecordFragment_RecordingItem";
 
-    private ImageButton mRecordButton;
-    private String fileName;
-    boolean mBound = false;
-    private RecordingItem mRecordingItem;
+    private Chronometer mChronometer;
+    private TextView lb_recording_status;
+
+    private ImageButton bt_recordStop;
 
     private int mRecordPromptCount = 0;
     //private long timeWhenPaused = 0; //stores time when user clicks pause button
 
     private boolean mStartRecording = true;
-    //private boolean mPauseRecording = true;
+
     private RecordingService mRecordingService;
+    boolean mBound = false;
+    private RecordingItem mRecordingItem;
 
     //for playback ------------------------------
     private Handler mHandler = new Handler();
 
-    private ImageButton mPlayButton;
+    private ImageButton bt_playStop;
     private MediaPlayer mMediaPlayer = null;
     private SeekBar mSeekBar = null;
-    private TextView mCurrentProgressTextView = null;
-    private TextView mFileLengthTextView = null;
-    //stores minutes and seconds of the length of the file.
-    private long minutes = 0;
-    private long seconds = 0;
+    private TextView lb_currentProgress = null;
+    private TextView lb_fileLength = null;
+
     //stores whether or not the mediaplayer is currently playing audio
     private boolean isPlaying = false;
 
@@ -82,6 +78,20 @@ public class SoundRecordFragment extends StepFragment {
         }
     };
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mRecordingItem = (RecordingItem) savedInstanceState.getSerializable(KEY_RECORDING_ITEM);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(KEY_RECORDING_ITEM,mRecordingItem);
+    }
 
     @Override
     protected int getLayoutResource() {
@@ -91,56 +101,30 @@ public class SoundRecordFragment extends StepFragment {
     @Override
     protected void onCreateViewStepFragment(View rootView, Bundle savedInstanceState) {
         mChronometer = (Chronometer) rootView.findViewById(R.id.chronometer);
-        mRecordingPrompt = (TextView) rootView.findViewById(R.id.recording_status_text);
-        //assign listeners
-        mRecordButton = (ImageButton) rootView.findViewById(R.id.btnStart);
-        mRecordButton.setImageResource(R.drawable.ic_launcher);
-        mRecordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onRecord(mStartRecording);
-                mStartRecording = !mStartRecording;
-            }
-        });
+        lb_recording_status = (TextView) rootView.findViewById(R.id.lb_recording_status);
+
+        bt_recordStop = (ImageButton) rootView.findViewById(R.id.bt_recordStop);
+        bt_recordStop.setImageResource(R.drawable.ic_launcher);
+        bt_recordStop.setOnClickListener(new RecordClickListener());
 
         // Playback -----------------------
-        mFileLengthTextView = (TextView) rootView.findViewById(R.id.file_length_text_view);
-        mFileLengthTextView.setText(String.format("%02d:%02d", minutes,seconds));
-        mCurrentProgressTextView = (TextView) rootView.findViewById(R.id.current_progress_text_view);
+        lb_fileLength = (TextView) rootView.findViewById(R.id.lb_fileLength);
+        if (mRecordingItem != null)
+            lb_fileLength.setText(String.format("%02d:%02d", mRecordingItem.getMinutes(),mRecordingItem.getSeconds()));
+
+        lb_currentProgress = (TextView) rootView.findViewById(R.id.lb_currentProgress);
 
 
-        mPlayButton = (ImageButton) rootView.findViewById(R.id.btn_play);
-        mPlayButton.setImageResource(R.drawable.ic_media_play);
-        mPlayButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onPlay(isPlaying);
-                isPlaying = !isPlaying;
-            }
-        });
-        /*
-        mPlayButton.setOnClickListener(new View.OnClickListener(){
+        bt_playStop = (ImageButton) rootView.findViewById(R.id.bt_playStop);
+        bt_playStop.setImageResource(R.drawable.ic_media_play);
+        bt_playStop.setOnClickListener(new PlayClickListener());
 
-            @Override
-            public void onClick(View v) {
-                try {
-                    PlaybackFragment playbackFragment = new PlaybackFragment().newInstance(mRecordingItem);
-                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                    playbackFragment.show(getFragmentManager(),"");
-
-                    playbackFragment.show(transaction, "dialog_playback");
-
-                } catch (Exception e) {
-                    Log.e("playback exc", "exception", e);
-                }
-            }
-        });
-*/
         mSeekBar = (SeekBar) rootView.findViewById(R.id.seekbar);
         // TODO: rename color name and set it in layout xml file
         ColorFilter filter = new LightingColorFilter(getResources().getColor(R.color.primary), getResources().getColor(R.color.primary));
         mSeekBar.getProgressDrawable().setColorFilter(filter);
         mSeekBar.getThumb().setColorFilter(filter);
+        mSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener());
     }
 
     @Override
@@ -155,7 +139,7 @@ public class SoundRecordFragment extends StepFragment {
 
     @Override
     protected StepResult getStepResult() {
-        return new SoundRecordStepResult(getStep().getId(),fileName);
+        return new SoundRecordStepResult(getStep().getId(),mRecordingItem.getFilePath());
     }
 
 
@@ -181,20 +165,20 @@ public class SoundRecordFragment extends StepFragment {
     private void onRecord(boolean start){
 
         Intent intent = new Intent(getActivity(), RecordingService.class);
-        /** Permission for audio source*/
+        /* Permission for audio source*/
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, 10);
 
         } else {
 
-            /**comment to exclude permission request*/
+            /*comment to exclude permission request*/
 
             if (start) {
                 // start recording
                 /* this change image from "start" to "stop" */
-                mRecordButton.setImageResource(R.drawable.ic_media_stop);
+                bt_recordStop.setImageResource(R.drawable.ic_media_stop);
                 /*disable playback button*/
-                mPlayButton.setEnabled(false);
+                bt_playStop.setEnabled(false);
                 // start Chronometer
                 mChronometer.setBase(SystemClock.elapsedRealtime());
                 mChronometer.start();
@@ -202,11 +186,11 @@ public class SoundRecordFragment extends StepFragment {
                     @Override
                     public void onChronometerTick(Chronometer chronometer) {
                         if (mRecordPromptCount == 0) {
-                            mRecordingPrompt.setText(getString(R.string.record_in_progress) + ".");
+                            lb_recording_status.setText(getString(R.string.record_in_progress) + ".");
                         } else if (mRecordPromptCount == 1) {
-                            mRecordingPrompt.setText(getString(R.string.record_in_progress) + "..");
+                            lb_recording_status.setText(getString(R.string.record_in_progress) + "..");
                         } else if (mRecordPromptCount == 2) {
-                            mRecordingPrompt.setText(getString(R.string.record_in_progress) + "...");
+                            lb_recording_status.setText(getString(R.string.record_in_progress) + "...");
                             mRecordPromptCount = -1;
                         }
 
@@ -218,29 +202,25 @@ public class SoundRecordFragment extends StepFragment {
                 //keep screen on while recording
                 getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-                mRecordingPrompt.setText(getString(R.string.record_in_progress) + ".");
+                lb_recording_status.setText(getString(R.string.record_in_progress) + ".");
                 mRecordPromptCount++;
 
             } else {
                 //stop recording
-                mRecordButton.setImageResource(R.drawable.ic_launcher);
+                bt_recordStop.setImageResource(R.drawable.ic_launcher);
                 mChronometer.stop();
                 mChronometer.setBase(SystemClock.elapsedRealtime());
                 //timeWhenPaused = 0;
-                mRecordingPrompt.setText(getString(R.string.record_prompt));
+                lb_recording_status.setText(getString(R.string.record_prompt));
                 /*enable playback button*/
-                mPlayButton.setEnabled(true);
+                bt_playStop.setEnabled(true);
                 /*and seekbar callbacks*/
                 //getActivity().stopService(intent);
                 if(mBound) {
-                    fileName = mRecordingService.getFileName();
-                    mRecordingItem = new RecordingItem();
-                    mRecordingItem.setFilePath(fileName);
-                    mRecordingItem.setName("sound recorded");
                     mRecordingService.stopRecording();
-                    /*get Duration*/
-                    int millSecond = mRecordingService.getElapsedMillis();
-                    mRecordingItem.setLength(millSecond);
+
+                    mRecordingItem = mRecordingService.getRecordingItem();
+                    lb_fileLength.setText(String.format("%02d:%02d", mRecordingItem.getMinutes(),mRecordingItem.getSeconds()));
 
                     getActivity().unbindService(mConnection);
                     mBound = false;
@@ -252,27 +232,10 @@ public class SoundRecordFragment extends StepFragment {
         }
     }
 
-    /*test for playing recorded audio*/
 
-
-    private void onPlay(boolean isPlaying){
-        if (!isPlaying) {
-            //currently MediaPlayer is not playing audio
-            if(mMediaPlayer == null) {
-                startPlaying(); //start from beginning
-            } else {
-                resumePlaying(); //resume the currently paused MediaPlayer
-            }
-            mPlayButton.setImageResource(R.drawable.ic_media_stop);
-        } else {
-            //pause the MediaPlayer
-            pausePlaying();
-            mPlayButton.setImageResource(R.drawable.ic_media_play);
-        }
-    }
 
     private void startPlaying() {
-        //mPlayButton.setImageResource(R.drawable.ic_media_pause);
+
         mMediaPlayer = new MediaPlayer();
 
         try {
@@ -294,7 +257,7 @@ public class SoundRecordFragment extends StepFragment {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 stopPlaying();
-                mPlayButton.setImageResource(R.drawable.ic_media_play);
+                bt_playStop.setImageResource(R.drawable.ic_media_play);
             }
         });
 
@@ -331,20 +294,20 @@ public class SoundRecordFragment extends StepFragment {
     }
 
     private void pausePlaying() {
-        //mPlayButton.setImageResource(R.drawable.ic_media_play);
+        //bt_playStop.setImageResource(R.drawable.ic_media_play);
         mHandler.removeCallbacks(mRunnable);
         mMediaPlayer.pause();
     }
 
     private void resumePlaying() {
-        //mPlayButton.setImageResource(R.drawable.ic_media_pause);
+        //bt_playStop.setImageResource(R.drawable.ic_media_pause);
         mHandler.removeCallbacks(mRunnable);
         mMediaPlayer.start();
         updateSeekBar();
     }
 
     private void stopPlaying() {
-        //mPlayButton.setImageResource(R.drawable.ic_media_play);
+        //bt_playStop.setImageResource(R.drawable.ic_media_play);
         mHandler.removeCallbacks(mRunnable);
         mMediaPlayer.stop();
         mMediaPlayer.reset();
@@ -354,7 +317,7 @@ public class SoundRecordFragment extends StepFragment {
         mSeekBar.setProgress(mSeekBar.getMax());
         isPlaying = !isPlaying;
 
-        mCurrentProgressTextView.setText(mFileLengthTextView.getText());
+        lb_currentProgress.setText(lb_fileLength.getText());
         mSeekBar.setProgress(mSeekBar.getMax());
 
         //allow the screen to turn off again once audio is finished playing
@@ -373,7 +336,7 @@ public class SoundRecordFragment extends StepFragment {
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(mMediaPlayer.getCurrentPosition());
                 long seconds = TimeUnit.MILLISECONDS.toSeconds(mMediaPlayer.getCurrentPosition())
                         - TimeUnit.MINUTES.toSeconds(minutes);
-                mCurrentProgressTextView.setText(String.format("%02d:%02d", minutes,seconds));
+                lb_currentProgress.setText(String.format("%02d:%02d", minutes,seconds));
 
                 updateSeekBar();
 
@@ -400,7 +363,7 @@ public class SoundRecordFragment extends StepFragment {
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(mMediaPlayer.getCurrentPosition());
                 long seconds = TimeUnit.MILLISECONDS.toSeconds(mMediaPlayer.getCurrentPosition())
                         - TimeUnit.MINUTES.toSeconds(minutes);
-                mCurrentProgressTextView.setText(String.format("%02d:%02d", minutes,seconds));
+                lb_currentProgress.setText(String.format("%02d:%02d", minutes,seconds));
                 updateSeekBar();
             }
         }
@@ -418,7 +381,7 @@ public class SoundRecordFragment extends StepFragment {
                 long minutes = TimeUnit.MILLISECONDS.toMinutes(mCurrentPosition);
                 long seconds = TimeUnit.MILLISECONDS.toSeconds(mCurrentPosition)
                         - TimeUnit.MINUTES.toSeconds(minutes);
-                mCurrentProgressTextView.setText(String.format("%02d:%02d", minutes, seconds));
+                lb_currentProgress.setText(String.format("%02d:%02d", minutes, seconds));
 
                 updateSeekBar();
             }
@@ -428,5 +391,39 @@ public class SoundRecordFragment extends StepFragment {
     private void updateSeekBar() {
         mHandler.postDelayed(mRunnable, 1000);
     }
+
+    private class RecordClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            onRecord(mStartRecording);
+            mStartRecording = !mStartRecording;
+        }
+    }
+
+
+    private class PlayClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+
+            if (!isPlaying) {
+                //currently MediaPlayer is not playing audio
+                if(mMediaPlayer == null) {
+                    startPlaying(); //start from beginning
+                } else {
+                    resumePlaying(); //resume the currently paused MediaPlayer
+                }
+                bt_playStop.setImageResource(R.drawable.ic_media_stop);
+            } else {
+                //pause the MediaPlayer
+                pausePlaying();
+                bt_playStop.setImageResource(R.drawable.ic_media_play);
+            }
+
+            isPlaying = !isPlaying;
+        }
+    }
+
 
 }

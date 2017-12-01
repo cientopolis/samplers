@@ -45,7 +45,6 @@ public class SamplersClassGenerator {
         output.add("package " + package_name+";");
         output.add("");
         output.add("import android.os.Bundle;");
-        output.add("import android.content.Intent;");
         output.add("import java.util.ArrayList;");
         output.add("import org.cientopolis.samplers.ui.SamplersMainActivity;");
         output.add("import org.cientopolis.samplers.network.NetworkConfiguration;");
@@ -58,6 +57,7 @@ public class SamplersClassGenerator {
         output.add("import org.cientopolis.samplers.framework.multipleSelect.*;");
         output.add("import org.cientopolis.samplers.framework.selectOne.*;");
         output.add("import org.cientopolis.samplers.framework.photo.*;");
+        output.add("import org.cientopolis.samplers.framework.soundRecord.*;");
 
         output.add("");
         output.add("public class "+activity_name+" extends SamplersMainActivity {");

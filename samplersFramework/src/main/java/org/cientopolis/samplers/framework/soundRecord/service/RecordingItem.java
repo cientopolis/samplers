@@ -3,27 +3,24 @@ package org.cientopolis.samplers.framework.soundRecord.service;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by laura on 01/10/17.
  */
 
-public class RecordingItem implements Parcelable {
-    private String mName; // file name
+public class RecordingItem implements Serializable {
+
     private String mFilePath; //file path
-    private int mId; //id in database
-    private int mLength; // length of recording in seconds
+    private int mLength = 0; // length of recording in seconds
+    private long minutes = 0;
+    private long seconds = 0;
+
     private long mTime; // date/time of the recording
 
     public RecordingItem()
     {
-    }
-
-    public RecordingItem(Parcel in) {
-        mName = in.readString();
-        mFilePath = in.readString();
-        mId = in.readInt();
-        mLength = in.readInt();
-        mTime = in.readLong();
     }
 
     public String getFilePath() {
@@ -40,22 +37,18 @@ public class RecordingItem implements Parcelable {
 
     public void setLength(int length) {
         mLength = length;
+
+        minutes = TimeUnit.MILLISECONDS.toMinutes(mLength);
+        seconds = TimeUnit.MILLISECONDS.toSeconds(mLength)
+                - TimeUnit.MINUTES.toSeconds(minutes);
     }
 
-    public int getId() {
-        return mId;
+    public long getMinutes() {
+        return minutes;
     }
 
-    public void setId(int id) {
-        mId = id;
-    }
-
-    public String getName() {
-        return mName;
-    }
-
-    public void setName(String name) {
-        mName = name;
+    public long getSeconds() {
+        return seconds;
     }
 
     public long getTime() {
@@ -66,27 +59,5 @@ public class RecordingItem implements Parcelable {
         mTime = time;
     }
 
-    public static final Parcelable.Creator<RecordingItem> CREATOR = new Parcelable.Creator<RecordingItem>() {
-        public RecordingItem createFromParcel(Parcel in) {
-            return new RecordingItem(in);
-        }
 
-        public RecordingItem[] newArray(int size) {
-            return new RecordingItem[size];
-        }
-    };
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(mId);
-        dest.writeInt(mLength);
-        dest.writeLong(mTime);
-        dest.writeString(mFilePath);
-        dest.writeString(mName);
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
 }

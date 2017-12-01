@@ -48,7 +48,7 @@ public class RecordingService extends Service {
         }
         catch (IOException e){
             e.printStackTrace();
-            Log.e("rec service", "error creating temp sound file");
+            Log.e(LOG_TAG, "error creating temp sound file");
         }
     }
 
@@ -87,12 +87,12 @@ public class RecordingService extends Service {
         }
     }
 
-    public String getFileName(){
-        return mFileName;
-    }
+    public RecordingItem getRecordingItem() {
+        RecordingItem recordingItem = new RecordingItem();
+        recordingItem.setFilePath(mFileName);
+        recordingItem.setLength((int)mElapsedMillis);
 
-    public int getElapsedMillis(){
-        return (int)mElapsedMillis;
+        return recordingItem;
     }
 
 
@@ -100,7 +100,6 @@ public class RecordingService extends Service {
         mRecorder.stop();
         mElapsedMillis = (System.currentTimeMillis() - mStartingTimeMillis);
         mRecorder.release();
-        //Toast.makeText(this, "recording saved to" + mFilePath, Toast.LENGTH_LONG).show();
 
         //remove notification
         if (mIncrementTimerTask != null) {

@@ -115,9 +115,13 @@ task samplers_config {
                     stepClassGenerator = new org.cientopolis.samplers.InsertTimeStepClassGenerator(step.id, step.nextStepId, step.text)
                     break
 
+                case "Sound":
+                    stepClassGenerator = new org.cientopolis.samplers.SoundRecordStepClassGenerator(step.id, step.nextStepId, step.text)
+                    break
+
                 default:
                     stepClassGenerator = null;
-                    break;
+                    break
             }
 
             if (stepClassGenerator != null) {

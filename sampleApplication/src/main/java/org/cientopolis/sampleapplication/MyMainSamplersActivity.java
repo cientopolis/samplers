@@ -30,7 +30,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         super.onCreate(savedInstanceState);
 
         // Set the network configuration
-        NetworkConfiguration.setURL("http://192.168.1.10/samplers/upload.php");
+        NetworkConfiguration.setURL("http://192.168.0.104/samplers/upload.php");
         NetworkConfiguration.setPARAM_NAME("sample");
 
         lb_main_welcome_message.setText("Bienvenido a la Aplicacion de Prueba!");

@@ -109,7 +109,13 @@
           "sampleText" : "your comments",
           "inputType" : "text",
           "maxLength" : 50,
-          "optional" : true
+          "optional" : true,
+          "nextStepId": 9
+        },
+        {
+          "id" : 9,
+          "type" : "Sound",
+          "text" : "Please, record the sound"
         }
     ]
   }

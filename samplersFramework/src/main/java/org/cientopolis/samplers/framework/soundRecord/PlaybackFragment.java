@@ -62,7 +62,7 @@ public class PlaybackFragment extends DialogFragment {
     public PlaybackFragment newInstance(RecordingItem item) {
         PlaybackFragment f = new PlaybackFragment();
         Bundle b = new Bundle();
-        b.putParcelable(ARG_ITEM, item);
+        //b.putParcelable(ARG_ITEM, item);
         f.setArguments(b);
 
         return f;
@@ -87,7 +87,7 @@ public class PlaybackFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
+/*
         Dialog dialog = super.onCreateDialog(savedInstanceState);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -164,6 +164,8 @@ public class PlaybackFragment extends DialogFragment {
         dialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return builder.create();
+        */
+return null;
     }
 
     @Override
