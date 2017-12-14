@@ -57,7 +57,7 @@ public class RecordingService extends Service {
         if (mRecorder != null) {
             stopRecording();
         }
-
+        Log.e(LOG_TAG, "SERVICE DESTROY");
         super.onDestroy();
     }
 

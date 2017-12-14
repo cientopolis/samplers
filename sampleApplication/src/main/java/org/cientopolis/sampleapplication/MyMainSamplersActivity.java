@@ -30,7 +30,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         super.onCreate(savedInstanceState);
 
         // Set the network configuration
-        NetworkConfiguration.setURL("http://192.168.0.104/samplers/upload.php");
+        NetworkConfiguration.setURL("http://192.168.0.100/samplers/upload.php");
         NetworkConfiguration.setPARAM_NAME("sample");
 
         lb_main_welcome_message.setText("Bienvenido a la Aplicacion de Prueba!");
@@ -41,7 +41,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
     protected Workflow getWorkflow() {
         Workflow workflow = new Workflow();
         Step step;
-
+/*
         // InformationStep
         workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",103));
 
@@ -50,9 +50,9 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
 
         // Insert Date
         workflow.addStep(new InsertDateStep(102, "Seleccione la Fecha de la muestra",2));
-
+*/
         // Sound
-        workflow.addStep(new SoundRecordStep(103, "Grabe algo",4));
+        workflow.addStep(new SoundRecordStep(103, "Grabe algo",5));
 
         // SelectOneStep
         ArrayList<SelectOneOption> optionsToSelect2 = new ArrayList<SelectOneOption>();
@@ -67,7 +67,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         workflow.addStep(new LocationStep(4, "Seleccione la posicion de la muestra",7));
 
         // PhotoStep
-        PhotoStep photoStep = new PhotoStep(5, "Saque una foto de su gato","",6);
+        PhotoStep photoStep = new PhotoStep(5, "Saque una foto de su gato","",7);
         // set help resource
         photoStep.setHelpResourseId(R.raw.photohelp);
         workflow.addStep(photoStep);

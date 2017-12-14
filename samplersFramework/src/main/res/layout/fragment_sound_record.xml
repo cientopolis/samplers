@@ -6,15 +6,12 @@
 
 
     <ProgressBar
-        style="?android:attr/progressBarStyleHorizontal"
+
         android:id="@+id/progressBar"
         android:layout_width="175dp"
         android:layout_height="175dp"
-        android:progressDrawable="@drawable/record_progress_bar"
         android:background="@drawable/record_progress_bar_background"
-        android:indeterminate="false"
-        android:max="100"
-        android:progress="0"
+        android:indeterminateDrawable="@drawable/record_progress_bar"
         android:layout_alignParentTop="true"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true" />
@@ -84,6 +81,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_media_play"
+        android:drawableTint="@color/pinkA400"
+        android:drawableTintMode="add"
+        android:drawableStart="@drawable/ic_play_circle_outline_black_36dp"
         android:layout_below="@+id/seekbar"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true" />

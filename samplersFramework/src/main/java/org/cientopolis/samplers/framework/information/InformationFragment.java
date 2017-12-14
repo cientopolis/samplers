@@ -49,7 +49,7 @@ public class InformationFragment extends StepFragment {
     @Override
     protected StepResult getStepResult() {
         // TODO: 01/03/2017 see stepResult of InformationStep
-        return null;
+        return new InformationStepResult(getStep().getId());
     }
 
 
