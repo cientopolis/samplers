@@ -1,9 +1,9 @@
 package org.cientopolis.samplers.framework.soundRecord;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
@@ -11,11 +11,12 @@ import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
-import android.support.v4.app.ActivityCompat;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.framework.StepResult;
 import org.cientopolis.samplers.framework.base.StepFragment;
+import org.cientopolis.samplers.framework.base.StepFragmentInteractionListener;
 import org.cientopolis.samplers.framework.soundRecord.service.RecordingItem;
 import org.cientopolis.samplers.framework.soundRecord.service.RecordingService;
 import org.cientopolis.samplers.ui.ErrorMessaging;
@@ -37,35 +39,33 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by laura on 06/09/17.
+ * A simple {@link StepFragment} subclass to complete a SoundRecordStep and record a sound.
+ * Activities that contain this fragment must implement the {@link StepFragmentInteractionListener}
+ * interface to handle interaction events.
+ * Use the {@link StepFragment#newInstance} factory method to create an instance of this fragment.
+ *
  * TODO:
- * - Aplicar pattern de estado
- * - No perder contacto (bound) con el servicio de grabacion cuando se rota
- * - Al rotar aparece la ayuda (revisar la TakeSampleActivity
- * - refactor onRecord() en startRecording() y stopRecording()
  * - Cambiar iconos por los sin el circulo
- * - Sacar MySharedPreferences del Service
  * - Progress bar (opcional)
- */
-
+ *
+ *
+ * */
 public class SoundRecordFragment extends StepFragment {
 
     private static final String KEY_RECORDING_ITEM = "org.cientopolis.samplers.SoundRecordFragment_RecordingItem";
     private static final String KEY_STATE = "org.cientopolis.samplers.SoundRecordFragment_State";
-    private static final String KEY_CONNECTION = "org.cientopolis.samplers.SoundRecordFragment_Connection";
-    private static final String KEY_BOOLEAN = "org.cientopolis.samplers.SoundRecordFragment_Boolean";
-
 
     private static final int PLAY_RESOURSE_ID = R.drawable.ic_play_circle_outline_black_36dp;
     private static final int PAUSE_RESOURSE_ID = R.drawable.ic_pause_circle_outline_black_36dp;
 
-    private State mState;
+    private static final int REQUEST_RECORDING_PERMISSION = 10;
+
+    private UIState mUIState;
 
     // FOR RECORDING ------------------
     private Chronometer mChronometer;
     private TextView lb_recording_status;
     private ImageButton bt_recordStop;
-
-    private boolean mStartRecording = true;
 
     private MyServiceConnection mConnection;
     private RecordingService mRecordingService;
@@ -77,15 +77,14 @@ public class SoundRecordFragment extends StepFragment {
 
     // FOR PLAYBACK ------------------------------
     private Handler mHandler = new Handler();
-
-    private ImageButton bt_playStop;
     private MediaPlayer mMediaPlayer = null;
+    private ImageButton bt_playStop;
     private SeekBar mSeekBar = null;
     private TextView lb_currentProgress = null;
     private TextView lb_fileLength = null;
 
     //stores whether or not the mediaplayer is currently playing audio
-    private boolean isPlaying = false;
+    //private boolean isPlaying = false;
     //private long timeWhenPaused = 0; //stores time when user clicks pause button
 
 
@@ -96,14 +95,13 @@ public class SoundRecordFragment extends StepFragment {
 
         if (savedInstanceState != null) {
             mRecordingItem = (RecordingItem) savedInstanceState.getSerializable(KEY_RECORDING_ITEM);
-            mState = (State) savedInstanceState.getSerializable(KEY_STATE);
-            mState.setFragment(this);
+            mUIState = (UIState) savedInstanceState.getSerializable(KEY_STATE);
             //mConnection = (MyServiceConnection) savedInstanceState.getSerializable(KEY_CONNECTION);
-            mStartRecording =  savedInstanceState.getBoolean(KEY_BOOLEAN);
+
 
         }
         else {
-            mState = new IdleState(this);
+            mUIState = new IdleUIState();
 
         }
         mConnection = new MyServiceConnection();
@@ -112,11 +110,12 @@ public class SoundRecordFragment extends StepFragment {
     @Override
     public void onSaveInstanceState (Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.e("SoundRecordFragment", "onSaveInstanceState: IN");
         outState.putSerializable(KEY_RECORDING_ITEM,mRecordingItem);
-        outState.putSerializable(KEY_STATE,mState);
-        outState.putSerializable(KEY_CONNECTION, mConnection);
-        outState.putBoolean(KEY_BOOLEAN, mStartRecording);
-
+        //outState.putSerializable(KEY_STATE,mUIState);
+        outState.putSerializable(KEY_STATE, mUIState);
+        //outState.putSerializable(KEY_CONNECTION, mConnection);
+        Log.e("SoundRecordFragment", "onSaveInstanceState: OUT");
 
     }
 
@@ -127,29 +126,11 @@ public class SoundRecordFragment extends StepFragment {
 
     @Override
     protected void onCreateViewStepFragment(View rootView, Bundle savedInstanceState) {
+
+        // Record ----------------------
+        bt_recordStop = (ImageButton) rootView.findViewById(R.id.bt_recordStop);
         mChronometer = (Chronometer) rootView.findViewById(R.id.chronometer);
         lb_recording_status = (TextView) rootView.findViewById(R.id.lb_recording_status);
-
-        bt_recordStop = (ImageButton) rootView.findViewById(R.id.bt_recordStop);
-        bt_recordStop.setOnClickListener(new RecordClickListener());
-
-        // Playback -----------------------
-        lb_fileLength = (TextView) rootView.findViewById(R.id.lb_fileLength);
-        if (mRecordingItem != null)
-            lb_fileLength.setText(String.format("%02d:%02d", mRecordingItem.getMinutes(),mRecordingItem.getSeconds()));
-
-        lb_currentProgress = (TextView) rootView.findViewById(R.id.lb_currentProgress);
-
-
-        bt_playStop = (ImageButton) rootView.findViewById(R.id.bt_playStop);
-        bt_playStop.setOnClickListener(new PlayClickListener());
-
-        mSeekBar = (SeekBar) rootView.findViewById(R.id.seekbar);
-        // TODO: rename color name and set it in layout xml file
-        ColorFilter filter = new LightingColorFilter(getResources().getColor(R.color.progress_bar_primary), getResources().getColor(R.color.progress_bar_primary));
-        mSeekBar.getProgressDrawable().setColorFilter(filter);
-        mSeekBar.getThumb().setColorFilter(filter);
-        mSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener());
 
         progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
         progressBarDraw = getResources().getDrawable(R.drawable.record_progress_bar);
@@ -163,7 +144,18 @@ public class SoundRecordFragment extends StepFragment {
         progressBar.setIndeterminate(true);
         progressBar.setIndeterminateDrawable(null);
 
-        //mState.setUp();
+
+        // Playback -----------------------
+        lb_fileLength = (TextView) rootView.findViewById(R.id.lb_fileLength);
+        lb_currentProgress = (TextView) rootView.findViewById(R.id.lb_currentProgress);
+        bt_playStop = (ImageButton) rootView.findViewById(R.id.bt_playStop);
+
+        mSeekBar = (SeekBar) rootView.findViewById(R.id.seekbar);
+        // TODO: rename color name and set it in layout xml file
+        ColorFilter filter = new LightingColorFilter(getResources().getColor(R.color.progress_bar_primary), getResources().getColor(R.color.progress_bar_primary));
+        mSeekBar.getProgressDrawable().setColorFilter(filter);
+        mSeekBar.getThumb().setColorFilter(filter);
+        mSeekBar.setOnSeekBarChangeListener(new SeekBarChangeListener());
     }
 
     @Override
@@ -236,53 +228,52 @@ public class SoundRecordFragment extends StepFragment {
         Log.e("SoundRecordFragment", "onResume()");
         //start RecordingService
 
-        mState.setUp();
+        mUIState.setUp(this);
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
+    private void requestRecordingPermission() {
+        if (getActivity().checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
 
-    /*functionality*/
-    private void onRecord(boolean start){
+            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_RECORDING_PERMISSION);
+            //  result on onRequestPermissionsResult()
 
+        } else { //we already have permission, instantiate the fragment
 
-        /* Permission for audio source*/
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, 10);
+            startRecording();
+        }
+    }
 
-        } else {
-
-
-
-            if (start) {
-                // start recording
-                mRecordingService.startRecording();
-
-                mState = new RecordingState(this);
-                mState.setUp();
-
-
-
-
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_RECORDING_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startRecording();
             } else {
-                //stop recording
-                mState = new IdleState(this);
-                mState.setUp();
-
-                //if(mBound) {
-                    mRecordingService.stopRecording();
-
-                    mRecordingItem = mRecordingService.getRecordingItem();
-                    lb_fileLength.setText(String.format("%02d:%02d", mRecordingItem.getMinutes(),mRecordingItem.getSeconds()));
-
-                    //getActivity().unbindService(mConnection);
-                //    mBound = false;
-                //}
-
+                // Send a message to the user that we need permissions to access the location to get the gps position
+                ErrorMessaging.showValidationErrorMessage(getActivity().getApplicationContext(),getResources().getString(R.string.recording_permissions_needed));
             }
-
         }
     }
 
 
+    private void startRecording() {
+        mRecordingService.startRecording();
+
+        mUIState = new RecordingUIState();
+        mUIState.setUp(this);
+    }
+
+    private void stopRecording() {
+        //if(mBound) {
+        mRecordingService.stopRecording();
+
+        mRecordingItem = mRecordingService.getRecordingItem();
+
+        mUIState = new IdleUIState();
+        mUIState.setUp(this);
+
+    }
 
     private void startPlaying() {
 
@@ -307,14 +298,46 @@ public class SoundRecordFragment extends StepFragment {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 stopPlaying();
-                bt_playStop.setImageResource(PLAY_RESOURSE_ID);
             }
         });
 
         updateSeekBar();
 
-        //keep screen on while playing audio
-        getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        mUIState = new PlayingUIState();
+        mUIState.setUp(this);
+
+
+    }
+
+    private void pausePlaying() {
+
+        mHandler.removeCallbacks(mRunnable);
+        mMediaPlayer.pause();
+
+        mUIState = new PlayingPausedUIState();
+        mUIState.setUp(this);
+    }
+
+    private void resumePlaying() {
+
+        mHandler.removeCallbacks(mRunnable);
+        mMediaPlayer.start();
+        updateSeekBar();
+
+        mUIState = new PlayingUIState();
+        mUIState.setUp(this);
+    }
+
+    private void stopPlaying() {
+
+        mHandler.removeCallbacks(mRunnable);
+        mMediaPlayer.stop();
+        mMediaPlayer.reset();
+        mMediaPlayer.release();
+        mMediaPlayer = null;
+
+        mUIState = new IdleUIState();
+        mUIState.setUp(this);
     }
 
     private void prepareMediaPlayerFromPoint(int progress) {
@@ -343,36 +366,7 @@ public class SoundRecordFragment extends StepFragment {
         getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
-    private void pausePlaying() {
-        //bt_playStop.setImageResource(R.drawable.ic_media_play);
-        mHandler.removeCallbacks(mRunnable);
-        mMediaPlayer.pause();
-    }
 
-    private void resumePlaying() {
-        //bt_playStop.setImageResource(R.drawable.ic_media_pause);
-        mHandler.removeCallbacks(mRunnable);
-        mMediaPlayer.start();
-        updateSeekBar();
-    }
-
-    private void stopPlaying() {
-        //bt_playStop.setImageResource(R.drawable.ic_media_play);
-        mHandler.removeCallbacks(mRunnable);
-        mMediaPlayer.stop();
-        mMediaPlayer.reset();
-        mMediaPlayer.release();
-        mMediaPlayer = null;
-
-        mSeekBar.setProgress(mSeekBar.getMax());
-        isPlaying = !isPlaying;
-
-        lb_currentProgress.setText(lb_fileLength.getText());
-        mSeekBar.setProgress(mSeekBar.getMax());
-
-        //allow the screen to turn off again once audio is finished playing
-        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
 
 
     private class SeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
@@ -446,32 +440,55 @@ public class SoundRecordFragment extends StepFragment {
 
         @Override
         public void onClick(View v) {
-            onRecord(mStartRecording);
-            mStartRecording = !mStartRecording;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                // Need to request permission at run time
+                requestRecordingPermission();
+            }
+            else {
+                startRecording();
+            }
         }
     }
 
+    private class StopRecordClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            stopRecording();
+        }
+    }
 
     private class PlayClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
-
+            Log.e("SoundRecordFragment", "Play click");
             if (mRecordingItem != null) {
-                if (!isPlaying) {
-                    //currently MediaPlayer is not playing audio
-                    if (mMediaPlayer == null) {
-                        startPlaying(); //start from beginning
-                    } else {
-                        resumePlaying(); //resume the currently paused MediaPlayer
-                    }
-                } else {
-                    //pause the MediaPlayer
-                    pausePlaying();
+                startPlaying(); //start from beginning
 
-                }
+            }
+        }
+    }
 
-                isPlaying = !isPlaying;
+    private class PausePlayingClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            Log.e("SoundRecordFragment", "Pause click");
+            if (mMediaPlayer != null) {
+                pausePlaying();
+            }
+        }
+    }
+
+    private class ResumeClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            Log.e("SoundRecordFragment", "Resume click");
+            if (mRecordingItem != null) {
+                resumePlaying(); //resume the currently paused MediaPlayer
+
             }
         }
     }
@@ -489,51 +506,36 @@ public class SoundRecordFragment extends StepFragment {
             mRecordingService = null;
             mBound = false;
         }
-    };
-
-    private interface State extends Serializable {
-        void setUp();
-        void setFragment(SoundRecordFragment fragment);
     }
 
-    /**
-     * ESTA GUARDANDO LAS REFERENCIAS A LOS CONTROLES DE LA ACTIVITY DESTRUIDA
-     *
-     * EL SERVICIO QUEDA DANDO VUELTAS EN EL ETER...
-     * Ver de iniciarlo al empezar a grabar, volver a hacer el bind en el onStart/onResume y matarlo en el stopRecording
-     * Habria que ver que no vuelva a empezar a grabar cuando se hace el re-bind (if ya no estoy grabando...)
-     *
-     * EL PATTERN ESTA HORRIBLE
-     *
-     *
-     * VER TAMBIEN da cuando se apaga la pantalla:
-     * java.lang.RuntimeException: Parcelable encountered IOException writing serializable object (name = org.cientopolis.samplers.framework.soundRecord.SoundRecordFragment$IdleState)
-     * */
+    private interface UIState extends Serializable {
+        void setUp(SoundRecordFragment fragment);
+    }
 
-    private class IdleState implements State {
-        private SoundRecordFragment fragment;
-
-        public IdleState(SoundRecordFragment fragment) {
-            this.fragment = fragment;
-        }
-
-        public void setFragment(SoundRecordFragment fragment) {
-            this.fragment = fragment;
-        }
+    private class IdleUIState implements UIState {
 
         @Override
-        public void setUp() {
+        public void setUp(final SoundRecordFragment fragment) {
             fragment.bt_recordStop.setImageResource(R.drawable.ic_launcher);
+            fragment.bt_recordStop.setOnClickListener(fragment.new RecordClickListener());
+
             fragment.progressBar.setIndeterminateDrawable(null);
+
             fragment.mChronometer.stop();
             fragment.mChronometer.setBase(SystemClock.elapsedRealtime());
             //timeWhenPaused = 0;
-//            fragment.lb_recording_status.setText(getString(R.string.record_prompt));
+            fragment.lb_recording_status.setText(fragment.getString(R.string.record_prompt));
 
-            /*enable playback button*/
+            // enable playback button
             fragment.bt_playStop.setImageResource(PLAY_RESOURSE_ID);
             fragment.bt_playStop.setEnabled(true);
+            fragment.bt_playStop.setOnClickListener(fragment.new PlayClickListener());
                 /*and seekbar callbacks*/
+
+            fragment.lb_currentProgress.setText(String.format("%02d:%02d",0,0));
+            if (fragment.mRecordingItem != null)
+                fragment.lb_fileLength.setText(String.format("%02d:%02d", fragment.mRecordingItem.getMinutes(),fragment.mRecordingItem.getSeconds()));
+            fragment.mSeekBar.setProgress(0);
 
             //allow the screen to turn off again once recording is finished
             if (fragment.getActivity() != null)
@@ -541,28 +543,28 @@ public class SoundRecordFragment extends StepFragment {
 
             Log.e("SoundRecordFragment", "IDLE");
         }
+
+
+        private void writeObject(java.io.ObjectOutputStream out) throws IOException{
+            // Needed, to override the default one that tries to serialize the SoundRecordFragment class
+        }
+
     }
 
-    private class RecordingState implements State {
-        private SoundRecordFragment fragment;
+    private class RecordingUIState extends IdleUIState { // implements UIState {
         private long startingTime = 0;
 
-        public RecordingState(SoundRecordFragment fragment) {
-            this.fragment = fragment;
-        }
-
-        public void setFragment(SoundRecordFragment fragment) {
-            this.fragment = fragment;
-        }
-
         @Override
-        public void setUp() {
+        public void setUp(SoundRecordFragment fragment) {
             /* this change image from "start" to "stop" */
             fragment.bt_recordStop.setImageResource(R.drawable.ic_media_stop);
+            fragment.bt_recordStop.setOnClickListener(fragment.new StopRecordClickListener());
+
             fragment.progressBar.setIndeterminateDrawable(progressBarDraw);
 
             /*disable playback button*/
             fragment.bt_playStop.setEnabled(false);
+
 
             // start Chronometer
             if (startingTime == 0)
@@ -574,28 +576,53 @@ public class SoundRecordFragment extends StepFragment {
             if (fragment.getActivity() != null)
                 fragment.getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-//            fragment.lb_recording_status.setText(getString(R.string.record_in_progress));
+            fragment.lb_recording_status.setText(fragment.getString(R.string.record_in_progress));
 
             Log.e("SoundRecordFragment", "RECORDING");
         }
+
+        private void writeObject(java.io.ObjectOutputStream out) throws IOException{
+            // Needed, to override the default one that tries to serialize the SoundRecordFragment class
+        }
     }
 
-    private class PlayingState implements State {
-        private SoundRecordFragment fragment;
+    private class PlayingUIState extends IdleUIState { //  implements UIState {
 
-        public PlayingState(SoundRecordFragment fragment) {
-            this.fragment = fragment;
-        }
-
-        public void setFragment(SoundRecordFragment fragment) {
-            this.fragment = fragment;
-        }
 
         @Override
-        public void setUp() {
+        public void setUp(SoundRecordFragment fragment) {
             fragment.bt_playStop.setImageResource(PAUSE_RESOURSE_ID);
+            fragment.bt_playStop.setOnClickListener(fragment.new PausePlayingClickListener());
+
+            //keep screen on while playing audio
+            if (fragment.getActivity() != null)
+                fragment.getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
             Log.e("SoundRecordFragment", "PLAYING");
+        }
+
+        private void writeObject(java.io.ObjectOutputStream out) throws IOException{
+            // Needed, to override the default one that tries to serialize the SoundRecordFragment class
+        }
+    }
+
+    private class PlayingPausedUIState extends IdleUIState { //  implements UIState {
+
+
+        @Override
+        public void setUp(SoundRecordFragment fragment) {
+            fragment.bt_playStop.setImageResource(PLAY_RESOURSE_ID);
+            fragment.bt_playStop.setOnClickListener(fragment.new ResumeClickListener());
+
+            //allow the screen to turn off again once audio is not playing
+            if (fragment.getActivity() != null)
+                fragment.getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+            Log.e("SoundRecordFragment", "PLAYINGPAUSED");
+        }
+
+        private void writeObject(java.io.ObjectOutputStream out) throws IOException{
+            // Needed, to override the default one that tries to serialize the SoundRecordFragment class
         }
     }
 

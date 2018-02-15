@@ -19,7 +19,6 @@ import org.cientopolis.samplers.framework.Workflow;
 import org.cientopolis.samplers.framework.base.StepFragment;
 import org.cientopolis.samplers.framework.base.StepFragmentInteractionListener;
 import org.cientopolis.samplers.persistence.DAO_Factory;
-import org.cientopolis.samplers.ui.ErrorMessaging;
 
 
 import java.util.Date;
@@ -98,7 +97,8 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
             sample = (Sample) savedInstanceState.getSerializable(KEY_SAMPLE);
-            actualStep = (Step) savedInstanceState.getSerializable(KEY_ACTUAL_STEP);
+            Step step = (Step) savedInstanceState.getSerializable(KEY_ACTUAL_STEP);
+            this.setActualStep(step);
         }
 
         refreshStepStateOnScreen();
