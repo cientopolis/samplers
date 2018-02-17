@@ -34,8 +34,6 @@
         android:text="@string/record_prompt"
         android:textStyle="bold"
         android:textSize="17sp"
-        android:textColor="#000000"
-        android:fontFamily="sans-serif-condensed"
         android:layout_below="@+id/progressBar"
         android:layout_centerHorizontal="true" />
 
@@ -43,7 +41,6 @@
         android:id="@+id/bt_recordStop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_launcher"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/lb_recording_status"
         android:layout_marginTop="10dp"/>
@@ -61,7 +58,7 @@
         android:id="@+id/lb_currentProgress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
         android:text="00:00"
         android:layout_below="@+id/seekbar"
         android:layout_alignStart="@+id/seekbar" />
@@ -70,7 +67,7 @@
         android:id="@+id/lb_fileLength"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="10dp"
+        android:layout_marginEnd="10dp"
         android:text="00:00"
         android:layout_below="@+id/seekbar"
         android:layout_alignEnd="@+id/seekbar" />
@@ -80,10 +77,6 @@
         android:id="@+id/bt_playStop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_media_play"
-        android:drawableTint="@color/pinkA400"
-        android:drawableTintMode="add"
-        android:drawableStart="@drawable/ic_play_circle_outline_black_36dp"
         android:layout_below="@+id/seekbar"
         android:layout_marginTop="10dp"
         android:layout_centerHorizontal="true" />

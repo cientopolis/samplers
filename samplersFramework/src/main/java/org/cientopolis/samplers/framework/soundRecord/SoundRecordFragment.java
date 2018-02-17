@@ -44,10 +44,6 @@ import java.util.concurrent.TimeUnit;
  * interface to handle interaction events.
  * Use the {@link StepFragment#newInstance} factory method to create an instance of this fragment.
  *
- * TODO:
- * - Cambiar iconos por los sin el circulo
- * - Progress bar (opcional)
- *
  *
  * */
 public class SoundRecordFragment extends StepFragment {
@@ -55,8 +51,11 @@ public class SoundRecordFragment extends StepFragment {
     private static final String KEY_RECORDING_ITEM = "org.cientopolis.samplers.SoundRecordFragment_RecordingItem";
     private static final String KEY_STATE = "org.cientopolis.samplers.SoundRecordFragment_State";
 
-    private static final int PLAY_RESOURSE_ID = R.drawable.ic_play_circle_outline_black_36dp;
-    private static final int PAUSE_RESOURSE_ID = R.drawable.ic_pause_circle_outline_black_36dp;
+    private static final int START_RECORDING_RESOURSE_ID = R.drawable.ic_mic_black_36dp;
+    private static final int STOP_RECORDING_RESOURSE_ID = R.drawable.ic_stop_black_36dp;
+
+    private static final int PLAY_RESOURSE_ID = R.drawable.ic_play_arrow_black_36dp;
+    private static final int PAUSE_RESOURSE_ID = R.drawable.ic_pause_black_36dp;
 
     private static final int REQUEST_RECORDING_PERMISSION = 10;
 
@@ -129,6 +128,7 @@ public class SoundRecordFragment extends StepFragment {
 
         // Record ----------------------
         bt_recordStop = (ImageButton) rootView.findViewById(R.id.bt_recordStop);
+        bt_recordStop.setImageAlpha(getResources().getInteger(R.integer.image_buttons_alpha));
         mChronometer = (Chronometer) rootView.findViewById(R.id.chronometer);
         lb_recording_status = (TextView) rootView.findViewById(R.id.lb_recording_status);
 
@@ -144,11 +144,11 @@ public class SoundRecordFragment extends StepFragment {
         progressBar.setIndeterminate(true);
         progressBar.setIndeterminateDrawable(null);
 
-
         // Playback -----------------------
         lb_fileLength = (TextView) rootView.findViewById(R.id.lb_fileLength);
         lb_currentProgress = (TextView) rootView.findViewById(R.id.lb_currentProgress);
         bt_playStop = (ImageButton) rootView.findViewById(R.id.bt_playStop);
+        bt_playStop.setImageAlpha(getResources().getInteger(R.integer.image_buttons_alpha));
 
         mSeekBar = (SeekBar) rootView.findViewById(R.id.seekbar);
         // TODO: rename color name and set it in layout xml file
@@ -516,8 +516,10 @@ public class SoundRecordFragment extends StepFragment {
 
         @Override
         public void setUp(final SoundRecordFragment fragment) {
-            fragment.bt_recordStop.setImageResource(R.drawable.ic_launcher);
+            fragment.bt_recordStop.setImageResource(START_RECORDING_RESOURSE_ID);
+
             fragment.bt_recordStop.setOnClickListener(fragment.new RecordClickListener());
+            fragment.bt_recordStop.setEnabled(true);
 
             fragment.progressBar.setIndeterminateDrawable(null);
 
@@ -528,6 +530,7 @@ public class SoundRecordFragment extends StepFragment {
 
             // enable playback button
             fragment.bt_playStop.setImageResource(PLAY_RESOURSE_ID);
+
             fragment.bt_playStop.setEnabled(true);
             fragment.bt_playStop.setOnClickListener(fragment.new PlayClickListener());
                 /*and seekbar callbacks*/
@@ -557,7 +560,7 @@ public class SoundRecordFragment extends StepFragment {
         @Override
         public void setUp(SoundRecordFragment fragment) {
             /* this change image from "start" to "stop" */
-            fragment.bt_recordStop.setImageResource(R.drawable.ic_media_stop);
+            fragment.bt_recordStop.setImageResource(STOP_RECORDING_RESOURSE_ID);
             fragment.bt_recordStop.setOnClickListener(fragment.new StopRecordClickListener());
 
             fragment.progressBar.setIndeterminateDrawable(progressBarDraw);
@@ -594,6 +597,8 @@ public class SoundRecordFragment extends StepFragment {
             fragment.bt_playStop.setImageResource(PAUSE_RESOURSE_ID);
             fragment.bt_playStop.setOnClickListener(fragment.new PausePlayingClickListener());
 
+            fragment.bt_recordStop.setEnabled(false);
+
             //keep screen on while playing audio
             if (fragment.getActivity() != null)
                 fragment.getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -613,6 +618,8 @@ public class SoundRecordFragment extends StepFragment {
         public void setUp(SoundRecordFragment fragment) {
             fragment.bt_playStop.setImageResource(PLAY_RESOURSE_ID);
             fragment.bt_playStop.setOnClickListener(fragment.new ResumeClickListener());
+
+            fragment.bt_recordStop.setEnabled(true);
 
             //allow the screen to turn off again once audio is not playing
             if (fragment.getActivity() != null)
