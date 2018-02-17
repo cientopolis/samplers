@@ -38,7 +38,9 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     // Libraries dependencies
+    // Location
     compile ('com.google.android.gms:play-services-location:10.2.1')
+    // Maps
     compile ('com.google.android.gms:play-services-maps:10.2.1')
 
     // Added manually as libraries (.jar in libs folder)

@@ -40,6 +40,12 @@
     <!-- InsertText Fragment -->
     <string name="error_must_insert_text">Debe ingresar algo</string>
 
+    <!-- for audio record-->
+    <string name="record_in_progress">Grabando...</string>
+    <string name="record_prompt">Presione el botón para grabar</string>
+    <string name="error_must_record_audio">Debe grabar el audio</string>
+    <string name="recording_permissions_needed">Se necesitan permisos de acceso para grabar audio.</string>
+
     <!-- SamplesList Activity -->
     <string name="title_activity_samples_list">Mestras tomadas</string>
     <string name="delete_sample_confirmation_message">¿Confirma que elimina la muestra?</string>

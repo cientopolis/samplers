@@ -13,6 +13,7 @@ import org.cientopolis.samplers.framework.selectOne.SelectOneStep;
 import org.cientopolis.samplers.framework.multipleSelect.MultipleSelectOption;
 import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.Workflow;
+import org.cientopolis.samplers.framework.soundRecord.SoundRecordStep;
 import org.cientopolis.samplers.network.NetworkConfiguration;
 import org.cientopolis.samplers.ui.SamplersMainActivity;
 
@@ -29,7 +30,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         super.onCreate(savedInstanceState);
 
         // Set the network configuration
-        NetworkConfiguration.setURL("http://192.168.1.10/samplers/upload.php");
+        NetworkConfiguration.setURL("http://192.168.0.100/samplers/upload.php");
         NetworkConfiguration.setPARAM_NAME("sample");
 
         lb_main_welcome_message.setText("Bienvenido a la Aplicacion de Prueba!");
@@ -40,15 +41,18 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
     protected Workflow getWorkflow() {
         Workflow workflow = new Workflow();
         Step step;
-
+/*
         // InformationStep
-        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",4));
+        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",103));
 
         // Insert Time
         workflow.addStep(new InsertTimeStep(101, "Seleccione la Hora de la muestra",102));
 
         // Insert Date
         workflow.addStep(new InsertDateStep(102, "Seleccione la Fecha de la muestra",2));
+*/
+        // Sound
+        workflow.addStep(new SoundRecordStep(103, "Grabe algo",5));
 
         // SelectOneStep
         ArrayList<SelectOneOption> optionsToSelect2 = new ArrayList<SelectOneOption>();
@@ -63,7 +67,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         workflow.addStep(new LocationStep(4, "Seleccione la posicion de la muestra",7));
 
         // PhotoStep
-        PhotoStep photoStep = new PhotoStep(5, "Saque una foto de su gato","",6);
+        PhotoStep photoStep = new PhotoStep(5, "Saque una foto de su gato","",7);
         // set help resource
         photoStep.setHelpResourseId(R.raw.photohelp);
         workflow.addStep(photoStep);

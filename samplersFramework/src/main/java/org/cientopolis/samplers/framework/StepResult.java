@@ -8,7 +8,7 @@ import java.io.Serializable;
  * Abstract class, there is a diferent StepResult subclass for the diferents {@link Step}.
  * See the diferent subclasses for details.
  */
-public abstract class StepResult implements Serializable {
+public  class StepResult implements Serializable {
     /**
      * The id of the {@link Step} that generated the StepResult.
      */

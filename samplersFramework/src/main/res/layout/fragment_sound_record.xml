@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ProgressBar
+
+        android:id="@+id/progressBar"
+        android:layout_width="175dp"
+        android:layout_height="175dp"
+        android:background="@drawable/record_progress_bar_background"
+        android:indeterminateDrawable="@drawable/record_progress_bar"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true" />
+
+    <Chronometer
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/chronometer"
+        android:textSize="60sp"
+        android:fontFamily="sans-serif-light"
+        android:layout_marginTop="50dp"
+        android:layout_alignTop="@+id/progressBar"
+        android:layout_centerHorizontal="true" />
+
+
+    <TextView
+        android:id="@+id/lb_recording_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/record_prompt"
+        android:textStyle="bold"
+        android:textSize="17sp"
+        android:layout_below="@+id/progressBar"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:id="@+id/bt_recordStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/lb_recording_status"
+        android:layout_marginTop="10dp"/>
+
+
+    <SeekBar
+        android:id="@+id/seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bt_recordStop"
+        android:layout_marginTop="20dp"/>
+
+
+    <TextView
+        android:id="@+id/lb_currentProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="00:00"
+        android:layout_below="@+id/seekbar"
+        android:layout_alignStart="@+id/seekbar" />
+
+    <TextView
+        android:id="@+id/lb_fileLength"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:text="00:00"
+        android:layout_below="@+id/seekbar"
+        android:layout_alignEnd="@+id/seekbar" />
+
+
+    <ImageButton
+        android:id="@+id/bt_playStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/seekbar"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true" />
+
+
+    <Button
+        android:id="@+id/bt_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="30dp"
+        android:text="@string/bt_next" />
+
+
+</RelativeLayout>

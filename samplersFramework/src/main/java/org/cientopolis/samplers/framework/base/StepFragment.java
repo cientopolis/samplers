@@ -73,9 +73,7 @@ public abstract class StepFragment extends Fragment {
 
         if (context instanceof StepFragmentInteractionListener) {
             mListener = (StepFragmentInteractionListener) context;
-            Log.e("MultipleSelectFragment", "mListener asignado");
         } else {
-            Log.e("MultipleSelectFragment", "mListener NO asignado");
             throw new RuntimeException(context.toString()
                     + " must implement StepFragmentInteractionListener");
         }
