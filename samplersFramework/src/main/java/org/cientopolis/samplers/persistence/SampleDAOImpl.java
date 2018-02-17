@@ -220,18 +220,24 @@ class SampleDAOImpl implements SampleDAO {
             String[] samplesDirs = fileDir.list();
 
             for (String sampleName: samplesDirs) {
+                Log.e("samplesDirs",sampleName);
+
                 dirSample = new File(fileDir, sampleName);
 
-                String[] files = dirSample.list();
-                for (String fileName: files) {
-                    if (fileName.endsWith(SAMPLES_EXTENSION)) {
-                        fileSample = new File(dirSample, fileName);
+                // Check if it is a sample directory (could be a zipped sample)
+                if (dirSample.isDirectory()) {
 
-                        br = new BufferedReader(new FileReader(fileSample));
+                    String[] files = dirSample.list();
+                    for (String fileName : files) {
+                        if (fileName.endsWith(SAMPLES_EXTENSION)) {
+                            fileSample = new File(dirSample, fileName);
 
-                        sample = gson.fromJson(br, Sample.class);
+                            br = new BufferedReader(new FileReader(fileSample));
 
-                        result.add(sample);
+                            sample = gson.fromJson(br, Sample.class);
+
+                            result.add(sample);
+                        }
                     }
                 }
             }

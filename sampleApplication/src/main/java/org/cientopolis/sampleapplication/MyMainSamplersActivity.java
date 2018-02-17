@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import org.cientopolis.samplers.framework.information.InformationStep;
 import org.cientopolis.samplers.framework.insertDate.InsertDateStep;
+import org.cientopolis.samplers.framework.insertText.InsertTextStep;
 import org.cientopolis.samplers.framework.insertTime.InsertTimeStep;
 import org.cientopolis.samplers.framework.location.LocationStep;
 import org.cientopolis.samplers.framework.multipleSelect.MultipleSelectStep;
@@ -30,7 +31,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         super.onCreate(savedInstanceState);
 
         // Set the network configuration
-        NetworkConfiguration.setURL("http://192.168.0.100/samplers/upload.php");
+        NetworkConfiguration.setURL("http://192.168.0.10/samplers/upload.php");
         NetworkConfiguration.setPARAM_NAME("sample");
 
         lb_main_welcome_message.setText("Bienvenido a la Aplicacion de Prueba!");
@@ -41,36 +42,36 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
     protected Workflow getWorkflow() {
         Workflow workflow = new Workflow();
         Step step;
-/*
+
         // InformationStep
-        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",103));
+        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",101));
 
         // Insert Time
         workflow.addStep(new InsertTimeStep(101, "Seleccione la Hora de la muestra",102));
 
         // Insert Date
-        workflow.addStep(new InsertDateStep(102, "Seleccione la Fecha de la muestra",2));
-*/
+        workflow.addStep(new InsertDateStep(102, "Seleccione la Fecha de la muestra",103));
+
         // Sound
-        workflow.addStep(new SoundRecordStep(103, "Grabe algo",5));
+        workflow.addStep(new SoundRecordStep(103, "Grabe algo",2));
 
         // SelectOneStep
         ArrayList<SelectOneOption> optionsToSelect2 = new ArrayList<SelectOneOption>();
-        optionsToSelect2.add(new SelectOneOption(1,"SI", 5));
-        optionsToSelect2.add(new SelectOneOption(2,"NO", 6));
+        optionsToSelect2.add(new SelectOneOption(1,"SI", 3));
+        optionsToSelect2.add(new SelectOneOption(2,"NO", 4));
         workflow.addStep(new SelectOneStep(2, optionsToSelect2, "¿Quiere sacar una foto?"));
 
-        // InsertTextStep
-        //workflow.addStep(new InsertTextStep(3, "Escriba algo","cualquier cosa",50, InsertTextStep.InputType.TYPE_TEXT, true, 3));
-
-        // LocationStep
-        workflow.addStep(new LocationStep(4, "Seleccione la posicion de la muestra",7));
-
         // PhotoStep
-        PhotoStep photoStep = new PhotoStep(5, "Saque una foto de su gato","",7);
+        PhotoStep photoStep = new PhotoStep(3, "Saque una foto de su gato","",4);
         // set help resource
         photoStep.setHelpResourseId(R.raw.photohelp);
         workflow.addStep(photoStep);
+
+        // InsertTextStep
+        workflow.addStep(new InsertTextStep(4, "Escriba algo","cualquier cosa",50, InsertTextStep.InputType.TYPE_TEXT, true, 5));
+
+        // LocationStep
+        workflow.addStep(new LocationStep(5, "Seleccione la posicion de la muestra",6));
 
         // MultipleSelectStep
         ArrayList<MultipleSelectOption> optionsToSelect = new ArrayList<MultipleSelectOption>();
@@ -78,8 +79,11 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         optionsToSelect.add(new MultipleSelectOption(2,"Basura"));
         optionsToSelect.add(new MultipleSelectOption(3,"Arroyo"));
         optionsToSelect.add(new MultipleSelectOption(4,"Animales"));
-        workflow.addStep(new MultipleSelectStep(6, optionsToSelect, "Seleccione si observa algo de esto",4));
+        workflow.addStep(new MultipleSelectStep(6, optionsToSelect, "Seleccione si observa algo de esto",null));
 
+
+
+/*
         // SelectOneStep
         optionsToSelect2 = new ArrayList<SelectOneOption>();
         optionsToSelect2.add(new SelectOneOption(1,"Opcion 1", null));
@@ -87,6 +91,8 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         optionsToSelect2.add(new SelectOneOption(3,"Opcion 3", null));
         optionsToSelect2.add(new SelectOneOption(4,"Opcion 4", null));
         workflow.addStep(new SelectOneStep(7, optionsToSelect2, "Seleccione solo uno"));
+*/
+
 
         return workflow;
     }
