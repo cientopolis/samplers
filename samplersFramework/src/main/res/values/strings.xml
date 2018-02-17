@@ -1,15 +1,19 @@
 <resources>
-    <string name="app_name">Registro Regional de Gatos</string>
+    <string name="app_name">Samplers Application</string>
+
     <string name="action_settings">Configuracion</string>
     <string name="action_samples">Muestras</string>
-    <string name="title_activity_take_sample">Tomar Muestra</string>
-    <string name="title_activity_samples_list">Mestras tomadas</string>
+    <string name="action_help">Ayuda</string>
+
+    <string name="yesString">Si</string>
+    <string name="noString">No</string>
 
     <!-- Main Activity -->
     <string name="txt_welcome_message">Bienvenidos al registro regional de gatos</string>
     <string name="bt_take_sample">Tomar Muestra</string>
 
     <!-- Take Sample Activity -->
+    <string name="title_activity_take_sample">Tomar Muestra</string>
     <string name="message_sample_saved">Muestra guardada</string>
 
     <!-- Step Fragments -->
@@ -24,17 +28,30 @@
 
     <!-- Photo Fragment -->
     <string name="bt_retake_photo">Volver a tomar foto</string>
-    <string name="camera_request_permission">Esta muestra necesita permisos de acceso a la camara.</string>
+    <string name="camera_permissions_needed">Se necesitan permisos de acceso a la camara para tomar la foto.</string>
+    <string name="error_must_take_photo">Debe tomar la foto</string>
 
     <!-- Location Fragment -->
     <string name="lb_latitude">Latitud:</string>
     <string name="lb_longitude">Longitud:</string>
+    <string name="location_permissions_needed">Se necesitan permisos de acceso a la ubicacion para obtener la posición.</string>
     <string name="error_must_take_location">Debe tomar la posición</string>
 
     <!-- InsertText Fragment -->
     <string name="error_must_insert_text">Debe ingresar algo</string>
 
+    <!-- for audio record-->
+    <string name="record_in_progress">Grabando...</string>
+    <string name="record_prompt">Presione el botón para grabar</string>
+    <string name="error_must_record_audio">Debe grabar el audio</string>
+    <string name="recording_permissions_needed">Se necesitan permisos de acceso para grabar audio.</string>
 
+    <!-- SamplesList Activity -->
+    <string name="title_activity_samples_list">Mestras tomadas</string>
+    <string name="delete_sample_confirmation_message">¿Confirma que elimina la muestra?</string>
+
+    <!-- Help Activity -->
+    <string name="title_activity_help">Ayuda</string>
 
 
 </resources>

@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:id="@+id/container"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ui.take_sample.TakeSampleActivity">
+    tools:context=".ui.TakeSampleActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:text="@string/title_activity_take_sample"
             android:textSize="@dimen/tsa_step_title_text_size"
+            android:layout_centerVertical="true"
             android:textColor="@color/activityBar_text"
             android:textStyle="bold" />
 
@@ -34,11 +35,22 @@
             android:id="@+id/lb_step_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:textColor="@color/activityBar_text"
             android:textSize="@dimen/tsa_step_count_text_size"
+            android:layout_centerVertical="true"
             android:textStyle="bold" />
+
+
+        <ImageView
+            android:id="@+id/img_take_sample_help"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="30dp"
+            android:layout_toEndOf="@+id/lb_desc_new_sample"
+            android:src="@drawable/ic_help_white_36dp"
+             />
 
     </RelativeLayout>
 

@@ -3,7 +3,7 @@ package org.cientopolis.samplers.test;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
-import org.cientopolis.samplers.model.Sample;
+import org.cientopolis.samplers.framework.Sample;
 import org.cientopolis.samplers.persistence.DAO_Factory;
 
 import static org.hamcrest.Matchers.equalTo;

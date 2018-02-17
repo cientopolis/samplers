@@ -1,13 +1,13 @@
 package org.cientopolis.samplers;
 
-import org.cientopolis.samplers.model.InformationStep;
-import org.cientopolis.samplers.model.MultipleSelectOption;
-import org.cientopolis.samplers.model.MultipleSelectStep;
-import org.cientopolis.samplers.model.PhotoStep;
-import org.cientopolis.samplers.model.SelectOneOption;
-import org.cientopolis.samplers.model.SelectOneStep;
-import org.cientopolis.samplers.model.Step;
-import org.cientopolis.samplers.model.Workflow;
+import org.cientopolis.samplers.framework.information.InformationStep;
+import org.cientopolis.samplers.framework.multipleSelect.MultipleSelectOption;
+import org.cientopolis.samplers.framework.multipleSelect.MultipleSelectStep;
+import org.cientopolis.samplers.framework.photo.PhotoStep;
+import org.cientopolis.samplers.framework.selectOne.SelectOneOption;
+import org.cientopolis.samplers.framework.selectOne.SelectOneStep;
+import org.cientopolis.samplers.framework.Step;
+import org.cientopolis.samplers.framework.Workflow;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -77,69 +77,8 @@ public class SamplersModelUnitTest {
         assertEquals(5, selectOneStep.getId());
     }
 
-    @Test
-    public void workflowTestNextStep () throws Exception {
-        //options
-        Step step0 = new InformationStep(0,"paso 0",1);
-        Step step1 = new InformationStep(1,"paso 1",2);
-        Step step2 = new InformationStep(2,"paso 2",3);
-        Step step3 = new InformationStep(3,"paso 3",null);
 
-        Workflow workflow = new Workflow();
 
-        workflow.addStep(step0);
-        workflow.addStep(step1);
-        workflow.addStep(step2);
-        workflow.addStep(step3);
 
-        workflow.nextStep(); //step 0
-        Step testStep = workflow.nextStep(); //step 1
 
-        assertEquals(1,workflow.getStepPosition());
-        assertEquals(1, testStep.getId());
-    }
-
-    @Test
-    public void workflowTestOutOfBounds () throws Exception {
-        Step step0 = new InformationStep(0, "step 0",1);
-        Step step1 = new InformationStep(1, "step 1",null);
-
-        Workflow workflow = new Workflow();
-
-        workflow.addStep(step0);
-        workflow.addStep(step1);
-
-        workflow.nextStep(); //step 0
-        workflow.nextStep(); //step 1
-        workflow.nextStep(); //inexisting step
-        workflow.nextStep(); //inexisting step
-        //
-        assertEquals(1, workflow.getStepPosition());
-    }
-
-    @Test
-    public void workflowTestPriortStep () throws Exception {
-        //options
-        Step step0 = new InformationStep(0,"step 0",1);
-        Step step1 = new InformationStep(1,"step 1",2);
-        Step step2 = new InformationStep(2,"step 2",3);
-        Step step3 = new InformationStep(3,"step 3",null);
-
-        Workflow workflow = new Workflow();
-
-        workflow.addStep(step0);
-        workflow.addStep(step1);
-        workflow.addStep(step2);
-        workflow.addStep(step3);
-
-        workflow.nextStep(); //step 0
-        workflow.nextStep(); //step 1
-        workflow.nextStep(); //step 2
-        workflow.nextStep(); //step 3
-
-        Step testStep = workflow.previuosStep(); //step 2
-
-        assertEquals(2,workflow.getStepPosition());
-        assertEquals(2, testStep.getId());
-    }
 }

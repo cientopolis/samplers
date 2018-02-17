@@ -4,10 +4,10 @@ import android.content.Context;
 import android.util.Log;
 import com.google.gson.Gson;
 
-import org.cientopolis.samplers.model.PhotoStepResult;
-import org.cientopolis.samplers.model.Sample;
-import org.cientopolis.samplers.model.Step;
-import org.cientopolis.samplers.model.StepResult;
+import org.cientopolis.samplers.framework.photo.PhotoStepResult;
+import org.cientopolis.samplers.framework.Sample;
+import org.cientopolis.samplers.framework.StepResult;
+import org.cientopolis.samplers.framework.soundRecord.SoundRecordStepResult;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -106,8 +106,13 @@ class SampleDAOImpl implements SampleDAO {
             List<StepResult> results = sample.getStepResults();
             for (StepResult stepResult: results) {
                 if (PhotoStepResult.class.isInstance(stepResult)) {
-                    if (!movePhotoToSampleDirectory((PhotoStepResult) stepResult,sampleDir)) {
+                    if (!moveMediaToSampleDirectory(((PhotoStepResult) stepResult).getImageFileName(),sampleDir)) {
                         throw new Exception("Cant move photo file");
+                    }
+                }
+                else if (SoundRecordStepResult.class.isInstance(stepResult)) {
+                    if (!moveMediaToSampleDirectory(((SoundRecordStepResult) stepResult).getSoundFileName(),sampleDir)) {
+                        throw new Exception("Cant move soud file");
                     }
                 }
             }
@@ -125,25 +130,25 @@ class SampleDAOImpl implements SampleDAO {
         return sample.getId();
     }
 
-    private boolean movePhotoToSampleDirectory(PhotoStepResult photoStepResult, File sampleDirectory) {
+    private boolean moveMediaToSampleDirectory(String mediaFileName, File sampleDirectory) {
         boolean ok;
 
-        File photoTempDir = MultimediaIOManagement.getTempDir(myContext);
-        File photoFileFrom = new File(photoTempDir, photoStepResult.getImageFileName());
+        File mediaTempDir = MultimediaIOManagement.getTempDir(myContext);
+        File mediaFileFrom = new File(mediaTempDir, mediaFileName);
 
-        if (photoFileFrom.exists()) {
-            String fileName = photoFileFrom.getName();
+        if (mediaFileFrom.exists()) {
+            String fileName = mediaFileFrom.getName();
             File photoFileTo = new File(sampleDirectory, fileName);
 
             // Move the file
-            ok = photoFileFrom.renameTo(photoFileTo);
+            ok = mediaFileFrom.renameTo(photoFileTo);
 
             if (!ok)
                 Log.e("SampleDAOImpl", "renameTo failed");
         }
         else {
             ok = true; // Assume already moved
-            Log.e("SampleDAOImpl", "photo file dont exists: " + photoFileFrom.getAbsolutePath());
+            Log.e("SampleDAOImpl", "media file dont exists: " + mediaFileFrom.getAbsolutePath());
         }
 
         return ok;
@@ -215,18 +220,24 @@ class SampleDAOImpl implements SampleDAO {
             String[] samplesDirs = fileDir.list();
 
             for (String sampleName: samplesDirs) {
+                Log.e("samplesDirs",sampleName);
+
                 dirSample = new File(fileDir, sampleName);
 
-                String[] files = dirSample.list();
-                for (String fileName: files) {
-                    if (fileName.endsWith(SAMPLES_EXTENSION)) {
-                        fileSample = new File(dirSample, fileName);
+                // Check if it is a sample directory (could be a zipped sample)
+                if (dirSample.isDirectory()) {
 
-                        br = new BufferedReader(new FileReader(fileSample));
+                    String[] files = dirSample.list();
+                    for (String fileName : files) {
+                        if (fileName.endsWith(SAMPLES_EXTENSION)) {
+                            fileSample = new File(dirSample, fileName);
 
-                        sample = gson.fromJson(br, Sample.class);
+                            br = new BufferedReader(new FileReader(fileSample));
 
-                        result.add(sample);
+                            sample = gson.fromJson(br, Sample.class);
+
+                            result.add(sample);
+                        }
                     }
                 }
             }

@@ -23,6 +23,8 @@ task samplers_config {
     // APPLICATION
     println json.application.title
     println json.application.welcomeMessage
+    json.application.googleMaps_API_KEY
+    println json.application.mainHelpFileName
     println json.application.networkConfiguration.url
     println json.application.networkConfiguration.paramName
 
@@ -46,15 +48,20 @@ task samplers_config {
     def package_name = json.project.package_name
     def manifest_path = "app/src/main/"
     def strings_path = "app/src/main/res/values/"
+    def raw_path = "app/src/main/res/raw/"
 
     // Check if exists MAIN ACTIVITY
     File main_activity_file = new File(app_path+"MyMainSamplersActivity.java")
     if (!main_activity_file.exists()) {
 
 
-        def class_generator = new org.cientopolis.samplers.SamplersClassGenerator(package_name, manifest_path, strings_path);
+        def class_generator = new org.cientopolis.samplers.SamplersClassGenerator(package_name, manifest_path, strings_path, raw_path);
+        // Set Main Help
+        if (json.application.mainHelpFileName != null) {
+            class_generator.setMainHelpFileName(json.application.mainHelpFileName);
+        }
 
-
+        // Set Google Maps API Key
         if (json.application.googleMaps_API_KEY != null) {
             class_generator.setGoogleMaps_API_KEY(json.application.googleMaps_API_KEY)
             println "Google maps API KEY added"
@@ -62,53 +69,72 @@ task samplers_config {
             println "No google maps API KEY found"
 
         // Workflow
+        def stepClassGenerator;
         json.workflow.steps.eachWithIndex { step, i ->
             switch (step.type) {
                 case "Information":
-                    class_generator.addStep(new org.cientopolis.samplers.InformationStepClassGenerator(step.id, step.nextStepId, step.text))
+                    stepClassGenerator = new org.cientopolis.samplers.InformationStepClassGenerator(step.id, step.nextStepId, step.text)
                     break
 
                 case "MultipleSelect":
-                    org.cientopolis.samplers.MultipleSelectStepClassGenerator stepMutipleSelect = new org.cientopolis.samplers.MultipleSelectStepClassGenerator(step.id, step.nextStepId, step.title)
+                    stepClassGenerator = new org.cientopolis.samplers.MultipleSelectStepClassGenerator(step.id, step.nextStepId, step.title)
 
                     step.options.each { option ->
-                        stepMutipleSelect.addOptionToSelect(option.id, option.text)
+                        stepClassGenerator.addOptionToSelect(option.id, option.text)
                     }
 
-                    class_generator.addStep(stepMutipleSelect)
                     break
 
                 case "SelectOne":
-                    org.cientopolis.samplers.SelectOneStepClassGenerator stepSelectOne = new org.cientopolis.samplers.SelectOneStepClassGenerator(step.id, step.title)
+                    stepClassGenerator = new org.cientopolis.samplers.SelectOneStepClassGenerator(step.id, step.title)
 
                     step.options.each { option ->
-                        stepSelectOne.addOptionToSelect(option.id, option.text, option.nextStepId)
+                        stepClassGenerator.addOptionToSelect(option.id, option.text, option.nextStepId)
                     }
 
-                    class_generator.addStep(stepSelectOne)
                     break
 
                 case "Photo":
                     // TODO add functionality to overlay image
-                    class_generator.addStep(new org.cientopolis.samplers.PhotoStepClassGenerator(step.id, step.nextStepId, step.text, ""))
+                    stepClassGenerator = new org.cientopolis.samplers.PhotoStepClassGenerator(step.id, step.nextStepId, step.text, "")
                     break
 
                 case "Location":
-                    class_generator.addStep(new org.cientopolis.samplers.LocationStepClassGenerator(step.id, step.nextStepId, step.text))
+                    stepClassGenerator = new org.cientopolis.samplers.LocationStepClassGenerator(step.id, step.nextStepId, step.text)
                     break
 
                 case "InsertText":
-                    class_generator.addStep(new org.cientopolis.samplers.InsertTextStepClassGenerator(step.id, step.nextStepId, step.text, step.sampleText, step.maxLength, step.inputType, step.optional))
+                    stepClassGenerator = new org.cientopolis.samplers.InsertTextStepClassGenerator(step.id, step.nextStepId, step.text, step.sampleText, step.maxLength, step.inputType, step.optional)
                     break
 
                 case "InsertDate":
-                    class_generator.addStep(new org.cientopolis.samplers.InsertDateStepClassGenerator(step.id, step.nextStepId, step.text))
+                    stepClassGenerator = new org.cientopolis.samplers.InsertDateStepClassGenerator(step.id, step.nextStepId, step.text)
                     break
 
                 case "InsertTime":
-                    class_generator.addStep(new org.cientopolis.samplers.InsertTimeStepClassGenerator(step.id, step.nextStepId, step.text))
+                    stepClassGenerator = new org.cientopolis.samplers.InsertTimeStepClassGenerator(step.id, step.nextStepId, step.text)
+                    break
+
+                case "Sound":
+                    stepClassGenerator = new org.cientopolis.samplers.SoundRecordStepClassGenerator(step.id, step.nextStepId, step.text)
+                    break
+
+                default:
+                    stepClassGenerator = null;
                     break
             }
+
+            if (stepClassGenerator != null) {
+                // Set Help File
+                if (step.helpFileName != null) {
+                    stepClassGenerator.setHelpFile(step.helpFileName)
+                }
+
+                // Add the step
+                class_generator.addStep(stepClassGenerator)
+            }
+
+
         }
 
         def activity_name = "MyMainSamplersActivity"

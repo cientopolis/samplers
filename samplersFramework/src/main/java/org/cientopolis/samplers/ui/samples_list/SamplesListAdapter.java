@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import org.cientopolis.samplers.R;
-import org.cientopolis.samplers.model.Sample;
+import org.cientopolis.samplers.framework.Sample;
 import java.text.DateFormat;
 import java.util.List;
 
@@ -141,8 +141,8 @@ public class SamplesListAdapter extends BaseAdapter{
     }
 
     public interface SamplesListAdapterListener {
-        public void onUploadSampleClick(Sample sample);
 
+        public void onUploadSampleClick(Sample sample);
 
         public void onDeleteSampleClick(Sample mySample);
     }
