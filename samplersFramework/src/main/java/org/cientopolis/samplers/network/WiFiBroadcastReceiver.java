@@ -13,6 +13,10 @@ import android.util.Log;
 
 public class WiFiBroadcastReceiver extends BroadcastReceiver {
 
+    public WiFiBroadcastReceiver() {
+
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
 

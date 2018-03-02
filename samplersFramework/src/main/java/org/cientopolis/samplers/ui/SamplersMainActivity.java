@@ -40,7 +40,7 @@ public abstract class SamplersMainActivity extends Activity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            ErrorMessaging.showInfoMessage(this, "Settings");
+            ErrorMessaging.showErrorMessage(this, "Settings");
             return true;
         }
         else if (id == R.id.action_samples) {

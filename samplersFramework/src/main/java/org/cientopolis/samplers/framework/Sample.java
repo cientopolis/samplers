@@ -16,6 +16,7 @@ public class Sample implements Serializable {
     private List<StepResult> steps;
     private Date startDateTime;
     private Date endDateTime;
+    private boolean sent;
 
     /**
      * Default constructor.
@@ -25,6 +26,7 @@ public class Sample implements Serializable {
     public Sample(){
         startDateTime = new Date();
         steps = new ArrayList<StepResult>();
+        sent = false;
     }
 
     /**
@@ -100,5 +102,22 @@ public class Sample implements Serializable {
      */
     public void setId(Long id) {
         this.id = id;
+    }
+
+    /**
+     * Returns if the sample is sent to the server.
+     *
+     * @return True if of the sample is sent to the server, False otherwise.
+     */
+    public boolean isSent() {
+        return sent;
+    }
+
+    /**
+     * Marks the sample as sent to the server
+     *
+     */
+    public void setSent(){
+        sent = true;
     }
 }

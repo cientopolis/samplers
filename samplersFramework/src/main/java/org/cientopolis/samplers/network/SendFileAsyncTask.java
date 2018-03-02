@@ -1,9 +1,11 @@
 package org.cientopolis.samplers.network;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
+
+import org.cientopolis.samplers.bus.BusProvider;
+import org.cientopolis.samplers.bus.SampleSentEvent;
+import org.cientopolis.samplers.framework.Sample;
 
 import java.io.File;
 
@@ -18,22 +20,24 @@ import okhttp3.Response;
  * Created by Xavier on 08/03/2017.
  */
 
-public class SendFileAsyncTask extends AsyncTask<File,Void,Void> {
+public class SendFileAsyncTask extends AsyncTask<File,Void,Boolean> {
 
 
-    private Context context;
     private static final String MEDIA_TYPE = "application/zip";
 
+    private Sample sample;
 
     private OkHttpClient client = new OkHttpClient();
 
-    public SendFileAsyncTask(Context context) {
-        this.context = context;
+    public SendFileAsyncTask(Sample sample) {
+        this.sample = sample;
     }
 
 
     @Override
-    protected Void doInBackground(File... params) {
+    protected Boolean doInBackground(File... params) {
+
+        Boolean succeeded = false;
 
         try {
             for (File file: params) {
@@ -57,16 +61,24 @@ public class SendFileAsyncTask extends AsyncTask<File,Void,Void> {
                 Log.e("SendFile", "ok:" + stringResponse);
             }
 
+            succeeded = true;
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return null;
+        return succeeded;
     }
 
     @Override
-    protected void onPostExecute(Void aVoid) {
-        // TODO: 14/03/2017 use listeners to show finish status
-        Toast.makeText(context, "Mestra enviada!!", Toast.LENGTH_LONG).show();
+    protected void onPostExecute(Boolean succeeded) {
+        if (succeeded) {
+            Log.e("SendFileAsyncTask", "Mestra enviada!!");
+
+        }
+        else
+            Log.e("SendFileAsyncTask","Error al envier la muestra!!");
+
+        BusProvider.getInstance().post(new SampleSentEvent(sample,succeeded));
     }
 }

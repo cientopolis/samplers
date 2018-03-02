@@ -27,6 +27,12 @@ public abstract class ErrorMessaging {
 
     }
 
+    public static void showErrorMessage(Context context, String mensaje) {
+
+        showMessage(context, mensaje, R.layout.toast_error_message);
+
+    }
+
     public static void showFatalErrorMessage(Context context, String mensaje) {
 
         showMessage(context, mensaje, R.layout.toast_fatal_error_message);

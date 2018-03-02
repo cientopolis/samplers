@@ -18,4 +18,14 @@ public class SoundRecordStepResult extends StepResult {
     public String getSoundFileName() {
         return soundFileName;
     }
+
+    @Override
+    public boolean hasMultimediaFile() {
+        return true;
+    }
+
+    @Override
+    public String getMultimediaFileName() {
+        return soundFileName;
+    }
 }

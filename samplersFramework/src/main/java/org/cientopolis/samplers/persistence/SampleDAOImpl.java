@@ -102,23 +102,17 @@ class SampleDAOImpl implements SampleDAO {
             // Create the sample file
             File fileSample = new File(sampleDir,filename);
 
-            // Move the photos to the sample directory
+            // Move the multimedia files to the sample directory
             List<StepResult> results = sample.getStepResults();
             for (StepResult stepResult: results) {
-                if (PhotoStepResult.class.isInstance(stepResult)) {
-                    if (!moveMediaToSampleDirectory(((PhotoStepResult) stepResult).getImageFileName(),sampleDir)) {
-                        throw new Exception("Cant move photo file");
-                    }
-                }
-                else if (SoundRecordStepResult.class.isInstance(stepResult)) {
-                    if (!moveMediaToSampleDirectory(((SoundRecordStepResult) stepResult).getSoundFileName(),sampleDir)) {
-                        throw new Exception("Cant move soud file");
+                if (stepResult.hasMultimediaFile()) {
+                    if (!moveMediaToSampleDirectory(stepResult.getMultimediaFileName(),sampleDir)) {
+                        throw new Exception("Cant move multimedia file");
                     }
                 }
             }
 
             outputStream = new FileOutputStream(fileSample);
-            //outputStream = myContext.openFileOutput(fileDir.getAbsolutePath()+"/"+filename, Context.MODE_PRIVATE);
             outputStream.write(jsonObject.getBytes());
             outputStream.close();
             Log.e("SampleDAOImpl", "sample saved");
@@ -196,6 +190,7 @@ class SampleDAOImpl implements SampleDAO {
         Log.e("SampleDAOImpl", "delete sample complete + ok = "+String.valueOf(ok));
         return ok;
     }
+
     //helper function
     private void deleteRecursive(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())

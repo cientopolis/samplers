@@ -37,9 +37,13 @@
             android:label="@string/title_activity_help"
             android:theme="@style/SamplersFrameworkAppTheme"></activity>
 
-        <service android:name=".framework.soundRecord.service.RecordingService" />
+        <service android:name=".framework.soundRecord.service.RecordingService"
+            android:exported="false"/>
 
-        <receiver android:name=".network.WiFiBroadcastReceiver" >
+        <service android:name=".network.SendSamplesService"
+            android:exported="false" />
+
+        <receiver android:name=".network.WiFiBroadcastReceiver">
             <intent-filter android:priority="100">
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
