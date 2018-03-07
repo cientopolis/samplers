@@ -30,7 +30,9 @@ class SendSample {
     private OkHttpClient client = new OkHttpClient();
 
     public boolean sendSample(Sample sample, Context context) {
-        Boolean succeeded = false;
+        boolean succeeded = false;
+
+        Log.e("SendSample", "sample:" + sample.toString());
 
         File samplesDir = DAO_Factory.getSampleDAO(context).getSamplesDir();
         File sampleDir = DAO_Factory.getSampleDAO(context).getSampleDir(sample);
@@ -54,7 +56,11 @@ class SendSample {
         else
             Log.e("SendSample", "sample dir NULL !!");
 
-        Log.e("SendSample", "sample:" + sample.toString());
+        if (succeeded) {
+            sample.setSent();
+            DAO_Factory.getSampleDAO(context).save(sample);
+        }
+
 
         BusProvider.getInstance().post(new SampleSentEvent(sample,succeeded));
 
@@ -66,7 +72,7 @@ class SendSample {
     }
 
     private boolean sendFile(File file) {
-        Boolean succeeded = false;
+        boolean succeeded = false;
 
         try {
             RequestBody body = new MultipartBody.Builder()

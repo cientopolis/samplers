@@ -120,4 +120,15 @@ public class Sample implements Serializable {
     public void setSent(){
         sent = true;
     }
+
+    @Override
+    public String toString() {
+        return "Sample{" +
+                "id=" + id +
+                ", startDateTime=" + startDateTime +
+                ", endDateTime=" + endDateTime +
+                ", sent=" + sent +
+                ", steps=" + steps +
+                '}';
+    }
 }

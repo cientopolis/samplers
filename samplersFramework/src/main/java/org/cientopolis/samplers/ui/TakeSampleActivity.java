@@ -18,6 +18,7 @@ import org.cientopolis.samplers.framework.StepResult;
 import org.cientopolis.samplers.framework.Workflow;
 import org.cientopolis.samplers.framework.base.StepFragment;
 import org.cientopolis.samplers.framework.base.StepFragmentInteractionListener;
+import org.cientopolis.samplers.network.SamplesShipmentService;
 import org.cientopolis.samplers.persistence.DAO_Factory;
 
 
@@ -143,6 +144,9 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
                 // Save the sample localy
                 DAO_Factory.getSampleDAO(getApplicationContext()).save(sample);
 
+                // try to send sample
+                checkToSendSample();
+
                 ErrorMessaging.showInfoMessage(this, getResources().getString(R.string.message_sample_saved));
                 Log.e("TakeSample", "finished");
                 this.finish();
@@ -175,8 +179,9 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
 
     @Override
     public void onStepFinished(StepResult stepResult) {
-        actualStep.setStepResult(stepResult);
         Log.e("onStepFinished","actualStep:"+actualStep);
+
+        actualStep.setStepResult(stepResult);
         sample.addStepResult(stepResult);
 
         // go to the next step
@@ -192,6 +197,12 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
             previuosStep();
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    private void checkToSendSample(){
+        Log.e("TakeSampleActivity","satarting service to check samples to send");
+        Intent intent = new Intent(this, SamplesShipmentService.class);
+        this.startService(intent);
     }
 
 

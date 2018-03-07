@@ -42,6 +42,7 @@ public class SamplesListFragment extends Fragment implements SamplesListAdapter.
         BusProvider.getInstance().register(this);
     }
 
+    @Override
     public void onDestroy () {
         // Always unregister when an object no longer should be on the bus.
         BusProvider.getInstance().unregister(this);

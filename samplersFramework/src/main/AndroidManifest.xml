@@ -6,8 +6,8 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <!-- <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> -->
     <application
@@ -28,26 +28,34 @@
         <activity
             android:name=".ui.TakeSampleActivity"
             android:label="@string/title_activity_take_sample"
-            android:theme="@style/SamplersFrameworkAppTheme"></activity>
+            android:theme="@style/SamplersFrameworkAppTheme" />
         <activity
             android:name=".ui.samples_list.SamplesListActivity"
             android:label="@string/title_activity_samples_list"
-            android:theme="@style/SamplersFrameworkAppTheme"></activity>
-        <activity android:name=".ui.HelpActivity"
+            android:theme="@style/SamplersFrameworkAppTheme" />
+        <activity
+            android:name=".ui.HelpActivity"
             android:label="@string/title_activity_help"
-            android:theme="@style/SamplersFrameworkAppTheme"></activity>
+            android:theme="@style/SamplersFrameworkAppTheme" />
 
-        <service android:name=".framework.soundRecord.service.RecordingService"
-            android:exported="false"/>
-
-        <service android:name=".network.SendSamplesService"
+        <service
+            android:name=".framework.soundRecord.service.RecordingService"
             android:exported="false" />
+        <service
+            android:name=".network.SendSamplesService"
+            android:exported="false" />
+
+        <service
+            android:name=".network.SamplesShipmentService"
+            android:exported="false"/>
 
         <receiver android:name=".network.WiFiBroadcastReceiver">
             <intent-filter android:priority="100">
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
         </receiver>
+
+
     </application>
 
 </manifest>
