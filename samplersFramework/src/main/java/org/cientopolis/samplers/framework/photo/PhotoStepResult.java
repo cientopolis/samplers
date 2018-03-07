@@ -37,4 +37,14 @@ public class PhotoStepResult extends StepResult {
         return imageFileName;
     }
 
+    @Override
+    public boolean hasMultimediaFile() {
+        return true;
+    }
+
+    @Override
+    public String getMultimediaFileName() {
+        return imageFileName;
+    }
+
 }

@@ -44,7 +44,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         Step step;
 
         // InformationStep
-        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",101));
+        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",103));
 
         // Insert Time
         workflow.addStep(new InsertTimeStep(101, "Seleccione la Hora de la muestra",102));
@@ -53,7 +53,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         workflow.addStep(new InsertDateStep(102, "Seleccione la Fecha de la muestra",103));
 
         // Sound
-        workflow.addStep(new SoundRecordStep(103, "Grabe algo",2));
+        workflow.addStep(new SoundRecordStep(103, "Grabe algo",6));
 
         // SelectOneStep
         ArrayList<SelectOneOption> optionsToSelect2 = new ArrayList<SelectOneOption>();

@@ -5,7 +5,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:padding="@dimen/toast_message_padding"
-    android:background="@color/toast_back_color_error_fatal"
+    android:background="@color/toast_back_color_fatal_error"
     >
     <ImageView android:src="@drawable/ic_warning_white_48dp"
         android:layout_width="wrap_content"
@@ -17,7 +17,7 @@
     <TextView android:id="@+id/lb_toast_error_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/toast_font_color_error_fatal"
+        android:textColor="@color/toast_font_color_fatal_error"
         android:textSize="@dimen/toast_message_text_size"
         android:textStyle="bold"
         android:layout_gravity="center"
