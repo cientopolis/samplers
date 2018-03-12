@@ -57,6 +57,9 @@ public class SamplesListFragment extends Fragment implements SamplesListAdapter.
         else
             ErrorMessaging.showErrorMessage(getActivity().getApplicationContext(), getResources().getString(R.string.send_sample_error_message));
 
+
+        samples.clear();
+        samples.addAll(DAO_Factory.getSampleDAO(getActivity().getApplicationContext()).list());
         adapter.notifyDataSetChanged();
     }
 
