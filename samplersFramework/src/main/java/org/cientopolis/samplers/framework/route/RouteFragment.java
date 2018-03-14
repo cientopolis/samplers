@@ -11,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -29,6 +28,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.framework.StepResult;
@@ -59,6 +60,7 @@ public class RouteFragment extends StepFragment {
 
     private MapView mMapView;
     private GoogleMap mGoogleMap;
+    private Polyline mPolyline;
 
     private List<Location> mRoute;
 
@@ -239,9 +241,21 @@ public class RouteFragment extends StepFragment {
                 .draggable(true));
 
 
+        // Polyline to represent the route
+        List<LatLng> puntos = mPolyline.getPoints();
+        puntos.add(mMarker.getPosition());
+        mPolyline.setPoints(puntos);
+
         // For zooming automatically to the location of the marker
         CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();
         mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+    }
+
+    private void clearMap() {
+        // Clear posible old route
+        mPolyline = null;
+        mGoogleMap.clear();
+        mPolyline = mGoogleMap.addPolyline(new PolylineOptions().clickable(false));
     }
 
     private class MapReadyCallbacks  implements OnMapReadyCallback {
@@ -251,8 +265,13 @@ public class RouteFragment extends StepFragment {
 
             mGoogleMap = googleMap;
 
-            //if (mLocation != null)
-            //    addMarker(mLocation);
+            if (!mRoute.isEmpty()) {
+                clearMap();
+                for (Location location : mRoute) {
+                    addMarker(location);
+                }
+
+            }
 
         }
     }
@@ -291,7 +310,7 @@ public class RouteFragment extends StepFragment {
 
             // Clear posible old route
             mRoute.clear();
-            mGoogleMap.clear();
+            clearMap();
 
             LocationRequest locationRequest = new LocationRequest();
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);

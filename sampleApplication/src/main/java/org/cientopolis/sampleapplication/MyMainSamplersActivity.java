@@ -75,7 +75,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         workflow.addStep(new LocationStep(5, "Seleccione la posicion de la muestra",6));
 
         // RouteStep
-        workflow.addStep(new RouteStep(55, "Marque el recorrido", 5000,null));
+        workflow.addStep(new RouteStep(55, "Marque el recorrido", 2000,null));
 
         // MultipleSelectStep
         ArrayList<MultipleSelectOption> optionsToSelect = new ArrayList<MultipleSelectOption>();
