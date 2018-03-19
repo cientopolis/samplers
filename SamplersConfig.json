@@ -115,7 +115,13 @@
         {
           "id" : 9,
           "type" : "Sound",
-          "text" : "Please, record the sound"
+          "text" : "Please, record the sound",
+          "nextStepId": 10
+        },
+        {
+          "id":10,
+          "type" : "Route",
+          "text" : "Please, Please, record the route"
         }
     ]
   }

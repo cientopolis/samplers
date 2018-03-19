@@ -103,6 +103,10 @@ task samplers_config {
                     stepClassGenerator = new org.cientopolis.samplers.LocationStepClassGenerator(step.id, step.nextStepId, step.text)
                     break
 
+                case "Route":
+                    stepClassGenerator = new org.cientopolis.samplers.RouteStepClassGenerator(step.id, step.nextStepId, step.text, step.interval, step.mapZoom)
+                    break
+
                 case "InsertText":
                     stepClassGenerator = new org.cientopolis.samplers.InsertTextStepClassGenerator(step.id, step.nextStepId, step.text, step.sampleText, step.maxLength, step.inputType, step.optional)
                     break

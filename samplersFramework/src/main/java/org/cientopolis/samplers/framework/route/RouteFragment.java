@@ -289,7 +289,7 @@ public class RouteFragment extends StepFragment {
             latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
             // For zooming automatically to the location of the marker
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(getStep().getMapZoom()).build();
             mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
     }

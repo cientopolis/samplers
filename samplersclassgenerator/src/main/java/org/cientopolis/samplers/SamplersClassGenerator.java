@@ -58,6 +58,7 @@ public class SamplersClassGenerator {
         output.add("import org.cientopolis.samplers.framework.selectOne.*;");
         output.add("import org.cientopolis.samplers.framework.photo.*;");
         output.add("import org.cientopolis.samplers.framework.soundRecord.*;");
+        output.add("import org.cientopolis.samplers.framework.route.*;");
 
         output.add("");
         output.add("public class "+activity_name+" extends SamplersMainActivity {");

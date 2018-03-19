@@ -11,13 +11,15 @@ public class RouteStep extends BaseStep {
     private Integer nextStepId;
     private String textToShow;
     private long interval;
+    private int mapZoom;
 
-    public RouteStep(int id, String aTextToShow, long interval, Integer nextStepId) {
+    public RouteStep(int id, String aTextToShow, Integer nextStepId) {
         super(id);
         stepFragmentClass = RouteFragment.class;
         textToShow = aTextToShow;
         this.nextStepId = nextStepId;
-        this.interval = interval;
+        this.interval = 5000;
+        this.mapZoom = 15;
     }
 
     @Override
@@ -31,5 +33,17 @@ public class RouteStep extends BaseStep {
 
     public long getInterval() {
         return interval;
+    }
+
+    public int getMapZoom() {
+        return mapZoom;
+    }
+
+    public void setInterval(long interval) {
+        this.interval = interval;
+    }
+
+    public void setMapZoom(int mapZoom) {
+        this.mapZoom = mapZoom;
     }
 }
