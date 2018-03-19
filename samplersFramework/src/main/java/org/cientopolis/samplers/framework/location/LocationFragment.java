@@ -43,7 +43,7 @@ import org.cientopolis.samplers.framework.base.StepFragmentInteractionListener;
  * A simple {@link StepFragment} subclass to complete a LocationStep and retrive a Location (current or marked on the map)
  * Activities that contain this fragment must implement the {@link StepFragmentInteractionListener}
  * interface to handle interaction events.
- * Use the {@link StepFragment#newInstance} factory method to create an instance of this fragment.*
+ * Use the {@link StepFragment#newInstance} factory method to create an instance of this fragment.
  */
 
 public class LocationFragment extends StepFragment {
@@ -211,7 +211,7 @@ public class LocationFragment extends StepFragment {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
             //  result on onRequestPermissionsResult()
 
-        } else { //we already have permission, instantiate the fragment
+        } else { //we already have permission, start requesting locations updates
 
             requestLocation();
         }

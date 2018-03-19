@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.framework.StepResult;
 import org.cientopolis.samplers.framework.base.StepFragment;
+import org.cientopolis.samplers.framework.base.StepFragmentInteractionListener;
 import org.cientopolis.samplers.ui.ErrorMessaging;
 
 import java.util.ArrayList;
@@ -42,11 +43,17 @@ import java.util.List;
 
 /**
  * Created by Xavier on 07/03/2018.
+ * A simple {@link StepFragment} subclass to complete a RouteStep and retrive a List<Location>
+ * Activities that contain this fragment must implement the {@link StepFragmentInteractionListener}
+ * interface to handle interaction events.
+ * Use the {@link StepFragment#newInstance} factory method to create an instance of this fragment.
  */
 
 public class RouteFragment extends StepFragment {
 
     private static final String KEY_ROUTE = "org.cientopolis.samplers.ROUTE";
+    private static final String KEY_STATE = "org.cientopolis.samplers.RouteFragment_State";
+
     private static final int REQUEST_LOCATION_PERMISSION = 10;
 
     private static final int START_REQUESTING_LOCATION_UPDATES_RESOURSE_ID = R.drawable.ic_my_location_black_36dp;
@@ -55,17 +62,15 @@ public class RouteFragment extends StepFragment {
     private ImageButton bt_get_position;
 
     private GoogleApiClient mGoogleApiClient;
-    private GoogleApiConnectionCallbacks googleApiConnectionCallbacks;
     private MyLocationListener myLocationListener;
+
+    private boolean receivingLocationUpdates;
 
     private MapView mMapView;
     private GoogleMap mGoogleMap;
-    private Polyline mPolyline;
 
     private List<Location> mRoute;
 
-    // FIXME sacar esto cuando este listo, es solo para pruebas
-    private double multiplicador = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -73,7 +78,7 @@ public class RouteFragment extends StepFragment {
 
         if (mGoogleApiClient == null) {
             Context context = getActivity().getApplicationContext();
-            googleApiConnectionCallbacks = new GoogleApiConnectionCallbacks();
+            GoogleApiConnectionCallbacks googleApiConnectionCallbacks = new GoogleApiConnectionCallbacks();
 
             mGoogleApiClient = new GoogleApiClient.Builder(context)
                     .addConnectionCallbacks(googleApiConnectionCallbacks)
@@ -83,10 +88,17 @@ public class RouteFragment extends StepFragment {
         }
 
         if (savedInstanceState != null) {
-            mRoute = (List<Location>) savedInstanceState.getSerializable(KEY_ROUTE);
+            mRoute = (ArrayList<Location>) savedInstanceState.getSerializable(KEY_ROUTE);
+            receivingLocationUpdates = savedInstanceState.getBoolean(KEY_STATE);
+
         }
-        else
+        else {
             mRoute = new ArrayList<>();
+            receivingLocationUpdates = false;
+        }
+
+        if (receivingLocationUpdates)
+            requestLocations();
 
     }
 
@@ -97,7 +109,6 @@ public class RouteFragment extends StepFragment {
 
     @Override
     public void onStart () {
-        //mGoogleApiClient.connect();
         super.onStart();
         if (mMapView != null)
             mMapView.onStart();
@@ -105,7 +116,6 @@ public class RouteFragment extends StepFragment {
 
     @Override
     public void onStop () {
-        //mGoogleApiClient.disconnect();
         super.onStop();
         if (mMapView != null)
             mMapView.onStop();
@@ -130,12 +140,18 @@ public class RouteFragment extends StepFragment {
         super.onDestroy();
         if (mMapView != null)
             mMapView.onDestroy();
+
+        if (receivingLocationUpdates) {
+            stopRequestingLocations();
+        }
     }
 
     @Override
     public void onSaveInstanceState (Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_ROUTE, (ArrayList<Location>) mRoute);
+        outState.putBoolean(KEY_STATE, receivingLocationUpdates);
+
         if (mMapView != null)
             mMapView.onSaveInstanceState(outState);
     }
@@ -153,7 +169,10 @@ public class RouteFragment extends StepFragment {
         textView.setText(getStep().getTextToShow());
 
         bt_get_position = (ImageButton) rootView.findViewById(R.id.bt_get_position);
-        bt_get_position.setImageResource(START_REQUESTING_LOCATION_UPDATES_RESOURSE_ID);
+        if (receivingLocationUpdates)
+            bt_get_position.setImageResource(STOP_REQUESTING_LOCATION_UPDATES_RESOURSE_ID);
+        else
+            bt_get_position.setImageResource(START_REQUESTING_LOCATION_UPDATES_RESOURSE_ID);
         bt_get_position.setOnClickListener(new GetPositionClickListener());
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
@@ -169,9 +188,6 @@ public class RouteFragment extends StepFragment {
         }
 
         mMapView.getMapAsync(new MapReadyCallbacks());
-
-        //if (mLocation != null)
-        //    updateLocationOnScreen();
 
     }
 
@@ -198,10 +214,24 @@ public class RouteFragment extends StepFragment {
     }
 
 
-    private void requestLocation() {
+    private void startRecordingRoute() {
+        // Clear posible old route
+        mRoute.clear();
+        mGoogleMap.clear();
+
+        requestLocations();
+
+        receivingLocationUpdates = true;
+
+        if (bt_get_position != null)
+            bt_get_position.setImageResource(STOP_REQUESTING_LOCATION_UPDATES_RESOURSE_ID);
+
+
+    }
+
+    private void requestLocations() {
+
         mGoogleApiClient.connect(); // onConnect retrives the location
-        bt_get_position.setOnClickListener(new StopGetPositionClickListener());
-        bt_get_position.setImageResource(STOP_REQUESTING_LOCATION_UPDATES_RESOURSE_ID);
 
     }
 
@@ -212,9 +242,9 @@ public class RouteFragment extends StepFragment {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
             //  result on onRequestPermissionsResult()
 
-        } else { //we already have permission, instantiate the fragment
+        } else { //we already have permission, start requesting locations updates
 
-            requestLocation();
+            startRecordingRoute();
         }
     }
 
@@ -222,7 +252,7 @@ public class RouteFragment extends StepFragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                requestLocation();
+                startRecordingRoute();
             } else {
                 // Send a message to the user that we need permissions to access the location to get the gps position
                 ErrorMessaging.showValidationErrorMessage(getActivity().getApplicationContext(),getResources().getString(R.string.location_permissions_needed_route));
@@ -232,30 +262,36 @@ public class RouteFragment extends StepFragment {
 
     private void addMarker(Location location){
 
-        LatLng latLng = new LatLng(location.getLatitude()+multiplicador, location.getLongitude()+multiplicador);
-        multiplicador = multiplicador + 0.002;
+        if (mGoogleMap != null) {
+            // clear the map and repaint all the route
+            mGoogleMap.clear();
+            Polyline mPolyline = mGoogleMap.addPolyline(new PolylineOptions().clickable(false));
 
-        Marker mMarker = mGoogleMap.addMarker(new MarkerOptions().position(latLng)
-                //.title("Marker Titlezzzz")
-                //.snippet("Marker Descriptionzzz")
-                .draggable(true));
+            LatLng latLng;
+            Marker mMarker;
+            List<LatLng> puntos = new ArrayList<>();
 
+            for (Location routeLocation: mRoute) {
+                latLng = new LatLng(routeLocation.getLatitude(), routeLocation.getLongitude());
 
-        // Polyline to represent the route
-        List<LatLng> puntos = mPolyline.getPoints();
-        puntos.add(mMarker.getPosition());
-        mPolyline.setPoints(puntos);
+                mMarker = mGoogleMap.addMarker(new MarkerOptions().position(latLng)
+                        //.title("Marker Titlezzzz")
+                        //.snippet("Marker Descriptionzzz")
+                        .draggable(false));
 
-        // For zooming automatically to the location of the marker
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();
-        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    }
+                puntos.add(mMarker.getPosition());
+            }
 
-    private void clearMap() {
-        // Clear posible old route
-        mPolyline = null;
-        mGoogleMap.clear();
-        mPolyline = mGoogleMap.addPolyline(new PolylineOptions().clickable(false));
+            // Polyline to represent the route
+            mPolyline.setPoints(puntos);
+
+            // Zoom to the position received
+            latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+            // For zooming automatically to the location of the marker
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();
+            mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
     }
 
     private class MapReadyCallbacks  implements OnMapReadyCallback {
@@ -266,11 +302,8 @@ public class RouteFragment extends StepFragment {
             mGoogleMap = googleMap;
 
             if (!mRoute.isEmpty()) {
-                clearMap();
-                for (Location location : mRoute) {
-                    addMarker(location);
-                }
-
+                // Add the last position to repaint the route
+                addMarker(mRoute.get(mRoute.size()-1));
             }
 
         }
@@ -280,37 +313,43 @@ public class RouteFragment extends StepFragment {
 
         @Override
         public void onClick(View v) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                // Need to request permission at run time
-                requestLocationPermission();
+
+            if (!receivingLocationUpdates) {
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    // Need to request permission at run time
+                    requestLocationPermission();
+                } else {
+                    startRecordingRoute();
+                }
             }
             else {
-                requestLocation();
+                stopRecordingRoute();
             }
         }
     }
 
-    private class StopGetPositionClickListener implements View.OnClickListener{
+    private void stopRecordingRoute() {
 
-        @Override
-        public void onClick(View v) {
+        Log.e("RouteFragment","stopRecordingRoute");
 
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, myLocationListener);
-            mGoogleApiClient.disconnect();
+        stopRequestingLocations();
 
-            bt_get_position.setOnClickListener(new GetPositionClickListener());
-            bt_get_position.setImageResource(START_REQUESTING_LOCATION_UPDATES_RESOURSE_ID);
-        }
+        receivingLocationUpdates = false;
+
+        bt_get_position.setImageResource(START_REQUESTING_LOCATION_UPDATES_RESOURSE_ID);
     }
+
+    private void stopRequestingLocations() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, myLocationListener);
+        mGoogleApiClient.disconnect();
+    }
+
 
     private class GoogleApiConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
         @Override
         public void onConnected(@Nullable Bundle bundle) {
-
-            // Clear posible old route
-            mRoute.clear();
-            clearMap();
 
             LocationRequest locationRequest = new LocationRequest();
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -351,6 +390,7 @@ public class RouteFragment extends StepFragment {
                 Log.e("MyLocationListener", "Longitude: "+String.valueOf(location.getLongitude()));
 
                 mRoute.add(location);
+                Log.e("MyLocationListener", "Cant Locations: "+String.valueOf(mRoute.size()));
                 addMarker(location);
 
 
@@ -375,4 +415,6 @@ public class RouteFragment extends StepFragment {
             //mGoogleApiClient.disconnect();
         }
     }
+
+
 }
