@@ -9,6 +9,7 @@ import org.cientopolis.samplers.framework.insertTime.InsertTimeStep;
 import org.cientopolis.samplers.framework.location.LocationStep;
 import org.cientopolis.samplers.framework.multipleSelect.MultipleSelectStep;
 import org.cientopolis.samplers.framework.photo.PhotoStep;
+import org.cientopolis.samplers.framework.route.RouteStep;
 import org.cientopolis.samplers.framework.selectOne.SelectOneOption;
 import org.cientopolis.samplers.framework.selectOne.SelectOneStep;
 import org.cientopolis.samplers.framework.multipleSelect.MultipleSelectOption;
@@ -44,7 +45,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         Step step;
 
         // InformationStep
-        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",103));
+        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",55));
 
         // Insert Time
         workflow.addStep(new InsertTimeStep(101, "Seleccione la Hora de la muestra",102));
@@ -72,6 +73,12 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
 
         // LocationStep
         workflow.addStep(new LocationStep(5, "Seleccione la posicion de la muestra",6));
+
+        // RouteStep
+        RouteStep routeStep = new RouteStep(55, "Marque el recorrido", null);
+        routeStep.setInterval(2000);  // default is 5000
+        routeStep.setMapZoom(12);  // default is 15
+        workflow.addStep(routeStep);
 
         // MultipleSelectStep
         ArrayList<MultipleSelectOption> optionsToSelect = new ArrayList<MultipleSelectOption>();

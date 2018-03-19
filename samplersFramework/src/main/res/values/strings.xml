@@ -37,6 +37,10 @@
     <string name="location_permissions_needed">Se necesitan permisos de acceso a la ubicacion para obtener la posición.</string>
     <string name="error_must_take_location">Debe tomar la posición</string>
 
+    <!-- Route Fragment -->
+    <string name="location_permissions_needed_route">Se necesitan permisos de acceso a la ubicacion para obtener la posición.</string>
+    <string name="error_must_take_route">Debe tomar el recorrido</string>
+
     <!-- InsertText Fragment -->
     <string name="error_must_insert_text">Debe ingresar algo</string>
 

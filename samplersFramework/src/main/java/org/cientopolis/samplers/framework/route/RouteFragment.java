@@ -1,24 +1,21 @@
-package org.cientopolis.samplers.framework.location;
+package org.cientopolis.samplers.framework.route;
 
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
-import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -31,35 +28,48 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.framework.StepResult;
-import org.cientopolis.samplers.ui.ErrorMessaging;
 import org.cientopolis.samplers.framework.base.StepFragment;
 import org.cientopolis.samplers.framework.base.StepFragmentInteractionListener;
+import org.cientopolis.samplers.ui.ErrorMessaging;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
- * Created by Xavier on 09/04/2017.
- * A simple {@link StepFragment} subclass to complete a LocationStep and retrive a Location (current or marked on the map)
+ * Created by Xavier on 07/03/2018.
+ * A simple {@link StepFragment} subclass to complete a RouteStep and retrive a List<Location>
  * Activities that contain this fragment must implement the {@link StepFragmentInteractionListener}
  * interface to handle interaction events.
  * Use the {@link StepFragment#newInstance} factory method to create an instance of this fragment.
  */
 
-public class LocationFragment extends StepFragment {
+public class RouteFragment extends StepFragment {
 
-    private static final String KEY_LOCATION = "org.cientopolis.samplers.LOCATION";
+    private static final String KEY_ROUTE = "org.cientopolis.samplers.ROUTE";
+    private static final String KEY_STATE = "org.cientopolis.samplers.RouteFragment_State";
+
     private static final int REQUEST_LOCATION_PERMISSION = 10;
 
+    private static final int START_REQUESTING_LOCATION_UPDATES_RESOURSE_ID = R.drawable.ic_my_location_black_36dp;
+    private static final int STOP_REQUESTING_LOCATION_UPDATES_RESOURSE_ID = R.drawable.ic_stop_black_36dp;
+
+    private ImageButton bt_get_position;
+
     private GoogleApiClient mGoogleApiClient;
-    private GoogleApiConnectionCallbacks googleApiConnectionCallbacks;
-    private Location mLocation = null;
-    private TextView lb_latitude;
-    private TextView lb_longitude;
+    private MyLocationListener myLocationListener;
+
+    private boolean receivingLocationUpdates;
 
     private MapView mMapView;
     private GoogleMap mGoogleMap;
-    private Marker mMarker;
+
+    private List<Location> mRoute;
 
 
     @Override
@@ -68,7 +78,7 @@ public class LocationFragment extends StepFragment {
 
         if (mGoogleApiClient == null) {
             Context context = getActivity().getApplicationContext();
-            googleApiConnectionCallbacks = new GoogleApiConnectionCallbacks();
+            GoogleApiConnectionCallbacks googleApiConnectionCallbacks = new GoogleApiConnectionCallbacks();
 
             mGoogleApiClient = new GoogleApiClient.Builder(context)
                     .addConnectionCallbacks(googleApiConnectionCallbacks)
@@ -78,14 +88,27 @@ public class LocationFragment extends StepFragment {
         }
 
         if (savedInstanceState != null) {
-            mLocation = savedInstanceState.getParcelable(KEY_LOCATION);
+            mRoute = (ArrayList<Location>) savedInstanceState.getSerializable(KEY_ROUTE);
+            receivingLocationUpdates = savedInstanceState.getBoolean(KEY_STATE);
+
         }
+        else {
+            mRoute = new ArrayList<>();
+            receivingLocationUpdates = false;
+        }
+
+        if (receivingLocationUpdates)
+            requestLocations();
 
     }
 
     @Override
+    protected int getLayoutResource() {
+        return R.layout.fragment_route;
+    }
+
+    @Override
     public void onStart () {
-        //mGoogleApiClient.connect();
         super.onStart();
         if (mMapView != null)
             mMapView.onStart();
@@ -93,7 +116,6 @@ public class LocationFragment extends StepFragment {
 
     @Override
     public void onStop () {
-        //mGoogleApiClient.disconnect();
         super.onStop();
         if (mMapView != null)
             mMapView.onStop();
@@ -118,13 +140,18 @@ public class LocationFragment extends StepFragment {
         super.onDestroy();
         if (mMapView != null)
             mMapView.onDestroy();
-}
+
+        if (receivingLocationUpdates) {
+            stopRequestingLocations();
+        }
+    }
 
     @Override
     public void onSaveInstanceState (Bundle outState) {
-        // TODO check if this method is called
         super.onSaveInstanceState(outState);
-        outState.putParcelable(KEY_LOCATION,mLocation);
+        outState.putSerializable(KEY_ROUTE, (ArrayList<Location>) mRoute);
+        outState.putBoolean(KEY_STATE, receivingLocationUpdates);
+
         if (mMapView != null)
             mMapView.onSaveInstanceState(outState);
     }
@@ -137,19 +164,15 @@ public class LocationFragment extends StepFragment {
     }
 
     @Override
-    protected int getLayoutResource() {
-        return R.layout.fragment_location;
-    }
-
-    @Override
     protected void onCreateViewStepFragment(View rootView, Bundle savedInstanceState) {
         TextView textView = (TextView) rootView.findViewById(R.id.lb_text_to_show);
         textView.setText(getStep().getTextToShow());
 
-        lb_latitude = (TextView) rootView.findViewById(R.id.lb_latitude);
-        lb_longitude = (TextView) rootView.findViewById(R.id.lb_longitude);
-
-        Button bt_get_position = (Button) rootView.findViewById(R.id.bt_get_position);
+        bt_get_position = (ImageButton) rootView.findViewById(R.id.bt_get_position);
+        if (receivingLocationUpdates)
+            bt_get_position.setImageResource(STOP_REQUESTING_LOCATION_UPDATES_RESOURSE_ID);
+        else
+            bt_get_position.setImageResource(START_REQUESTING_LOCATION_UPDATES_RESOURSE_ID);
         bt_get_position.setOnClickListener(new GetPositionClickListener());
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
@@ -166,22 +189,20 @@ public class LocationFragment extends StepFragment {
 
         mMapView.getMapAsync(new MapReadyCallbacks());
 
-        if (mLocation != null)
-            updateLocationOnScreen();
     }
 
     @Override
-    protected LocationStep getStep() {
-        return (LocationStep) step;
+    protected RouteStep getStep() {
+        return (RouteStep) step;
     }
 
     @Override
     protected boolean validate() {
         boolean ok = true;
 
-        if (mLocation == null) {
+        if (mRoute.isEmpty()) {
             ok = false;
-            ErrorMessaging.showValidationErrorMessage(getActivity(), getResources().getString(R.string.error_must_take_location));
+            ErrorMessaging.showValidationErrorMessage(getActivity(), getResources().getString(R.string.error_must_take_route));
         }
 
         return ok;
@@ -189,17 +210,27 @@ public class LocationFragment extends StepFragment {
 
     @Override
     protected StepResult getStepResult() {
-        return new LocationStepResult(getStep().getId(),mLocation.getLatitude(), mLocation.getLongitude());
+        return new RouteStepResult(getStep().getId(), mRoute);
     }
 
 
-    private void updateLocationOnScreen(){
-        lb_latitude.setText(String.valueOf(mLocation.getLatitude()));
-        lb_longitude.setText(String.valueOf(mLocation.getLongitude()));
+    private void startRecordingRoute() {
+        // Clear posible old route
+        mRoute.clear();
+        mGoogleMap.clear();
+
+        requestLocations();
+
+        receivingLocationUpdates = true;
+
+        if (bt_get_position != null)
+            bt_get_position.setImageResource(STOP_REQUESTING_LOCATION_UPDATES_RESOURSE_ID);
+
+
     }
 
+    private void requestLocations() {
 
-    private void requestLocation() {
         mGoogleApiClient.connect(); // onConnect retrives the location
 
     }
@@ -213,7 +244,7 @@ public class LocationFragment extends StepFragment {
 
         } else { //we already have permission, start requesting locations updates
 
-            requestLocation();
+            startRecordingRoute();
         }
     }
 
@@ -221,11 +252,60 @@ public class LocationFragment extends StepFragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                requestLocation();
+                startRecordingRoute();
             } else {
                 // Send a message to the user that we need permissions to access the location to get the gps position
-                ErrorMessaging.showValidationErrorMessage(getActivity().getApplicationContext(),getResources().getString(R.string.location_permissions_needed));
+                ErrorMessaging.showValidationErrorMessage(getActivity().getApplicationContext(),getResources().getString(R.string.location_permissions_needed_route));
             }
+        }
+    }
+
+    private void addMarker(Location location){
+
+        if (mGoogleMap != null) {
+            // clear the map and repaint all the route
+            mGoogleMap.clear();
+            Polyline mPolyline = mGoogleMap.addPolyline(new PolylineOptions().clickable(false));
+
+            LatLng latLng;
+            Marker mMarker;
+            List<LatLng> puntos = new ArrayList<>();
+
+            for (Location routeLocation: mRoute) {
+                latLng = new LatLng(routeLocation.getLatitude(), routeLocation.getLongitude());
+
+                mMarker = mGoogleMap.addMarker(new MarkerOptions().position(latLng)
+                        //.title("Marker Titlezzzz")
+                        //.snippet("Marker Descriptionzzz")
+                        .draggable(false));
+
+                puntos.add(mMarker.getPosition());
+            }
+
+            // Polyline to represent the route
+            mPolyline.setPoints(puntos);
+
+            // Zoom to the position received
+            latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+            // For zooming automatically to the location of the marker
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(getStep().getMapZoom()).build();
+            mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
+    }
+
+    private class MapReadyCallbacks  implements OnMapReadyCallback {
+
+        @Override
+        public void onMapReady(GoogleMap googleMap) {
+
+            mGoogleMap = googleMap;
+
+            if (!mRoute.isEmpty()) {
+                // Add the last position to repaint the route
+                addMarker(mRoute.get(mRoute.size()-1));
+            }
+
         }
     }
 
@@ -233,30 +313,54 @@ public class LocationFragment extends StepFragment {
 
         @Override
         public void onClick(View v) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                // Need to request permission at run time
-                requestLocationPermission();
+
+            if (!receivingLocationUpdates) {
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    // Need to request permission at run time
+                    requestLocationPermission();
+                } else {
+                    startRecordingRoute();
+                }
             }
             else {
-                requestLocation();
+                stopRecordingRoute();
             }
         }
     }
 
-    private class GoogleApiConnectionCallbacks implements ConnectionCallbacks, OnConnectionFailedListener {
+    private void stopRecordingRoute() {
+
+        Log.e("RouteFragment","stopRecordingRoute");
+
+        stopRequestingLocations();
+
+        receivingLocationUpdates = false;
+
+        bt_get_position.setImageResource(START_REQUESTING_LOCATION_UPDATES_RESOURSE_ID);
+    }
+
+    private void stopRequestingLocations() {
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, myLocationListener);
+        mGoogleApiClient.disconnect();
+    }
+
+
+    private class GoogleApiConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
         @Override
         public void onConnected(@Nullable Bundle bundle) {
 
             LocationRequest locationRequest = new LocationRequest();
             locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            locationRequest.setNumUpdates(1);
+            locationRequest.setInterval(getStep().getInterval());
 
+            myLocationListener = new MyLocationListener();
             try {
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest ,new MyLocationListener());
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, locationRequest , myLocationListener);
             }
             catch (SecurityException e) {
-                Log.e("LocationFragment", "SecurityException accesing Location");
+                Log.e("RouteFragment", "SecurityException accesing Location");
             }
 
         }
@@ -268,8 +372,9 @@ public class LocationFragment extends StepFragment {
 
         @Override
         public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-            Log.e("LocationFragment", "Google API Connection Failed");
+            Log.e("RouteFragment", "Google API Connection Failed");
         }
+        
     }
 
     private class MyLocationListener implements LocationListener {
@@ -277,14 +382,18 @@ public class LocationFragment extends StepFragment {
         @Override
         public void onLocationChanged(Location location) {
             if (location != null) {
-                mLocation = location;
+                //mLocation = location;
 
-                updateLocationOnScreen();
+                //updateLocationOnScreen();
 
                 Log.e("MyLocationListener", "Latitude: "+String.valueOf(location.getLatitude()));
                 Log.e("MyLocationListener", "Longitude: "+String.valueOf(location.getLongitude()));
 
+                mRoute.add(location);
+                Log.e("MyLocationListener", "Cant Locations: "+String.valueOf(mRoute.size()));
                 addMarker(location);
+
+
                 /*
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
                 if (mMarker == null) {
@@ -303,65 +412,9 @@ public class LocationFragment extends StepFragment {
                 mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 */
             }
-            mGoogleApiClient.disconnect();
+            //mGoogleApiClient.disconnect();
         }
     }
 
-    private void addMarker(Location location){
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        if (mMarker == null) {
-            mMarker = mGoogleMap.addMarker(new MarkerOptions().position(latLng)
-                    //.title("Marker Titlezzzz")
-                    //.snippet("Marker Descriptionzzz")
-                    .draggable(true));
 
-        }
-        else {
-            mMarker.setPosition(latLng);
-        }
-
-        // For zooming automatically to the location of the marker
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(latLng).zoom(15).build();
-        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    }
-
-
-    private class MapReadyCallbacks  implements OnMapReadyCallback {
-
-        @Override
-        public void onMapReady(GoogleMap googleMap) {
-
-            mGoogleMap = googleMap;
-            mGoogleMap.setOnMarkerDragListener(new MarkerDragListener());
-
-            if (mLocation != null)
-                addMarker(mLocation);
-
-        }
-    }
-
-    private class MarkerDragListener implements GoogleMap.OnMarkerDragListener {
-
-        @Override
-        public void onMarkerDragStart(Marker marker) {
-
-        }
-
-        @Override
-        public void onMarkerDrag(Marker marker) {
-
-        }
-
-        @Override
-        public void onMarkerDragEnd(Marker marker) {
-            mLocation = new Location(LocationManager.PASSIVE_PROVIDER);
-            mLocation.setLatitude(marker.getPosition().latitude);
-            mLocation.setLongitude(marker.getPosition().longitude);
-
-            updateLocationOnScreen();
-
-            Log.e("MarkerDragListener", "Latitude: "+String.valueOf(mLocation.getLatitude()));
-            Log.e("MarkerDragListener", "Longitude: "+String.valueOf(mLocation.getLongitude()));
-        }
-    }
 }
