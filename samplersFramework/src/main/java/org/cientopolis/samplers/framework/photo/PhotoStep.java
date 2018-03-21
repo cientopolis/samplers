@@ -9,24 +9,17 @@ import org.cientopolis.samplers.framework.base.BaseStep;
 public class PhotoStep extends BaseStep {
 
     private String instructionsToShow;
-    // TODO: 15/03/2017 Add functionality to support this
-    private String imageToOverlay;
     private Integer nextStepId;
 
-    public PhotoStep(int id, String anInstructionsToShow, String anImageToOverlay, Integer nextStepId) {
+    public PhotoStep(int id, String anInstructionsToShow, Integer nextStepId) {
         super(id);
         stepFragmentClass = PhotoFragment.class;
         instructionsToShow = anInstructionsToShow;
-        imageToOverlay = anImageToOverlay; //comment here!
         this.nextStepId = nextStepId;
     }
 
     public String getInstructionsToShow() {
         return instructionsToShow;
-    }
-
-    public String getImageToOverlay() {
-        return imageToOverlay;
     }
 
     @Override
