@@ -8,7 +8,8 @@ import java.io.Serializable;
  * Abstract class, there is a diferent StepResult subclass for the diferents {@link Step}.
  * See the diferent subclasses for details.
  */
-public  class StepResult implements Serializable {
+public class StepResult implements Serializable {
+
     /**
      * The id of the {@link Step} that generated the StepResult.
      */
@@ -30,5 +31,24 @@ public  class StepResult implements Serializable {
      */
     public int getStepId() {
         return stepId;
+    }
+
+
+    /**
+     * Returns whether the {@link StepResult} has a multimedia file (like a photo or a sound) or not.
+     *
+     * @return true if the {@link StepResult} has a multimedia file, false otherwise.
+     */
+    public boolean hasMultimediaFile() {
+        return false;
+    }
+
+    /**
+     * Returns the filename of the multimedia file (like a photo or a sound) of the {@link StepResult}.
+     *
+     * @return the filename of the multimedia file.
+     */
+    public String getMultimediaFileName() {
+        return null;
     }
 }

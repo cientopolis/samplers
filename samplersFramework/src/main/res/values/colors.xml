@@ -40,6 +40,7 @@
     <item name="redA400" type="color">#FF1744</item>
     <item name="redA700" type="color">#D50000</item>
 
+    <item name="orange900" type="color">#E65100</item>
 
     <!-- INDIGO theme -->
     <item name="actionBar_background" type="color">@color/indigo700</item>
@@ -61,10 +62,12 @@
 
     <!-- Information and Error Messaging ======================================================= -->
     <item name="toast_back_color_info" type="color">@color/bluegrey600</item>
-    <item name="toast_back_color_error" type="color">@color/indigo500</item>
-    <item name="toast_back_color_error_fatal" type="color">@color/redA700</item>
+    <item name="toast_back_color_error" type="color">@color/orange900</item>
+    <item name="toast_back_color_validation_error" type="color">@color/indigo500</item>
+    <item name="toast_back_color_fatal_error" type="color">@color/redA700</item>
 
     <item name="toast_font_color_info" type="color">@color/white</item>
     <item name="toast_font_color_error" type="color">@color/white</item>
-    <item name="toast_font_color_error_fatal" type="color">@color/white</item>
+    <item name="toast_font_color_validation_error" type="color">@color/white</item>
+    <item name="toast_font_color_fatal_error" type="color">@color/white</item>
 </resources>

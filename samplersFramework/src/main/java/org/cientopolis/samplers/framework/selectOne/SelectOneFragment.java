@@ -96,7 +96,7 @@ public class SelectOneFragment extends StepFragment {
             Log.e("MyOnCheckedChangeListener", "onCheckedChanged");
             if (isChecked) {
                 selectedOption = (SelectOneOption) buttonView.getTag();
-                Log.e("MyOnCheckedChangeListener", "isChecked:"+selectedOption.getTextToShow());
+                Log.e("MyOnCheckedChangeListener", "Checked:"+selectedOption.getTextToShow());
             }
         }
     }
@@ -115,9 +115,9 @@ public class SelectOneFragment extends StepFragment {
 
     @Override
     protected StepResult getStepResult() {
-        Log.e("SelectOneFragment", "getStepResult:"+selectedOption.getTextToShow());
-        Log.e("SelectOneFragment", "NextStepID:"+String.valueOf(selectedOption.getNextStepId()));
-        return new SelectOneStepResult(getStep().getId(),selectedOption);
+        SelectOneStepResult selectOneStepResult = new SelectOneStepResult(getStep().getId(),selectedOption);
+        getStep().setStepResult(selectOneStepResult);
+        return selectOneStepResult;
     }
 
 

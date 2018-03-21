@@ -25,11 +25,16 @@ public class SamplesListAdapter extends BaseAdapter{
     private SamplesListAdapterListener listener;
     private int LIST_ITEM_BACK_COLOR_0;
     private int LIST_ITEM_BACK_COLOR_1;
+    private int IMG_SAMPLE_SENT = R.drawable.ic_cloud_done_black_36dp;
+    private int IMG_SAMPLE_NOT_SENT = R.drawable.ic_cloud_upload_black_36dp;
+    private int IMG_SAMPLE_SENDING = R.drawable.ic_cloud_queue_black_36dp;
+
 
     public SamplesListAdapter(Context context, List<Sample> samples, SamplesListAdapterListener listener) {
         this.samples = samples;
         this.myContext = context;
         this.listener = listener;
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             LIST_ITEM_BACK_COLOR_0 = context.getResources().getColor(R.color.list_item_back_color_0, context.getTheme());
@@ -72,10 +77,11 @@ public class SamplesListAdapter extends BaseAdapter{
             // ViewHolder
             viewHolder = new SamplesListAdapterViewHolder();
 
-            viewHolder.lb_id = (TextView) resultView.findViewById(R.id.lb_id);
             viewHolder.lb_datetime = (TextView) resultView.findViewById(R.id.lb_datetime);
             viewHolder.img_status = (ImageView) resultView.findViewById(R.id.img_status);
+            viewHolder.img_status.setImageAlpha(myContext.getResources().getInteger(R.integer.image_buttons_alpha));
             viewHolder.delete_sample = (ImageView) resultView.findViewById(R.id.delete_sample);
+            viewHolder.delete_sample.setImageAlpha(myContext.getResources().getInteger(R.integer.image_buttons_alpha));
 
             resultView.setTag(viewHolder);
         }
@@ -96,16 +102,23 @@ public class SamplesListAdapter extends BaseAdapter{
 
         Sample sample = samples.get(position);
 
-        viewHolder.lb_id.setText(String.valueOf(sample.getId()));
+        if (sample.isSent()) {
+            viewHolder.img_status.setImageResource(IMG_SAMPLE_SENT);
+            viewHolder.img_status.setOnClickListener(null);
+        }
+        else {
+            viewHolder.img_status.setImageResource(IMG_SAMPLE_NOT_SENT);
+            viewHolder.img_status.setOnClickListener(new UploadSampleClickListener(sample,viewHolder.img_status));
+        }
+
         viewHolder.lb_datetime.setText(DateFormat.getDateTimeInstance().format(sample.getStartDateTime()));
-        viewHolder.img_status.setOnClickListener(new UploadSampleClickListener(sample));
+
         viewHolder.delete_sample.setOnClickListener(new DeleteSampleClickListener(sample));
 
         return resultView;
     }
 
     private static class SamplesListAdapterViewHolder {
-        TextView lb_id;
         TextView lb_datetime;
         ImageView img_status;
         ImageView delete_sample;
@@ -114,13 +127,18 @@ public class SamplesListAdapter extends BaseAdapter{
     private class UploadSampleClickListener implements  View.OnClickListener{
 
         private Sample mySample;
+        private ImageView myImg_status;
 
-        public UploadSampleClickListener(Sample sample) {
+        public UploadSampleClickListener(Sample sample, ImageView img_status) {
             mySample = sample;
+            myImg_status = img_status;
         }
 
         @Override
         public void onClick(View view) {
+            myImg_status.setImageResource(IMG_SAMPLE_SENDING);
+            myImg_status.setOnClickListener(null);
+            myImg_status = null;
             listener.onUploadSampleClick(mySample);
         }
     }

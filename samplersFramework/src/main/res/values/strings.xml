@@ -37,6 +37,10 @@
     <string name="location_permissions_needed">Se necesitan permisos de acceso a la ubicacion para obtener la posición.</string>
     <string name="error_must_take_location">Debe tomar la posición</string>
 
+    <!-- Route Fragment -->
+    <string name="location_permissions_needed_route">Se necesitan permisos de acceso a la ubicacion para obtener la posición.</string>
+    <string name="error_must_take_route">Debe tomar el recorrido</string>
+
     <!-- InsertText Fragment -->
     <string name="error_must_insert_text">Debe ingresar algo</string>
 
@@ -49,6 +53,8 @@
     <!-- SamplesList Activity -->
     <string name="title_activity_samples_list">Mestras tomadas</string>
     <string name="delete_sample_confirmation_message">¿Confirma que elimina la muestra?</string>
+    <string name="send_sample_success_message">La muestra se envió correctamente</string>
+    <string name="send_sample_error_message">Error al enviar la muestra. Por favor intente más tarde</string>
 
     <!-- Help Activity -->
     <string name="title_activity_help">Ayuda</string>

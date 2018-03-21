@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 import com.google.gson.Gson;
 
+import org.cientopolis.samplers.bus.BusProvider;
+import org.cientopolis.samplers.bus.NewSampleSavedEvent;
 import org.cientopolis.samplers.framework.photo.PhotoStepResult;
 import org.cientopolis.samplers.framework.Sample;
 import org.cientopolis.samplers.framework.StepResult;
@@ -86,7 +88,13 @@ class SampleDAOImpl implements SampleDAO {
 
     @Override
     public Long save(Sample sample) {
-        sample.setId(sample.getStartDateTime().getTime());
+        Log.e("SampleDAOImpl", "Saving sample: "+sample.toString());
+
+        boolean succeeded = false;
+        boolean newSample = (sample.getId() == null);
+        if (newSample) {
+            sample.setId(sample.getStartDateTime().getTime());
+        }
 
         String filename = getSampleFileName(sample.getId());
 
@@ -102,29 +110,30 @@ class SampleDAOImpl implements SampleDAO {
             // Create the sample file
             File fileSample = new File(sampleDir,filename);
 
-            // Move the photos to the sample directory
+            // Move the multimedia files to the sample directory
             List<StepResult> results = sample.getStepResults();
             for (StepResult stepResult: results) {
-                if (PhotoStepResult.class.isInstance(stepResult)) {
-                    if (!moveMediaToSampleDirectory(((PhotoStepResult) stepResult).getImageFileName(),sampleDir)) {
-                        throw new Exception("Cant move photo file");
-                    }
-                }
-                else if (SoundRecordStepResult.class.isInstance(stepResult)) {
-                    if (!moveMediaToSampleDirectory(((SoundRecordStepResult) stepResult).getSoundFileName(),sampleDir)) {
-                        throw new Exception("Cant move soud file");
+                if (stepResult.hasMultimediaFile()) {
+                    if (!moveMediaToSampleDirectory(stepResult.getMultimediaFileName(),sampleDir)) {
+                        throw new Exception("Cant move multimedia file");
                     }
                 }
             }
 
             outputStream = new FileOutputStream(fileSample);
-            //outputStream = myContext.openFileOutput(fileDir.getAbsolutePath()+"/"+filename, Context.MODE_PRIVATE);
             outputStream.write(jsonObject.getBytes());
             outputStream.close();
-            Log.e("SampleDAOImpl", "sample saved");
+
+            succeeded = true;
+
+            Log.e("SampleDAOImpl", "sample saved. Id: "+sample.getId());
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("SampleDAOImpl", "cant save sample");
+        }
+
+        if (succeeded && newSample) {
+            BusProvider.getInstance().post(new NewSampleSavedEvent(sample));
         }
 
         return sample.getId();
@@ -196,6 +205,7 @@ class SampleDAOImpl implements SampleDAO {
         Log.e("SampleDAOImpl", "delete sample complete + ok = "+String.valueOf(ok));
         return ok;
     }
+
     //helper function
     private void deleteRecursive(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
@@ -248,6 +258,20 @@ class SampleDAOImpl implements SampleDAO {
 
 
         return result;
+    }
+
+    @Override
+    public List<Sample> getUnsentSamples() {
+        List<Sample> samples = list();
+        List<Sample> unsentSamples = new ArrayList<>();
+
+        for (Sample sample: samples) {
+            if (!sample.isSent()) {
+                unsentSamples.add(sample);
+            }
+        }
+
+        return unsentSamples;
     }
 
     @Override
