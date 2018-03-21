@@ -95,8 +95,7 @@ task samplers_config {
                     break
 
                 case "Photo":
-                    // TODO add functionality to overlay image
-                    stepClassGenerator = new org.cientopolis.samplers.PhotoStepClassGenerator(step.id, step.nextStepId, step.text, "")
+                    stepClassGenerator = new org.cientopolis.samplers.PhotoStepClassGenerator(step.id, step.nextStepId, step.text)
                     break
 
                 case "Location":
