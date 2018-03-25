@@ -26,7 +26,7 @@ import org.cientopolis.samplers.framework.StepResult;
  */
 public abstract class StepFragment extends Fragment {
 
-    private static final String ARG_STEP = "param_step";
+    private static final String ARG_STEP = "org.cientopolis.samplers.StepFragment.PARAM_STEP";
 
     protected Step step;
     protected StepFragmentInteractionListener mListener;
@@ -133,7 +133,7 @@ public abstract class StepFragment extends Fragment {
      * Use this method to interact with the recently created layout
      *
      * @param rootView The rootView provided in the {@link Fragment#onCreateView}  method.
-     * @param savedInstanceState The rootView provided in the {@link Fragment#onCreateView}  method.
+     * @param savedInstanceState The savedInstanceState provided in the {@link Fragment#onCreateView}  method.
      */
     protected abstract void onCreateViewStepFragment(View rootView, Bundle savedInstanceState);
 

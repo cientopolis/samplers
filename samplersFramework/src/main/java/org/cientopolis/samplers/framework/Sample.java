@@ -25,7 +25,7 @@ public class Sample implements Serializable {
      */
     public Sample(){
         startDateTime = new Date();
-        steps = new ArrayList<StepResult>();
+        steps = new ArrayList<>();
         sent = false;
     }
 

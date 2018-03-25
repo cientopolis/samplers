@@ -6,18 +6,19 @@ import java.io.Serializable;
 
 /**
  * Created by Xavier on 06/06/2016.
+ * Represents a Step in the Workflow
  */
 public interface Step extends Serializable{
 
-    public <T extends StepFragment> Class<T> getStepFragmentClass();
-    public <T extends StepFragment> void setStepFragmentClass(Class<T> type);
+    <T extends StepFragment> Class<T> getStepFragmentClass();
+    <T extends StepFragment> void setStepFragmentClass(Class<T> type);
 
-    public int getId();
-    public Integer getNextStepId();
+    int getId();
+    Integer getNextStepId();
 
-    public void setStepResult(StepResult stepResult);
-    public StepResult getStepResult();
+    void setStepResult(StepResult stepResult);
+    StepResult getStepResult();
 
-    public void setHelpResourseId(Integer helpResourseId);
-    public Integer getHelpResourseId();
+    void setHelpResourseId(Integer helpResourseId);
+    Integer getHelpResourseId();
 }
