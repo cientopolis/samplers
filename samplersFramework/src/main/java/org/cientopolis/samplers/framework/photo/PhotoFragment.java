@@ -2,22 +2,17 @@ package org.cientopolis.samplers.framework.photo;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Surface;
 import android.view.View;
@@ -32,6 +27,8 @@ import java.io.IOException;
 import java.io.Serializable;
 
 
+
+
 /**
  * Created by lilauth on 3/9/17.
  */
@@ -40,14 +37,16 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
 
     private ImageView photo_preview;
     private Uri imageURI;
+    private int imageRotation;
 
     private Fragment camera_fragment;
 
     private PhotoFragmentState fragmentState = PhotoFragmentState.TAKING_PHOTO;
 
-    private static final String KEY_STATE = "org.cientopolis.samplers.PhotoFragmentState";
-    private static final String KEY_PHOTOFILEURI = "org.cientopolis.samplers.PhotoFileUri";
-    private static final String KEY_CAMERA_TYPE = "org.cientopolis.samplers.CameraType";
+    private static final String KEY_STATE = "org.cientopolis.samplers.PhotoFragment.State";
+    private static final String KEY_PHOTOFILEURI = "org.cientopolis.samplers.PhotoFragment.PhotoFileUri";
+    private static final String KEY_IMAGE_ROTATION = "org.cientopolis.samplers.PhotoFragment.ImageRotation";
+    private static final String KEY_CAMERA_TYPE = "org.cientopolis.samplers.PhotoFragment.CameraType";
     private static final int REQUEST_CAMERA_PERMISSION = 1;
 
     private int cameraType = 0;
@@ -66,6 +65,14 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
     protected void onCreateViewStepFragment(View rootView, Bundle savedInstanceState) {
 
         photo_preview = (ImageView) rootView.findViewById(R.id.photo_preview);
+        photo_preview.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                if (fragmentState == PhotoFragmentState.SHOWING_PREVIEW)
+                    showPreview();
+            }
+        });
+        Log.e("onCreateViewStepFragmen","width:"+String.valueOf(photo_preview.getWidth())+" height:"+String.valueOf(photo_preview.getHeight()));
 
         Button bt_retake_photo = (Button) rootView.findViewById(R.id.bt_retake_photo);
         bt_retake_photo.setOnClickListener(new ReTakePhotoClick());
@@ -103,6 +110,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         super.onSaveInstanceState(outState);
         outState.putSerializable(KEY_STATE,fragmentState);
         outState.putParcelable(KEY_PHOTOFILEURI, imageURI);
+        outState.putInt(KEY_IMAGE_ROTATION, imageRotation);
         outState.putSerializable(KEY_CAMERA_TYPE, cameraType);
     }
 
@@ -112,6 +120,7 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
         if (savedInstanceState != null) {
             fragmentState = (PhotoFragmentState) savedInstanceState.getSerializable(KEY_STATE);
             imageURI = savedInstanceState.getParcelable(KEY_PHOTOFILEURI);
+            imageRotation = savedInstanceState.getInt(KEY_IMAGE_ROTATION);
             cameraType = (int) savedInstanceState.getSerializable(KEY_CAMERA_TYPE);
         }
     }
@@ -216,8 +225,9 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
 
 
     @Override
-    public void onPhotoTaked(Uri imageURI) {
+    public void onPhotoTaked(Uri imageURI, int rotation) {
         this.imageURI = imageURI;
+        this.imageRotation = rotation;
 
         showPreview();
     }
@@ -233,6 +243,9 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
             }
             rotation = getRotation(orientation);
 
+            int exifwidth = exif.getAttributeInt(ExifInterface.TAG_IMAGE_WIDTH, -1);
+            Log.e("exif", "width:"+String.valueOf(exifwidth));
+
         } catch (IOException e) {
             e.printStackTrace();
             Log.e("error exif", "error loading exif data");
@@ -242,12 +255,14 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
 
     private int getRotation(int cameraOrientation) {
         //now we have to determine frame orientation
-        Log.e("get orient",String.valueOf(cameraOrientation));
-        int rotation = getActivity().getWindowManager().getDefaultDisplay().getRotation();
+
         int degrees = 0;
 
-        if (((cameraOrientation == 1) || (cameraOrientation == 0)) && (cameraType == 1)){
-            switch (rotation) {
+        if ((cameraType == 1) || (cameraOrientation == -1)) {
+            // In Camera1 Exif orientation is always 0, so we save the orientation when the photo
+            // is taked and we use it here to rotate the preview
+            // We also use it when the Exif information is missing
+            switch (this.imageRotation) {
                 case Surface.ROTATION_0: //portrait normal
                     degrees = 90;
                     break;
@@ -263,21 +278,19 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
             }
 
        }
-        else {
-            if (cameraType == 2){
-                switch (cameraOrientation){
-                    case 1: degrees = 0;
-                        break;
-                    case 6: degrees = 90;
-                        break;
-                    case 3: degrees = 180;
-                        break;
-                    case 8: degrees = 270;
-                        break;
-                }
+        else if (cameraType == 2){
+            switch (cameraOrientation){ // See exif.TAG_ORIENTATION meaning below to understand this
+                case 1: degrees = 0;
+                    break;
+                case 6: degrees = 90;
+                    break;
+                case 3: degrees = 180;
+                    break;
+                case 8: degrees = 270;
+                    break;
             }
         }
-        Log.e("rot and degree", "rotation: "+String.valueOf(rotation)+ " degrees: "+ String.valueOf(degrees));
+
         return degrees;
     }
 
@@ -293,26 +306,58 @@ public class PhotoFragment extends StepFragment implements PhotoFragmentCallback
 
 
     private void showPreviewLayout (String absoluteImagePath) {
+        // the max bounds are the bounds of the ImageView control
+        int maxWidth = photo_preview.getWidth(); //1920;
+        int maxHeight = photo_preview.getHeight();  //1080;
+        Log.e("showPreviewLayout","maxWidth:"+String.valueOf(maxWidth)+" maxHeight:"+String.valueOf(maxHeight));
 
-        //get rotation in degrees for image
-        int rotation = getOrientation(absoluteImagePath);
-        //get rotation in degrees for image
-        //test for preview problem
-        Matrix matrix = new Matrix();
-        matrix.postRotate(rotation);
-        //test for max preview size supported
 
-        //Bitmap b = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(absoluteImagePath,null), 1920, 1080, false);
-        //Bitmap rotatedBitmap = Bitmap.createBitmap(b , 0, 0, b.getWidth(), b.getHeight(), matrix, true);
+        // if the ImageView control is painted...
+        if ((maxWidth > 0) && (maxHeight > 0)){
 
-        //photo_preview.setImageBitmap(rotatedBitmap/*b Bitmap.createScaledBitmap(b, 1920, 1080, false)*/);
-        // load image on the ui control
-        photo_preview.setImageURI(imageURI);
-        photo_preview.setRotation(rotation);
-        photo_preview.refreshDrawableState();
-        //Glide.with(getActivity().getApplicationContext()).load(imageURI.toString()).into(photo_preview);
+            // create a scaled bitmap of the image
+            Bitmap b = getScaledBitmap(absoluteImagePath, maxWidth, maxHeight);
+
+            //get rotation in degrees for image
+            int rotation = getOrientation(absoluteImagePath);
+
+            // load image on the ui control
+            photo_preview.setImageBitmap(b);
+
+            // set rotation params
+            photo_preview.setRotation(rotation);
+            photo_preview.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            photo_preview.refreshDrawableState();
+
+        }
     }
 
+    private Bitmap getScaledBitmap(String absoluteImagePath, int maxWidth, int maxHeight) {
+
+        // get the bounds of the image: inJustDecodeBounds get the bounds without loading the image
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(absoluteImagePath, options);
+        int imageHeight = options.outHeight;
+        int imageWidth = options.outWidth;
+
+        int newWidth;
+        int newHeight;
+
+        if (imageWidth < maxWidth) { // if the image is smaller than the ImageView control (poor camera...)
+            newWidth = imageWidth;
+            newHeight = imageHeight;
+        }
+        else { // the image is bigger than the ImageView control, we have to scale it
+            newWidth = maxWidth;
+            int percentage = (int) ((double)maxWidth / (double) imageWidth *100);
+            newHeight = imageHeight * percentage /100;
+        }
+
+        // create a scaled bitmap of the image
+        return Bitmap.createScaledBitmap(BitmapFactory.decodeFile(absoluteImagePath, null), newWidth, newHeight, false);
+
+    }
 
 
     /*private helper classes*/

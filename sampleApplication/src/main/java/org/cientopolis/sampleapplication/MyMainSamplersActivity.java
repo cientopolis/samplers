@@ -45,7 +45,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         Step step;
 
         // InformationStep
-        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",55));
+        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",3));
 
         // Insert Time
         workflow.addStep(new InsertTimeStep(101, "Seleccione la Hora de la muestra",102));
@@ -63,7 +63,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         workflow.addStep(new SelectOneStep(2, optionsToSelect2, "¿Quiere sacar una foto?"));
 
         // PhotoStep
-        PhotoStep photoStep = new PhotoStep(3, "Saque una foto de su gato",4);
+        PhotoStep photoStep = new PhotoStep(3, "Saque una foto de su gato",null);
         // set help resource
         photoStep.setHelpResourseId(R.raw.photohelp);
         workflow.addStep(photoStep);

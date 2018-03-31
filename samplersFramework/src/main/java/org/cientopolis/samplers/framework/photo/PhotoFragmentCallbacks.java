@@ -10,5 +10,5 @@ import java.io.Serializable;
 
 public interface PhotoFragmentCallbacks extends Serializable{
 
-    public void onPhotoTaked(Uri imageURI);
+    void onPhotoTaked(Uri imageURI, int rotation);
 }

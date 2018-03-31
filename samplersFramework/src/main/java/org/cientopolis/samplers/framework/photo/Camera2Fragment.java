@@ -605,7 +605,7 @@ public class Camera2Fragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mListener.onPhotoTaked(imageURI);
+                mListener.onPhotoTaked(imageURI,getActivity().getWindowManager().getDefaultDisplay().getRotation());
             }
         });
     }
