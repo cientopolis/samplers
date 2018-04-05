@@ -2,16 +2,20 @@ package org.cientopolis.samplers.ui;
 
 
 import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import org.cientopolis.samplers.R;
+import org.cientopolis.samplers.authentication.AuthenticationManager;
+import org.cientopolis.samplers.authentication.User;
 import org.cientopolis.samplers.framework.Sample;
 import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.StepResult;
@@ -24,7 +28,7 @@ import org.cientopolis.samplers.persistence.DAO_Factory;
 
 import java.util.Date;
 
-public class TakeSampleActivity extends Activity implements StepFragmentInteractionListener {
+public class TakeSampleActivity extends Activity implements StepFragmentInteractionListener, LoginFragment.LoginFragmentInteractionListener {
 
     public static final String EXTRA_WORKFLOW = "org.cientopolis.samplers.EXTRA_WORKFLOW";
 
@@ -51,7 +55,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
             workflow = new Workflow();
 
         if (!workflow.validate()) {
-            throw new RuntimeException("invalid workflow");
+            throw new RuntimeException("The workflow doesn't validate");
         }
 
         getFragmentManager().addOnBackStackChangedListener(new MyOnBackStackChangedListener());
@@ -66,7 +70,11 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
 
         if (savedInstanceState == null) { // First execution
             sample = new Sample();
-            nextStep();
+
+            if (AuthenticationManager.isAuthenticationEnabled() && (AuthenticationManager.getUser() == null))
+                login();
+            else
+                nextStep();
         }
 
         //refreshStepStateOnScreen();
@@ -105,6 +113,18 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
         refreshStepStateOnScreen();
 
         Log.e("TakeSampleActivity", "onRestoreInstanceState");
+    }
+
+    private void login() {
+        try {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            Fragment fragment = AuthenticationManager.getLoginFragmentClass().newInstance();
+            transaction.replace(R.id.container, fragment);
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error while instantiating LoginFragment");
+        }
     }
 
     private void nextStep() {
@@ -203,6 +223,13 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
         Log.e("TakeSampleActivity","satarting service to check samples to send");
         Intent intent = new Intent(this, SamplesShipmentService.class);
         this.startService(intent);
+    }
+
+    @Override
+    public void onLogin(@Nullable User user) {
+        if ((user != null) || (AuthenticationManager.isAuthenticationOptional())) {
+            nextStep();
+        }
     }
 
 

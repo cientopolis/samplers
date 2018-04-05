@@ -2,19 +2,30 @@ package org.cientopolis.samplers.ui;
 
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import com.squareup.otto.Subscribe;
+
 import org.cientopolis.samplers.R;
+import org.cientopolis.samplers.authentication.AuthenticationManager;
+import org.cientopolis.samplers.authentication.User;
+import org.cientopolis.samplers.bus.LoginEvent;
 import org.cientopolis.samplers.framework.Workflow;
 import org.cientopolis.samplers.ui.samples_list.SamplesListActivity;
 
 
-public abstract class SamplersMainActivity extends Activity {
+public abstract class SamplersMainActivity extends Activity implements LoginFragment.LoginFragmentInteractionListener {
     protected TextView lb_main_welcome_message;
+
+    private Fragment loginFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,5 +105,41 @@ public abstract class SamplersMainActivity extends Activity {
     }
 
     protected abstract Integer getMainHelpResourceId();
+
+    public void login(View view){
+
+        startLoginFragment();
+    }
+
+    protected void startLoginFragment() {
+        try {
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            loginFragment = AuthenticationManager.getLoginFragmentClass().newInstance();
+            transaction.replace(R.id.container, loginFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Error while instantiating LoginFragment");
+        }
+    }
+
+    @Override
+    public void onLogin(@Nullable User user) {
+        if (user != null) {
+            // UPDATE UI
+        }
+
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.remove(loginFragment);
+        //transaction.addToBackStack(null);
+        transaction.commit();
+
+    }
+
+    @Subscribe
+    public void onLoginEvent(LoginEvent loginEvent) {
+        // UPDATE UI
+    }
 
 }

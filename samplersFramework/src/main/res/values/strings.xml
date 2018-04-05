@@ -9,12 +9,19 @@
     <string name="noString">No</string>
 
     <!-- Main Activity -->
-    <string name="txt_welcome_message">Bienvenidos al registro regional de gatos</string>
+    <string name="txt_welcome_message">Bienvenidos a la Aplicación de Prueba de Samplers</string>
     <string name="bt_take_sample">Tomar Muestra</string>
+
+    <string name="bt_login">Iniciar Sesión</string>
+    <string name="bt_logout">Cerrar Sesión</string>
 
     <!-- Take Sample Activity -->
     <string name="title_activity_take_sample">Tomar Muestra</string>
     <string name="message_sample_saved">Muestra guardada</string>
+
+    <!-- Login Fragment -->
+    <string name="lb_skip_login">Omitir</string>
+    <string name="lb_login_message">Por favor inicie sesión</string>
 
     <!-- Step Fragments -->
     <string name="bt_next">Siguiente</string>
@@ -58,6 +65,7 @@
 
     <!-- Help Activity -->
     <string name="title_activity_help">Ayuda</string>
+
 
 
 </resources>

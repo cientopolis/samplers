@@ -39,9 +39,11 @@ dependencies {
 
     // Libraries dependencies
     // Location
-    compile ('com.google.android.gms:play-services-location:10.2.1')
+    compile ('com.google.android.gms:play-services-location:12.0.1')
     // Maps
-    compile ('com.google.android.gms:play-services-maps:10.2.1')
+    compile ('com.google.android.gms:play-services-maps:12.0.1')
+    // Authentication with Google
+    compile ('com.google.android.gms:play-services-auth:12.0.1')
 
     // Added manually as libraries (.jar in libs folder)
     //compile 'com.google.code.gson:gson:2.8.0'
