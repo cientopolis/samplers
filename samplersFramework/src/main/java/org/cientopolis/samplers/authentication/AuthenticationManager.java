@@ -1,10 +1,10 @@
 package org.cientopolis.samplers.authentication;
 
-import android.app.Fragment;
+
+import android.util.Log;
 
 import org.cientopolis.samplers.bus.BusProvider;
 import org.cientopolis.samplers.bus.LoginEvent;
-import org.cientopolis.samplers.ui.LoginFragment;
 
 /**
  * Created by Xavier on 04/04/2018.
@@ -15,13 +15,13 @@ public class AuthenticationManager {
     private static User user = null;
     private static boolean authenticationEnabled = false;
     private static boolean authenticationOptional = true;
-    private static Class loginFragmentClass = LoginFragment.class;
+    private static Class loginFragmentClass = StandardLoginFragment.class;
 
-    public static <T extends Fragment> Class<T> getLoginFragmentClass() {
+    public static <T extends LoginFragment> Class<T> getLoginFragmentClass() {
         return loginFragmentClass;
     }
 
-    public static <T extends Fragment> void setToginFragmentClass(Class<T> type) {
+    public static <T extends LoginFragment> void setToginFragmentClass(Class<T> type) {
         AuthenticationManager.loginFragmentClass = type;
     }
 
@@ -30,6 +30,7 @@ public class AuthenticationManager {
     }
 
     public static void login(User user) {
+        Log.e("login","user:"+user);
         AuthenticationManager.user = user;
         BusProvider.getInstance().post(new LoginEvent(user));
     }

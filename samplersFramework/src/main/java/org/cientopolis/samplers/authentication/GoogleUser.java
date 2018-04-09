@@ -30,4 +30,11 @@ public class GoogleUser implements User {
     public String getUserId() {
         return userId;
     }
+
+    @Override
+    public String toString() {
+        return "GoogleUser{" +
+                "userName='" + userName + '\'' +
+                '}';
+    }
 }

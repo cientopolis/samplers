@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.authentication.AuthenticationManager;
+import org.cientopolis.samplers.authentication.LoginFragmentInteractionListener;
 import org.cientopolis.samplers.authentication.User;
 import org.cientopolis.samplers.framework.Sample;
 import org.cientopolis.samplers.framework.Step;
@@ -28,7 +29,7 @@ import org.cientopolis.samplers.persistence.DAO_Factory;
 
 import java.util.Date;
 
-public class TakeSampleActivity extends Activity implements StepFragmentInteractionListener, LoginFragment.LoginFragmentInteractionListener {
+public class TakeSampleActivity extends Activity implements StepFragmentInteractionListener, LoginFragmentInteractionListener {
 
     public static final String EXTRA_WORKFLOW = "org.cientopolis.samplers.EXTRA_WORKFLOW";
 

@@ -42,6 +42,15 @@
         android:layout_alignParentBottom="true"
         android:onClick="login" />
 
+    <TextView
+        android:id="@+id/lb_main_user_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textSize="@dimen/main_lb_welcome_message_text_size"
+        android:layout_alignParentBottom="true"
+        />
+
 
 </RelativeLayout>
 

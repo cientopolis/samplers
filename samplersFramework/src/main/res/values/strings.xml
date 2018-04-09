@@ -15,13 +15,16 @@
     <string name="bt_login">Iniciar Sesión</string>
     <string name="bt_logout">Cerrar Sesión</string>
 
-    <!-- Take Sample Activity -->
-    <string name="title_activity_take_sample">Tomar Muestra</string>
-    <string name="message_sample_saved">Muestra guardada</string>
+    <!-- Login Activity -->
+    <string name="title_activity_login">Iniciar Sesión</string>
 
     <!-- Login Fragment -->
     <string name="lb_skip_login">Omitir</string>
     <string name="lb_login_message">Por favor inicie sesión</string>
+
+    <!-- Take Sample Activity -->
+    <string name="title_activity_take_sample">Tomar Muestra</string>
+    <string name="message_sample_saved">Muestra guardada</string>
 
     <!-- Step Fragments -->
     <string name="bt_next">Siguiente</string>

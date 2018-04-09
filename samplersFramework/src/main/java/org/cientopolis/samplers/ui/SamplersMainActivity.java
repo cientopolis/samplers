@@ -2,30 +2,33 @@ package org.cientopolis.samplers.ui;
 
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.squareup.otto.Subscribe;
 
 import org.cientopolis.samplers.R;
+
 import org.cientopolis.samplers.authentication.AuthenticationManager;
+import org.cientopolis.samplers.authentication.LoginActivity;
 import org.cientopolis.samplers.authentication.User;
+import org.cientopolis.samplers.bus.BusProvider;
 import org.cientopolis.samplers.bus.LoginEvent;
 import org.cientopolis.samplers.framework.Workflow;
 import org.cientopolis.samplers.ui.samples_list.SamplesListActivity;
 
 
-public abstract class SamplersMainActivity extends Activity implements LoginFragment.LoginFragmentInteractionListener {
+public abstract class SamplersMainActivity extends Activity {
     protected TextView lb_main_welcome_message;
+    protected Button bt_main_login;
+    protected TextView lb_main_user_name;
 
-    private Fragment loginFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +36,33 @@ public abstract class SamplersMainActivity extends Activity implements LoginFrag
         setContentView(R.layout.activity_samplers_main);
 
         lb_main_welcome_message = (TextView) findViewById(R.id.lb_main_welcome_message);
+        bt_main_login = (Button) findViewById(R.id.bt_main_login);
+        lb_main_user_name = (TextView) findViewById(R.id.lb_main_user_name);
+
+        // Register to the bus to receive messages
+        BusProvider.getInstance().register(this);
+
     }
 
+    @Override
+    public void onDestroy () {
+        // Always unregister when an object no longer should be on the bus.
+        BusProvider.getInstance().unregister(this);
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (AuthenticationManager.isAuthenticationEnabled()) {
+            updateUserUI(AuthenticationManager.getUser());
+        }
+        else {
+            lb_main_user_name.setVisibility(View.INVISIBLE);
+            bt_main_login.setVisibility(View.INVISIBLE);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -108,38 +136,33 @@ public abstract class SamplersMainActivity extends Activity implements LoginFrag
 
     public void login(View view){
 
-        startLoginFragment();
+        startLoginActivity();
     }
 
-    protected void startLoginFragment() {
-        try {
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
-            loginFragment = AuthenticationManager.getLoginFragmentClass().newInstance();
-            transaction.replace(R.id.container, loginFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error while instantiating LoginFragment");
-        }
-    }
+    protected void startLoginActivity() {
 
-    @Override
-    public void onLogin(@Nullable User user) {
-        if (user != null) {
-            // UPDATE UI
-        }
-
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transaction.remove(loginFragment);
-        //transaction.addToBackStack(null);
-        transaction.commit();
-
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
     @Subscribe
     public void onLoginEvent(LoginEvent loginEvent) {
         // UPDATE UI
+        Log.e("onLoginEvent","user:"+loginEvent.user);
+        updateUserUI(loginEvent.user);
+    }
+
+    private void updateUserUI(User user) {
+        if (user != null) {
+            lb_main_user_name.setText(user.getUserName());
+            lb_main_user_name.setVisibility(View.VISIBLE);
+            bt_main_login.setVisibility(View.INVISIBLE);
+        }
+        else { // no user logged
+            lb_main_user_name.setVisibility(View.INVISIBLE);
+            bt_main_login.setVisibility(View.VISIBLE);
+        }
+
     }
 
 }

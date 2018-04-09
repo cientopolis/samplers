@@ -1,11 +1,8 @@
-package org.cientopolis.samplers.ui;
+package org.cientopolis.samplers.authentication;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.content.Context;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,21 +18,17 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
 import org.cientopolis.samplers.R;
-import org.cientopolis.samplers.authentication.AuthenticationManager;
-import org.cientopolis.samplers.authentication.GoogleUser;
-import org.cientopolis.samplers.authentication.User;
+
 
 /**
  * Created by Xavier on 31/03/2018.
  */
 
-public class LoginFragment extends Fragment {
+public class StandardLoginFragment extends LoginFragment {
 
     private static final int RC_SIGN_IN = 111;
 
-    private LoginFragmentInteractionListener mListener;
-
-    public LoginFragment() {
+    public StandardLoginFragment() {
         // Required empty public constructor
     }
 
@@ -51,7 +44,7 @@ public class LoginFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
-        View rootView =   inflater.inflate(R.layout.fragment_login, container, false);
+        View rootView =   inflater.inflate(R.layout.fragment_standard_login, container, false);
 
         // Set the dimensions of the sign-in button.
         SignInButton signInButton = (SignInButton) rootView.findViewById(R.id.sign_in_button);
@@ -109,53 +102,25 @@ public class LoginFragment extends Fragment {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         User user;
         try {
+            Log.e("handleSignInResult","entra");
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            Log.e("handleSignInResult","recupera");
 
             // Signed in successfully.
             user = new GoogleUser(account.getDisplayName(),account.getId());
+            Log.e("handleSignInResult","crea");
             AuthenticationManager.login(user);
+            Log.e("handleSignInResult","user:"+user);
 
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
-            Log.w("LoginFragment", "signInResult:failed code=" + e.getStatusCode());
+            Log.w("StandardLoginFragment", "signInResult:failed code=" + e.getStatusCode());
             user = null;
         }
 
+        Log.e("handleSignInResult","termina");
         mListener.onLogin(user);
-    }
-
-    private void myOnAttach(Context context) {
-        /*
-        * ATENTION:
-        * this method is called twice on API 23-25 because both onAttach(Activity) and onAttach(Context) are executed
-        * Don't put creation code here (e.g. new SomeClass())
-        */
-
-        if (context instanceof LoginFragmentInteractionListener) {
-            mListener = (LoginFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement LoginFragmentInteractionListener");
-        }
-    }
-
-    @SuppressWarnings("deprecation") // This method is needed when running on API Levels < 23
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        myOnAttach(activity);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        myOnAttach(context);
-    }
-
-
-    public interface LoginFragmentInteractionListener {
-        void onLogin(@Nullable User user);
     }
 
 }
