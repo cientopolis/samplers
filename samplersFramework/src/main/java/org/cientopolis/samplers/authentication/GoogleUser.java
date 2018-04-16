@@ -6,7 +6,7 @@ package org.cientopolis.samplers.authentication;
 
 public class GoogleUser implements User {
 
-    public static final String AUTHENTICATION_NAME = "google";
+    public static final String AUTHENTICATION_TYPE = "google";
 
     private String userName;
     private String userId;
@@ -17,8 +17,8 @@ public class GoogleUser implements User {
     }
 
     @Override
-    public String getAuthenticationName() {
-        return AUTHENTICATION_NAME;
+    public String getAuthenticationType() {
+        return AUTHENTICATION_TYPE;
     }
 
     @Override

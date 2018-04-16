@@ -3,7 +3,6 @@ package org.cientopolis.samplers.authentication;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-
 import org.cientopolis.samplers.R;
 
 public class LoginActivity extends Activity implements LoginFragmentInteractionListener {
@@ -25,11 +24,15 @@ public class LoginActivity extends Activity implements LoginFragmentInteractionL
                 throw new RuntimeException("Error while instantiating LoginFragment");
             }
         }
+
     }
+
 
     @Override
     public void onLogin(@Nullable User user) {
         this.finish();
-
     }
+
 }
+
+

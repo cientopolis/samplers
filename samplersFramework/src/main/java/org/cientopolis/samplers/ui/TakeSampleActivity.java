@@ -72,7 +72,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
         if (savedInstanceState == null) { // First execution
             sample = new Sample();
 
-            if (AuthenticationManager.isAuthenticationEnabled() && (AuthenticationManager.getUser() == null))
+            if (AuthenticationManager.isAuthenticationEnabled() && (AuthenticationManager.getUser(getApplicationContext()) == null))
                 login();
             else
                 nextStep();

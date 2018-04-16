@@ -102,15 +102,12 @@ public class StandardLoginFragment extends LoginFragment {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         User user;
         try {
-            Log.e("handleSignInResult","entra");
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            Log.e("handleSignInResult","recupera");
 
             // Signed in successfully.
             user = new GoogleUser(account.getDisplayName(),account.getId());
-            Log.e("handleSignInResult","crea");
-            AuthenticationManager.login(user);
-            Log.e("handleSignInResult","user:"+user);
+
+            AuthenticationManager.login(user, getActivity().getApplicationContext());
 
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
@@ -119,7 +116,6 @@ public class StandardLoginFragment extends LoginFragment {
             user = null;
         }
 
-        Log.e("handleSignInResult","termina");
         mListener.onLogin(user);
     }
 

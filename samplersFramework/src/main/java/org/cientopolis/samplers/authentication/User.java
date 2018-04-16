@@ -6,7 +6,7 @@ package org.cientopolis.samplers.authentication;
 
 public interface User {
 
-    String getAuthenticationName();
+    String getAuthenticationType();
     String getUserName();
     String getUserId();
 

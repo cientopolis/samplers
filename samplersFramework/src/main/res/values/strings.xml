@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">Samplers Application</string>
 
-    <string name="action_settings">Configuracion</string>
+    <!-- Main Menu Options -->
+    <string name="action_settings">Configuración</string>
     <string name="action_samples">Muestras</string>
     <string name="action_help">Ayuda</string>
+    <string name="action_logout">Cerrar Sesión</string>
 
     <string name="yesString">Si</string>
     <string name="noString">No</string>

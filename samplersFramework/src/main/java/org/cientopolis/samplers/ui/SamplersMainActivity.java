@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.squareup.otto.DeadEvent;
 import com.squareup.otto.Subscribe;
 
 import org.cientopolis.samplers.R;
@@ -42,10 +43,13 @@ public abstract class SamplersMainActivity extends Activity {
         // Register to the bus to receive messages
         BusProvider.getInstance().register(this);
 
+        Log.e("SamplersMainActivity","onCreate");
     }
 
     @Override
     public void onDestroy () {
+        Log.e("SamplersMainActivity","onDestroy");
+
         // Always unregister when an object no longer should be on the bus.
         BusProvider.getInstance().unregister(this);
         super.onDestroy();
@@ -56,7 +60,7 @@ public abstract class SamplersMainActivity extends Activity {
         super.onResume();
 
         if (AuthenticationManager.isAuthenticationEnabled()) {
-            updateUserUI(AuthenticationManager.getUser());
+            updateUserUI(AuthenticationManager.getUser(getApplicationContext()));
         }
         else {
             lb_main_user_name.setVisibility(View.INVISIBLE);
@@ -90,6 +94,11 @@ public abstract class SamplersMainActivity extends Activity {
             startHelpActivity();
             return true;
         }
+        else if (id == R.id.action_logout) {
+            logout();
+            return true;
+        }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -134,6 +143,11 @@ public abstract class SamplersMainActivity extends Activity {
 
     protected abstract Integer getMainHelpResourceId();
 
+    protected void logout() {
+        AuthenticationManager.logout(getApplicationContext());
+        BusProvider.getInstance().post(new LoginEvent(null));
+    }
+
     public void login(View view){
 
         startLoginActivity();
@@ -149,7 +163,14 @@ public abstract class SamplersMainActivity extends Activity {
     public void onLoginEvent(LoginEvent loginEvent) {
         // UPDATE UI
         Log.e("onLoginEvent","user:"+loginEvent.user);
+
         updateUserUI(loginEvent.user);
+    }
+
+    @Subscribe
+    public void onDeadEvent(DeadEvent event) {
+        // DEAD EVENT
+        Log.e("onDeadEvent","event:"+event.toString());
     }
 
     private void updateUserUI(User user) {
