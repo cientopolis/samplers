@@ -12,6 +12,8 @@ public class SamplersClassGenerator {
     private String googleMaps_API_KEY;
     private List<StepClassGenerator> steps;
     private String mainHelpFileName;
+    private static boolean authenticationEnabled = false;
+    private static boolean authenticationOptional = true;
 
     public SamplersClassGenerator(String package_name, String manifest_path, String strings_path, String raw_path) {
         this.package_name = package_name;
@@ -38,7 +40,15 @@ public class SamplersClassGenerator {
         this.mainHelpFileName = mainHelpFileName;
     }
 
-    public void generateMainActivity(String path, String activity_name, String welcomeMessage, String net_config_url, String net_config_paramName) {
+    public static void setAuthenticationEnabled(boolean authenticationEnabled) {
+        SamplersClassGenerator.authenticationEnabled = authenticationEnabled;
+    }
+
+    public static void setAuthenticationOptional(boolean authenticationOptional) {
+        SamplersClassGenerator.authenticationOptional = authenticationOptional;
+    }
+
+    public void generateMainActivity(String path, String activity_name, String welcomeMessage, NetworkConfiguration networkConfiguration) {
 
         List<String> output = new ArrayList<>();
 
@@ -59,6 +69,8 @@ public class SamplersClassGenerator {
         output.add("import org.cientopolis.samplers.framework.photo.*;");
         output.add("import org.cientopolis.samplers.framework.soundRecord.*;");
         output.add("import org.cientopolis.samplers.framework.route.*;");
+        output.add("import org.cientopolis.samplers.authentication.AuthenticationManager;");
+
 
         output.add("");
         output.add("public class "+activity_name+" extends SamplersMainActivity {");
@@ -68,8 +80,14 @@ public class SamplersClassGenerator {
         output.add("        super.onCreate(savedInstanceState);");
 
         // Set Network Configuration
-        output.add("        NetworkConfiguration.setURL(\"" + net_config_url + "\");");
-        output.add("        NetworkConfiguration.setPARAM_NAME(\"" + net_config_paramName + "\");");
+        output.add("        NetworkConfiguration.setURL(\"" + networkConfiguration.URL + "\");");
+        output.add("        NetworkConfiguration.setPARAM_NAME_SAMPLE(\"" + networkConfiguration.PARAM_NAME_SAMPLE + "\");");
+        output.add("        NetworkConfiguration.setPARAM_NAME_USER_ID(\"" + networkConfiguration.PARAM_NAME_USER_ID + "\");");
+        output.add("        NetworkConfiguration.setPARAM_NAME_AUTHENTICATION_TYPE(\"" + networkConfiguration.PARAM_NAME_AUTHENTICATION_TYPE + "\");");
+
+        // Set the authentication configuration
+        output.add("        AuthenticationManager.setAuthenticationEnabled(" + String.valueOf(authenticationEnabled) + ");");
+        output.add("        AuthenticationManager.setAuthenticationOptional(" + String.valueOf(authenticationOptional) + ");");
 
         // Set Welcome Message ---------------------------------------------------------------------
         String varName = "welcomeMessage";
