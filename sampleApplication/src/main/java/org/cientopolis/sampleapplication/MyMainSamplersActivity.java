@@ -1,7 +1,8 @@
 package org.cientopolis.sampleapplication;
 
-import android.os.Bundle;
 
+import android.os.Bundle;
+import org.cientopolis.samplers.authentication.AuthenticationManager;
 import org.cientopolis.samplers.framework.information.InformationStep;
 import org.cientopolis.samplers.framework.insertDate.InsertDateStep;
 import org.cientopolis.samplers.framework.insertText.InsertTextStep;
@@ -33,9 +34,13 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
 
         // Set the network configuration
         NetworkConfiguration.setURL("http://192.168.0.10/samplers/upload.php");
-        NetworkConfiguration.setPARAM_NAME("sample");
+        NetworkConfiguration.setPARAM_NAME_SAMPLE("sample");
+        NetworkConfiguration.setPARAM_NAME_USER_ID("user_id");
+        NetworkConfiguration.setPARAM_NAME_AUTHENTICATION_TYPE("authentication_type");
 
-        lb_main_welcome_message.setText("Bienvenido a la Aplicacion de Prueba!");
+        // Set the authentication configuration
+        AuthenticationManager.setAuthenticationEnabled(true);
+        AuthenticationManager.setAuthenticationOptional(true);
     }
 
 

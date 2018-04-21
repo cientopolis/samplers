@@ -66,7 +66,7 @@ public abstract class StepFragment extends Fragment {
 
     private void myOnAttach(Context context) {
         /*
-        * ATENTION:
+        * ATTENTION:
         * this method is called twice on API 23-25 because both onAttach(Activity) and onAttach(Context) are executed
         * Don't put creation code here (e.g. new SomeClass())
         */
