@@ -7,7 +7,6 @@ import android.app.FragmentTransaction;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -20,7 +19,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.framework.StepResult;
-import org.cientopolis.samplers.framework.base.StepFragment;
+import org.cientopolis.samplers.framework.StepFragment;
 import org.cientopolis.samplers.ui.ErrorMessaging;
 
 import java.io.IOException;

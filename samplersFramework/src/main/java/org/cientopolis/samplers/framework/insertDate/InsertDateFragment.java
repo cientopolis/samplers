@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.framework.StepResult;
-import org.cientopolis.samplers.framework.base.StepFragment;
-import org.cientopolis.samplers.framework.base.StepFragmentInteractionListener;
+import org.cientopolis.samplers.framework.StepFragment;
+import org.cientopolis.samplers.framework.StepFragmentInteractionListener;
 
 import java.util.GregorianCalendar;
 

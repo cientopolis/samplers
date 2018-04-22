@@ -35,8 +35,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.framework.StepResult;
 import org.cientopolis.samplers.ui.ErrorMessaging;
-import org.cientopolis.samplers.framework.base.StepFragment;
-import org.cientopolis.samplers.framework.base.StepFragmentInteractionListener;
+import org.cientopolis.samplers.framework.StepFragment;
+import org.cientopolis.samplers.framework.StepFragmentInteractionListener;
 
 /**
  * Created by Xavier on 09/04/2017.

@@ -1,6 +1,7 @@
 package org.cientopolis.samplers.framework.base;
 
 import org.cientopolis.samplers.framework.Step;
+import org.cientopolis.samplers.framework.StepFragment;
 import org.cientopolis.samplers.framework.StepResult;
 
 import java.io.Serializable;

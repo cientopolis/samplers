@@ -21,8 +21,8 @@ import org.cientopolis.samplers.framework.Sample;
 import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.StepResult;
 import org.cientopolis.samplers.framework.Workflow;
-import org.cientopolis.samplers.framework.base.StepFragment;
-import org.cientopolis.samplers.framework.base.StepFragmentInteractionListener;
+import org.cientopolis.samplers.framework.StepFragment;
+import org.cientopolis.samplers.framework.StepFragmentInteractionListener;
 import org.cientopolis.samplers.network.SamplesShipmentService;
 import org.cientopolis.samplers.persistence.DAO_Factory;
 

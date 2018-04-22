@@ -1,7 +1,5 @@
 package org.cientopolis.samplers.framework;
 
-import org.cientopolis.samplers.framework.base.StepFragment;
-
 import java.io.Serializable;
 
 /**

@@ -1,4 +1,4 @@
-package org.cientopolis.samplers.framework.base;
+package org.cientopolis.samplers.framework;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -11,8 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.framework.multipleSelect.MultipleSelectFragment;
-import org.cientopolis.samplers.framework.Step;
-import org.cientopolis.samplers.framework.StepResult;
 
 /**
  * Created by Xavier on 02/03/2017.
@@ -108,8 +106,14 @@ public abstract class StepFragment extends Fragment {
 
         // Set the "Next Button" onClick listener
         Button bt_next = (Button) rootView.findViewById(R.id.bt_next);
-        if (bt_next != null)
+        if (bt_next != null) {
+            // Set the onClick listener
             bt_next.setOnClickListener(new NextClickListener());
+            // Set the caption
+            bt_next.setText(getResources().getString(R.string.bt_next));
+            // Set the image icon
+            bt_next.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_keyboard_arrow_right_black_36dp, 0);
+        }
         else
             throw new RuntimeException("Layout must include a Button with id: bt_next");
 

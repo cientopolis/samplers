@@ -9,8 +9,8 @@ import android.widget.TextView;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.framework.StepResult;
 import org.cientopolis.samplers.ui.ErrorMessaging;
-import org.cientopolis.samplers.framework.base.StepFragment;
-import org.cientopolis.samplers.framework.base.StepFragmentInteractionListener;
+import org.cientopolis.samplers.framework.StepFragment;
+import org.cientopolis.samplers.framework.StepFragmentInteractionListener;
 
 /**
  * A simple {@link StepFragment} subclass.

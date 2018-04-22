@@ -8,7 +8,7 @@ import android.widget.TimePicker;
 
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.framework.StepResult;
-import org.cientopolis.samplers.framework.base.StepFragment;
+import org.cientopolis.samplers.framework.StepFragment;
 
 import java.util.GregorianCalendar;
 
