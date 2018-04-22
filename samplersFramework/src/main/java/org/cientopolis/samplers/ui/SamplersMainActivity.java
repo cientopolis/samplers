@@ -146,6 +146,7 @@ public abstract class SamplersMainActivity extends Activity {
     protected void logout() {
         AuthenticationManager.logout(getApplicationContext());
         BusProvider.getInstance().post(new LoginEvent(null));
+        updateUserUI(null); // BUS is not working here...
     }
 
     public void login(View view){

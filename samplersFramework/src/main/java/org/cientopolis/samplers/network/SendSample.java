@@ -63,9 +63,11 @@ class SendSample {
         if (succeeded) {
             sample.setSent();
             DAO_Factory.getSampleDAO(context).save(sample);
-            if (zipFile != null) {
-                zipFile.delete();
-            }
+        }
+
+        // Delete the zip file
+        if (zipFile != null) {
+            zipFile.delete();
         }
 
 
