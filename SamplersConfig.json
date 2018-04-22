@@ -8,9 +8,14 @@
     "title" : "Samplers Hello World App",
     "welcomeMessage" : "Welcome to your first Samplers App!",
     "networkConfiguration" : {
-      "url" : "http://192.168.1.10/samplers/upload.php",
-      "paramName" : "sample"
+      "url" : "http://192.168.0.10/samplers/upload.php",
+      "paramName" : "sample",
+      "paramNameUserId" : "user_id",
+      "paramNameAuthenticationType" : "authentication_type"
+
     },
+    "authenticationEnabled" : true,
+    "authenticationOptional" : true,
     "googleMaps_API_KEY" : "AIzaSyBSdAX453WDiPJmPotF5akUQNQw_W_MzJ4",
     "mainHelpFileName" : "mainhelp.html"
   } ,

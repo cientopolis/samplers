@@ -88,13 +88,13 @@ public class Camera1Fragment extends Fragment {
         Button b_takePicture = (Button) rootView.findViewById(R.id.b_take_picture);
         b_takePicture.setOnClickListener(new TakePictureClick());
 
-        /*mListener for takePicture button onClick*/
+
         if(this.getParentFragment() instanceof  PhotoFragmentCallbacks){
             mListener = (PhotoFragmentCallbacks) this.getParentFragment();
-            Log.e("Camera2Fragment", "mListener asignado(onClick)");
+            Log.e("Camera1Fragment", "mListener asignado(onClick)");
         }
         else {
-            Log.e("Camera2Fragment", "mListener NO asignado");
+            Log.e("Camera1Fragment", "mListener NO asignado");
             throw new RuntimeException(this.getParentFragment().toString()
                     + " must implement PhotoFragmentCallbacks");
         }
@@ -171,7 +171,9 @@ public class Camera1Fragment extends Fragment {
         } else { // back-facing
             result = (info.orientation - degrees + 360) % 360;
         }
+
         camera.setDisplayOrientation(result);
+
     }
 
     public void captureImage() throws IOException{
@@ -258,7 +260,7 @@ public class Camera1Fragment extends Fragment {
                 throw new RuntimeException("unable to create picture");
             }
             else{
-                mListener.onPhotoTaked(imageURI);
+                mListener.onPhotoTaked(imageURI,getActivity().getWindowManager().getDefaultDisplay().getRotation());
             }
         }
     }

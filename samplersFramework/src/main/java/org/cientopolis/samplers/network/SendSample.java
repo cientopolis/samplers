@@ -3,6 +3,8 @@ package org.cientopolis.samplers.network;
 import android.content.Context;
 import android.util.Log;
 
+import org.cientopolis.samplers.authentication.AuthenticationManager;
+import org.cientopolis.samplers.authentication.User;
 import org.cientopolis.samplers.bus.BusProvider;
 import org.cientopolis.samplers.bus.SampleSentEvent;
 import org.cientopolis.samplers.framework.Sample;
@@ -36,17 +38,19 @@ class SendSample {
 
         File samplesDir = DAO_Factory.getSampleDAO(context).getSamplesDir();
         File sampleDir = DAO_Factory.getSampleDAO(context).getSampleDir(sample);
+        File zipFile = null;
+
         if (sampleDir != null) {
             try {
 
                 String zipFileName = "sample_"+String.valueOf(sample.getId())+".zip";
-                File zipFile = new File(samplesDir,zipFileName);
+                zipFile = new File(samplesDir,zipFileName);
 
                 Log.e("SendSample", "try to zip...");
                 ZipUtilities.zipFilesInDirectory(sampleDir,zipFile.getAbsolutePath());
                 Log.e("SendSample", "ziped");
 
-                succeeded = sendFile(zipFile);
+                succeeded = sendFile(zipFile,context);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -61,6 +65,11 @@ class SendSample {
             DAO_Factory.getSampleDAO(context).save(sample);
         }
 
+        // Delete the zip file
+        if (zipFile != null) {
+            zipFile.delete();
+        }
+
 
         BusProvider.getInstance().post(new SampleSentEvent(sample,succeeded));
 
@@ -71,20 +80,36 @@ class SendSample {
 
     }
 
-    private boolean sendFile(File file) {
+    private boolean sendFile(File file, Context context) {
         boolean succeeded = false;
 
         try {
-            RequestBody body = new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)
-                    .addFormDataPart(NetworkConfiguration.getPARAM_NAME(), file.getName(),
-                            RequestBody.create(MediaType.parse(MEDIA_TYPE), file))
-                    .build();
+            MultipartBody.Builder builder = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM);
+
+            // add the sample param
+            builder.addFormDataPart(NetworkConfiguration.getPARAM_NAME_SAMPLE(), file.getName(),
+                    RequestBody.create(MediaType.parse(MEDIA_TYPE), file));
+
+            // add the user params
+            if (AuthenticationManager.isAuthenticationEnabled()) {
+                User user = AuthenticationManager.getUser(context);
+                if (user != null) {
+                    builder.addFormDataPart(NetworkConfiguration.getPARAM_NAME_USER_ID(), user.getUserId())
+                            .addFormDataPart(NetworkConfiguration.getPARAM_NAME_AUTHENTICATION_TYPE(), user.getAuthenticationType());
+                    Log.e("SendFile", "USER INFO ADDED");
+                }
+            }
+
+
+            RequestBody body = builder.build();
+
 
             Request request = new Request.Builder()
                     .url(NetworkConfiguration.getURL())
                     .post(body)
                     .build();
+
 
             Log.e("request", "request:" + request.toString());
 

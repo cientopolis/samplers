@@ -40,6 +40,8 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
+
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.persistence.MultimediaIOManagement;
 import org.cientopolis.samplers.ui.ErrorMessaging;
@@ -605,7 +607,7 @@ public class Camera2Fragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mListener.onPhotoTaked(imageURI);
+                mListener.onPhotoTaked(imageURI,getActivity().getWindowManager().getDefaultDisplay().getRotation());
             }
         });
     }
@@ -697,8 +699,9 @@ public class Camera2Fragment extends Fragment {
                     + " must implement PhotoFragmentCallbacks");
         }
 
-        // TODO set the instructions to show to a TextView
-        //instructions
+        TextView textView = (TextView) rootView.findViewById(R.id.lb_instructions);
+        textView.setText(instructions);
+
         return rootView;
     }
 

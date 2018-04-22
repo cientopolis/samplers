@@ -1,16 +1,28 @@
 <resources>
     <string name="app_name">Samplers Application</string>
 
-    <string name="action_settings">Configuracion</string>
+    <!-- Main Menu Options -->
+    <string name="action_settings">Configuración</string>
     <string name="action_samples">Muestras</string>
     <string name="action_help">Ayuda</string>
+    <string name="action_logout">Cerrar Sesión</string>
 
     <string name="yesString">Si</string>
     <string name="noString">No</string>
 
     <!-- Main Activity -->
-    <string name="txt_welcome_message">Bienvenidos al registro regional de gatos</string>
+    <string name="txt_welcome_message">Bienvenidos a la Aplicación de Prueba de Samplers</string>
     <string name="bt_take_sample">Tomar Muestra</string>
+
+    <string name="bt_login">Iniciar Sesión</string>
+    <string name="bt_logout">Cerrar Sesión</string>
+
+    <!-- Login Activity -->
+    <string name="title_activity_login">Iniciar Sesión</string>
+
+    <!-- Login Fragment -->
+    <string name="lb_skip_login">Omitir</string>
+    <string name="lb_login_message">Por favor inicie sesión</string>
 
     <!-- Take Sample Activity -->
     <string name="title_activity_take_sample">Tomar Muestra</string>
@@ -58,6 +70,7 @@
 
     <!-- Help Activity -->
     <string name="title_activity_help">Ayuda</string>
+
 
 
 </resources>

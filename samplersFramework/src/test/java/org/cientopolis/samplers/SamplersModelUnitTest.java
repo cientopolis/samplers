@@ -55,7 +55,7 @@ public class SamplersModelUnitTest {
 
     @Test
     public void PhotoStepTest () throws Exception {
-        PhotoStep photoStep = new PhotoStep(4, "instructions","path to image",null);
+        PhotoStep photoStep = new PhotoStep(4, "instructions",null);
         assertEquals("instructions", photoStep.getInstructionsToShow());
         assertEquals(4, photoStep.getId());
     }
