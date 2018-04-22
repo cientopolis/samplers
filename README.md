@@ -42,7 +42,7 @@ Samplers is a framework to build mobile citizen science applications.
         compile ('com.google.android.gms:play-services-location:12.0.1')
         compile ('com.google.android.gms:play-services-maps:12.0.1')
         
-        // if you will use Authentication with Google, add this dependencies (you should use the latest version)
+        // if you will use authentication with Google, add this dependencies (you should use the latest version)
         compile ('com.google.android.gms:play-services-auth:12.0.1')
 
         // the framework dependency
@@ -61,7 +61,10 @@ Instantiation can be done manually or using gradle class generator.
         2. Override the **onCreate()** method and set the NetworkConfiguration:
             ```java
             NetworkConfiguration.setURL("http://192.168.1.10/samplers/upload.php");
-            NetworkConfiguration.setPARAM_NAME("sample");
+            NetworkConfiguration.setPARAM_NAME_SAMPLE("sample");
+            // Optional if you will use authentication
+            NetworkConfiguration.setPARAM_NAME_USER_ID("user_id");
+            NetworkConfiguration.setPARAM_NAME_AUTHENTICATION_TYPE("authentication_type");
             ```
     
     - You can create your own Main Activity and start the TakeSampleActivity like this:
