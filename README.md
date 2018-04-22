@@ -1,7 +1,7 @@
 # Samplers
 Samplers is a framework to build mobile citizen science applications.
 
-# UNDER DEVELOPMENT v0.6
+# UNDER DEVELOPMENT v0.7
 
 ## Steps to use the framework
 
@@ -14,7 +14,19 @@ Samplers is a framework to build mobile citizen science applications.
     - Download the latest **samplersFramework.aar** from [here](https://github.com/cientopolis/samplers/releases/)
     - Import the library into the project: **File -> New -> New Module -> Import .JAR/.AAR Package**
 
-3. Add the necessary dependencies
+3. Add the google repository
+    - On your **project build.gradle**
+      ```gradle
+      allprojects {
+          repositories {
+              jcenter()
+              google()
+          }
+      }
+        
+      ```
+      
+4. Add the necessary dependencies
     - On your **application build.gradle**
       ```gradle
       dependencies {
@@ -26,10 +38,12 @@ Samplers is a framework to build mobile citizen science applications.
         compile 'com.android.support:design:24.2.1' 
         compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
-        // if you will use maps and location services, add this dependencies 
-        // you should use the latest version 
-        compile 'com.google.android.gms:play-services-location:10.2.1'
-        compile 'com.google.android.gms:play-services-maps:10.2.1'
+        // if you will use maps and location services, add this dependencies (you should use the latest version)
+        compile ('com.google.android.gms:play-services-location:12.0.1')
+        compile ('com.google.android.gms:play-services-maps:12.0.1')
+        
+        // if you will use Authentication with Google, add this dependencies (you should use the latest version)
+        compile ('com.google.android.gms:play-services-auth:12.0.1')
 
         // the framework dependency
         compile project(":samplersFramework")
