@@ -7,8 +7,9 @@ import java.util.List;
  */
 
 public interface DAO<E,K> {
-    public K save(E object);
-    public E find(K key);
-    public boolean delete(E object);
-    public List<E> list();
+
+    K save(E object);
+    E find(K key);
+    boolean delete(E object);
+    List<E> list();
 }

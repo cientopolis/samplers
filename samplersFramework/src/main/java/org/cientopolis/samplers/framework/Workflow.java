@@ -68,10 +68,7 @@ public class Workflow implements Serializable {
         else {
             Integer nextStepId = this.actualStep.getNextStepId();
             if (nextStepId != null) {
-                //Log.e("Workflow","nextStepId:"+String.valueOf(nextStepId));
                 step = steps.get(nextStepId);
-                if (step == null)
-                    Log.e("Workflow","NULLLLLL:");
             }
         }
 

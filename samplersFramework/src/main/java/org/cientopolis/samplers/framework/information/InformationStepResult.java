@@ -1,5 +1,6 @@
 package org.cientopolis.samplers.framework.information;
 
+import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.StepResult;
 
 /**

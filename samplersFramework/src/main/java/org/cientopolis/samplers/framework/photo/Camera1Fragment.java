@@ -89,7 +89,7 @@ public class Camera1Fragment extends Fragment {
         b_takePicture.setOnClickListener(new TakePictureClick());
 
 
-        if(this.getParentFragment() instanceof  PhotoFragmentCallbacks){
+        if (this.getParentFragment() instanceof  PhotoFragmentCallbacks){
             mListener = (PhotoFragmentCallbacks) this.getParentFragment();
             Log.e("Camera1Fragment", "mListener asignado(onClick)");
         }
@@ -105,7 +105,6 @@ public class Camera1Fragment extends Fragment {
 
     @Override
     public void onSaveInstanceState (Bundle outState) {
-        // TODO no se esta ejecutando este metodo
         //camera is streaming. So, we released the camera and stop the streaming
         releaseCamera();
 

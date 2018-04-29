@@ -6,10 +6,8 @@ import com.google.gson.Gson;
 
 import org.cientopolis.samplers.bus.BusProvider;
 import org.cientopolis.samplers.bus.NewSampleSavedEvent;
-import org.cientopolis.samplers.framework.photo.PhotoStepResult;
 import org.cientopolis.samplers.framework.Sample;
 import org.cientopolis.samplers.framework.StepResult;
-import org.cientopolis.samplers.framework.soundRecord.SoundRecordStepResult;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,25 +19,64 @@ import java.util.List;
 
 /**
  * Created by Xavier on 09/02/2017.
+ * Implementation of {@link  SampleDAO}
+ * It stores each sample as a directory which contains a .json file of the sample object and the multimedia files.
+ * The samples are saved in the samples directory in the internal storage (in the app's internal storage directory)
+ * For example:
+ * Sample id:123456 with 2 photos is saved like this:
+ *      /samples/                                        // Samples directory
+ *                sample_123456/                         // Sample id:123456 directory
+ *                              sample_123456.json       // Sample object as a JSON object
+ *                              1524437599776.jpg        // Photo file 1
+ *                              1524441664170.jpg        // Photo file 2
+ *
+ *
+ * From Android documentation:
+ * "By default, files saved to the internal storage are private to your app, and other apps cannot access them (nor can the user, unless they have root access)"
+ * "When the user uninstalls your app, the files saved on the internal storage are removed"
+ * See Android documentation for more details about the app's internal storage
  */
 
 class SampleDAOImpl implements SampleDAO {
 
+    // The name of the directory where the samples will be saved
     private static final  String SAMPLES_DIR = "samples";
+    // The prefix of the sample file
     private static final  String SAMPLES_PREFIX = "sample_";
+    // The extension of the sample file
     private static final  String SAMPLES_EXTENSION = ".json";
 
+    // The Context to get access to the app's internal storage.
     private Context myContext;
 
+    /**
+     * Constructor.
+     *
+     * @param context The {@link Context} to get access to the app's internal storage.
+     */
     SampleDAOImpl(Context context) {
         myContext = context;
     }
 
 
+    /**
+     * The name of the directory where the sample is saved
+     * It consist of the sample prefix plus the id of the sample
+     *
+     * @param id The id of the Sample
+     * @return The name of the directory where the sample is saved
+     */
     private String getSampleDirFileName(Long id) {
         return SAMPLES_PREFIX + String.valueOf(id);
     }
 
+    /**
+     * The name of the file that stores the sample object
+     * It consist of the sample prefix plus the id of the sample
+     *
+     * @param id The id of the Sample
+     * @return The name of the file that stores the sample object
+     */
     private String getSampleFileName(Long id) {
         return SAMPLES_PREFIX + String.valueOf(id) + SAMPLES_EXTENSION;
     }
@@ -58,7 +95,6 @@ class SampleDAOImpl implements SampleDAO {
     private File getSamplesDir(Context context) throws IOException {
 
         File fileDir = new File(context.getFilesDir(),SAMPLES_DIR);
-
 
         if (!fileDir.exists()) {
             if (!fileDir.mkdirs()) {
