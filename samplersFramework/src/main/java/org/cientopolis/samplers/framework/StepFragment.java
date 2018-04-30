@@ -14,7 +14,8 @@ import org.cientopolis.samplers.framework.multipleSelect.MultipleSelectFragment;
 
 /**
  * Created by Xavier on 02/03/2017.
- * A simple {@link Fragment} subclass.
+ * Represents the view of a {@link Step}.
+ * Given a {@link Step} it's the UI to generate the correspondent {@link StepResult}
  *
  * Activities that contain subclasses of this fragment must implement the
  * {@link StepFragmentInteractionListener} interface to handle interaction events.
@@ -26,7 +27,9 @@ public abstract class StepFragment extends Fragment {
 
     private static final String ARG_STEP = "org.cientopolis.samplers.StepFragment.PARAM_STEP";
 
+    // The given Step, passed as a parameter
     protected Step step;
+    // The listener to interact when the Step is finished
     protected StepFragmentInteractionListener mListener;
 
 
@@ -166,17 +169,21 @@ public abstract class StepFragment extends Fragment {
     protected abstract StepResult getStepResult();
 
 
-
+    /**
+     * OnClick listener of the Next Button
+     */
     private class NextClickListener implements View.OnClickListener{
 
         @Override
         public void onClick(View v) {
+            // check for missing listener
             if (mListener != null) {
+                // Validate if the step is complete. It's a subclass task
                 if (validate())
                     mListener.onStepFinished(getStepResult());
             }
             else {
-                Log.e("NextClickListener", "OMG! mListener NULL !!!");
+                throw new RuntimeException("StepFragmentInteractionListener is NULL. You probably overrode the onAttach() method without calling super.onAttach().");
             }
         }
     }

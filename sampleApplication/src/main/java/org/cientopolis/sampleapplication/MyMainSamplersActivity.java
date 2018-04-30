@@ -14,7 +14,6 @@ import org.cientopolis.samplers.framework.route.RouteStep;
 import org.cientopolis.samplers.framework.selectOne.SelectOneOption;
 import org.cientopolis.samplers.framework.selectOne.SelectOneStep;
 import org.cientopolis.samplers.framework.multipleSelect.MultipleSelectOption;
-import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.Workflow;
 import org.cientopolis.samplers.framework.soundRecord.SoundRecordStep;
 import org.cientopolis.samplers.network.NetworkConfiguration;
@@ -24,6 +23,9 @@ import java.util.ArrayList;
 
 /**
  * Created by Xavier on 02/02/2017.
+ * Main activity of the Sample Aplication.
+ * It's a basic example of how to extend {@link SamplersMainActivity}
+ * You can modify the {@link MyMainSamplersActivity#getWorkflow()} method to link the steps you want to use
  */
 
 public class MyMainSamplersActivity  extends SamplersMainActivity {
@@ -47,7 +49,6 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
     @Override
     protected Workflow getWorkflow() {
         Workflow workflow = new Workflow();
-        Step step;
 
         // InformationStep
         workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",3));
@@ -62,7 +63,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         workflow.addStep(new SoundRecordStep(103, "Grabe algo",6));
 
         // SelectOneStep
-        ArrayList<SelectOneOption> optionsToSelect2 = new ArrayList<SelectOneOption>();
+        ArrayList<SelectOneOption> optionsToSelect2 = new ArrayList<>();
         optionsToSelect2.add(new SelectOneOption(1,"SI", 3));
         optionsToSelect2.add(new SelectOneOption(2,"NO", 4));
         workflow.addStep(new SelectOneStep(2, optionsToSelect2, "¿Quiere sacar una foto?"));
@@ -86,7 +87,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         workflow.addStep(routeStep);
 
         // MultipleSelectStep
-        ArrayList<MultipleSelectOption> optionsToSelect = new ArrayList<MultipleSelectOption>();
+        ArrayList<MultipleSelectOption> optionsToSelect = new ArrayList<>();
         optionsToSelect.add(new MultipleSelectOption(1,"Arboles"));
         optionsToSelect.add(new MultipleSelectOption(2,"Basura"));
         optionsToSelect.add(new MultipleSelectOption(3,"Arroyo"));
