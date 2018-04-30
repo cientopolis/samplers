@@ -40,6 +40,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.cientopolis.samplers.R;
@@ -685,7 +686,8 @@ public class Camera2Fragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_camera2, container, false);
 
-        Button b_take_picture = (Button) rootView.findViewById(R.id.b_take_picture);
+        ImageButton b_take_picture = (ImageButton) rootView.findViewById(R.id.b_take_picture);
+        b_take_picture.setImageAlpha(getResources().getInteger(R.integer.image_buttons_alpha));
         b_take_picture.setOnClickListener(new TakePictureClick());
         autoFitTextureView = (AutoFitTextureView) rootView.findViewById(R.id.textureView);
 

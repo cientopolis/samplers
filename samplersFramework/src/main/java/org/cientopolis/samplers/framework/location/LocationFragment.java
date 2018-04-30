@@ -12,7 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -149,8 +149,10 @@ public class LocationFragment extends StepFragment {
         lb_latitude = (TextView) rootView.findViewById(R.id.lb_latitude);
         lb_longitude = (TextView) rootView.findViewById(R.id.lb_longitude);
 
-        Button bt_get_position = (Button) rootView.findViewById(R.id.bt_get_position);
+        ImageButton bt_get_position = (ImageButton) rootView.findViewById(R.id.bt_get_position);
+        bt_get_position.setImageAlpha(getResources().getInteger(R.integer.image_buttons_alpha));
         bt_get_position.setOnClickListener(new GetPositionClickListener());
+
 
         mMapView = (MapView) rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);

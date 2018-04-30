@@ -14,6 +14,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.cientopolis.samplers.R;
@@ -85,7 +86,8 @@ public class Camera1Fragment extends Fragment {
         TextView textView = (TextView) rootView.findViewById(R.id.lb_instructions);
         textView.setText(instructions);
 
-        Button b_takePicture = (Button) rootView.findViewById(R.id.b_take_picture);
+        ImageButton b_takePicture = (ImageButton) rootView.findViewById(R.id.b_take_picture);
+        b_takePicture.setImageAlpha(getResources().getInteger(R.integer.image_buttons_alpha));
         b_takePicture.setOnClickListener(new TakePictureClick());
 
 
