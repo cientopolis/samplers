@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
+
 import com.squareup.otto.Subscribe;
 import org.cientopolis.samplers.R;
 import org.cientopolis.samplers.bus.BusProvider;
@@ -18,6 +20,7 @@ import org.cientopolis.samplers.bus.SampleSentEvent;
 import org.cientopolis.samplers.framework.Sample;
 import org.cientopolis.samplers.network.SendSamplesService;
 import org.cientopolis.samplers.persistence.DAO_Factory;
+import org.cientopolis.samplers.persistence.SampleDAO;
 import org.cientopolis.samplers.ui.ErrorMessaging;
 
 import java.util.List;
@@ -29,6 +32,7 @@ public class SamplesListFragment extends Fragment implements SamplesListAdapter.
 
     private List<Sample> samples;
     private SamplesListAdapter adapter;
+    private TextView lb_no_samples_message;
 
     public SamplesListFragment() {
         // Required empty public constructor
@@ -79,7 +83,17 @@ public class SamplesListFragment extends Fragment implements SamplesListAdapter.
         ListView list_samples = (ListView) rootView.findViewById(R.id.list_samples);
         list_samples.setAdapter(adapter);
 
+        lb_no_samples_message = (TextView) rootView.findViewById(R.id.lb_no_samples_message);
+        updateUISate();
+
         return rootView;
+    }
+
+    private void updateUISate() {
+        if (samples.isEmpty())
+            lb_no_samples_message.setVisibility(View.VISIBLE);
+        else
+            lb_no_samples_message.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -98,17 +112,17 @@ public class SamplesListFragment extends Fragment implements SamplesListAdapter.
 
         // Ask for confirmation before deleting
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(message).setPositiveButton(yesString, new ConfirmationYesOnClickListener(mySample))
+        builder.setMessage(message).setPositiveButton(yesString, new DeleteConfirmationYesOnClickListener(mySample))
                 .setNegativeButton(noString, null).show();
 
 
     }
 
-    private class ConfirmationYesOnClickListener implements DialogInterface.OnClickListener {
+    private class DeleteConfirmationYesOnClickListener implements DialogInterface.OnClickListener {
 
         private Sample sample;
 
-        public ConfirmationYesOnClickListener(Sample sample) {
+        DeleteConfirmationYesOnClickListener(Sample sample) {
             this.sample = sample;
         }
 
@@ -119,7 +133,44 @@ public class SamplesListFragment extends Fragment implements SamplesListAdapter.
                 DAO_Factory.getSampleDAO(getActivity().getApplicationContext()).delete(this.sample);
                 samples.remove(this.sample);
                 adapter.notifyDataSetChanged();
+                updateUISate();
             }
         }
     }
+
+
+    public void deleteSentSamples() {
+        String message =  getResources().getString(R.string.delete_sent_samples_confirmation_message);
+        String yesString = getResources().getString(R.string.yesString);
+        String noString = getResources().getString(R.string.noString);
+
+        // Ask for confirmation before deleting
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(message).setPositiveButton(yesString, new DeleteSentSamplesConfirmationYesOnClickListener())
+                .setNegativeButton(noString, null).show();
+
+    }
+
+    private class DeleteSentSamplesConfirmationYesOnClickListener implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            if (which == DialogInterface.BUTTON_POSITIVE) {
+                SampleDAO dao = DAO_Factory.getSampleDAO(getActivity().getApplicationContext());
+                List<Sample> sampleList = dao.list();
+
+                for (Sample sample : sampleList) {
+                    if (sample.isSent())
+                        dao.delete(sample);
+
+                }
+
+                // clear and retrieve the remaining samples
+                samples.clear();
+                samples.addAll(dao.list());
+                adapter.notifyDataSetChanged();
+                updateUISate();
+            }
+        }
+    }
+
 }

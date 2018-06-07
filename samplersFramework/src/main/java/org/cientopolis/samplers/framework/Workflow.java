@@ -41,9 +41,15 @@ public class Workflow implements Serializable {
      * @param steps The steps of the workflow
      * @param firstStep The step that will be the first step of the workflow. It must be included in the steps param too.
      */
-    public Workflow(Map<Integer, Step> steps, Step firstStep) {
+    public Workflow(List<Step> steps, Step firstStep) {
 
-        this.steps = steps;
+        this.steps = new HashMap<>();
+
+        for (Step step: steps) {
+
+            this.steps.put(step.getId(),step);
+        }
+
         this.firstStep = firstStep;
     }
 

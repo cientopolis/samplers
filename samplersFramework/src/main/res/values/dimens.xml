@@ -10,6 +10,9 @@
     <!-- SamplersMain Activity -->
     <dimen name="main_lb_welcome_message_text_size">26sp</dimen>
 
+    <!-- Samples List Activity -->
+    <dimen name="sl_no_samples_message_text_size">26sp</dimen>
+
 
     <!-- TakeSample Activity -->
     <dimen name="tsa_activity_bar_vertical_padding">0dp</dimen>

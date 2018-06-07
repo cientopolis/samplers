@@ -64,9 +64,13 @@
 
     <!-- SamplesList Activity -->
     <string name="title_activity_samples_list">Mestras tomadas</string>
+    <string name="samples_list_no_samples_message">No hay muestras guardadas en este dispositivo</string>
     <string name="delete_sample_confirmation_message">¿Confirma que elimina la muestra?</string>
+    <string name="delete_sent_samples_confirmation_message">¿Confirma que elimina las muestras enviadas?</string>
     <string name="send_sample_success_message">La muestra se envió correctamente</string>
     <string name="send_sample_error_message">Error al enviar la muestra. Por favor intente más tarde</string>
+    <!-- SamplesList Menu Options -->
+    <string name="action_delete_sent_samples">Eliminar todas las muestras enviadas</string>
 
     <!-- Help Activity -->
     <string name="title_activity_help">Ayuda</string>

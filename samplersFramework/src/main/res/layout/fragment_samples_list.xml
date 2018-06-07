@@ -11,4 +11,14 @@
         >
     </ListView>
 
+    <TextView
+        android:id="@+id/lb_no_samples_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@string/samples_list_no_samples_message"
+        android:textSize="@dimen/sl_no_samples_message_text_size"
+        android:textAlignment="center"
+        />
+
 </RelativeLayout>
