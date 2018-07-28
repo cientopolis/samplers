@@ -2,6 +2,7 @@ package org.cientopolis.samplers.framework.multipleSelect;
 
 import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.StepResult;
+import org.cientopolis.samplers.framework.base.BaseStepResult;
 
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  * The result of each {@link MultipleSelectStep}
  */
 
-public class MultipleSelectStepResult extends StepResult {
+public class MultipleSelectStepResult extends BaseStepResult {
 
     /**
      * A list of the selected options.

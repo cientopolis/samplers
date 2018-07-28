@@ -2,12 +2,13 @@ package org.cientopolis.samplers.framework.information;
 
 import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.StepResult;
+import org.cientopolis.samplers.framework.base.BaseStepResult;
 
 /**
  * Created by Xavier on 01/12/2017.
  */
 
-public class InformationStepResult extends StepResult {
+public class InformationStepResult extends BaseStepResult {
     /**
      * Constructor.
      *

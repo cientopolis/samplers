@@ -3,6 +3,7 @@ package org.cientopolis.samplers.framework.photo;
 
 import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.StepResult;
+import org.cientopolis.samplers.framework.base.BaseStepResult;
 
 /**
  * Created by Xavier on 07/02/2017.
@@ -10,7 +11,7 @@ import org.cientopolis.samplers.framework.StepResult;
  * The result of each {@link PhotoStep}.
  */
 
-public class PhotoStepResult extends StepResult {
+public class PhotoStepResult extends BaseStepResult {
 
     /**
      * The filename of the photo file.

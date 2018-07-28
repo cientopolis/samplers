@@ -2,6 +2,7 @@ package org.cientopolis.samplers.framework.location;
 
 import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.StepResult;
+import org.cientopolis.samplers.framework.base.BaseStepResult;
 
 /**
  * Created by Xavier on 09/04/2017.
@@ -9,7 +10,7 @@ import org.cientopolis.samplers.framework.StepResult;
  * The result of each {@link LocationStep}
  */
 
-public class LocationStepResult extends StepResult {
+public class LocationStepResult extends BaseStepResult {
 
     /**
      * The latitude of the position collected.

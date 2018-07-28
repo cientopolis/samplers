@@ -3,6 +3,7 @@ package org.cientopolis.samplers.framework.selectOne;
 
 import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.StepResult;
+import org.cientopolis.samplers.framework.base.BaseStepResult;
 
 /**
  * Created by Xavier on 07/02/2017.
@@ -10,7 +11,7 @@ import org.cientopolis.samplers.framework.StepResult;
  * The result of each {@link SelectOneStep}
  */
 
-public class SelectOneStepResult extends StepResult {
+public class SelectOneStepResult extends BaseStepResult {
 
     /**
      * The option selected.

@@ -2,6 +2,7 @@ package org.cientopolis.samplers.framework.insertText;
 
 import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.StepResult;
+import org.cientopolis.samplers.framework.base.BaseStepResult;
 
 /**
  * Created by Xavier on 23/06/2017.
@@ -9,7 +10,7 @@ import org.cientopolis.samplers.framework.StepResult;
  * The result of each {@link InsertTextStep}
  */
 
-public class InsertTextStepResult extends StepResult {
+public class InsertTextStepResult extends BaseStepResult {
 
     /**
      * The inserted text.

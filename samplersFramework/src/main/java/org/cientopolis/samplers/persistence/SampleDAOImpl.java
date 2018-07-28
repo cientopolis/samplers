@@ -8,6 +8,7 @@ import org.cientopolis.samplers.bus.BusProvider;
 import org.cientopolis.samplers.bus.NewSampleSavedEvent;
 import org.cientopolis.samplers.framework.Sample;
 import org.cientopolis.samplers.framework.StepResult;
+import org.cientopolis.samplers.persistence.gson.GsonProvider;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -134,7 +135,7 @@ class SampleDAOImpl implements SampleDAO {
 
         String filename = getSampleFileName(sample.getId());
 
-        Gson gson = new Gson();
+        Gson gson = GsonProvider.newGsonInstance(); //new Gson();
         String jsonObject = gson.toJson(sample);
 
         FileOutputStream outputStream;
@@ -214,7 +215,7 @@ class SampleDAOImpl implements SampleDAO {
                 if (fileName.endsWith(SAMPLES_EXTENSION)) {
                     File sampleFile = new File(sampleDirectory, fileName);
                     BufferedReader br = new BufferedReader(new FileReader(sampleFile));
-                    Gson gson = new Gson();
+                    Gson gson = GsonProvider.newGsonInstance(); //new Gson();
                     sample = gson.fromJson(br, Sample.class);
                 }
             }
@@ -259,7 +260,7 @@ class SampleDAOImpl implements SampleDAO {
         File dirSample;
         File fileSample;
         BufferedReader br;
-        Gson gson = new Gson();
+        Gson gson = GsonProvider.newGsonInstance(); //new Gson();
 
         try {
             File fileDir = getSamplesDir(myContext);

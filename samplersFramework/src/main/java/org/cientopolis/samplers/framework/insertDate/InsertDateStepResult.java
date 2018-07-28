@@ -2,6 +2,7 @@ package org.cientopolis.samplers.framework.insertDate;
 
 import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.StepResult;
+import org.cientopolis.samplers.framework.base.BaseStepResult;
 
 import java.util.Date;
 
@@ -11,7 +12,7 @@ import java.util.Date;
  * The result of each {@link InsertDateStep}
  */
 
-public class InsertDateStepResult extends StepResult {
+public class InsertDateStepResult extends BaseStepResult {
 
     /**
      * The selected date.

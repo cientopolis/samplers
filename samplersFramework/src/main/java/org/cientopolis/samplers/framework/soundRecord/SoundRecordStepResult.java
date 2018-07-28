@@ -1,12 +1,13 @@
 package org.cientopolis.samplers.framework.soundRecord;
 
 import org.cientopolis.samplers.framework.StepResult;
+import org.cientopolis.samplers.framework.base.BaseStepResult;
 
 /**
  * Created by laura on 14/09/17.
  */
 
-public class SoundRecordStepResult extends StepResult {
+public class SoundRecordStepResult extends BaseStepResult {
 
     private String soundFileName;
 
