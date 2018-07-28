@@ -1,5 +1,7 @@
 package org.cientopolis.samplers.framework;
 
+import android.support.annotation.Nullable;
+
 import java.io.Serializable;
 
 /**
@@ -8,15 +10,57 @@ import java.io.Serializable;
  */
 public interface Step extends Serializable{
 
+    /**
+     * Returns the Fragment class wich will be used to execute the Step
+     * @param <T> T must extends StepFragment
+     * @return The Fragment class
+     */
     <T extends StepFragment> Class<T> getStepFragmentClass();
+
+    /**
+     * Sets the Fragment class wich will be used to execute the Step
+     * @param type The Fragment class
+     * @param <T> T must extends StepFragment
+     */
     <T extends StepFragment> void setStepFragmentClass(Class<T> type);
 
+    /**
+     * The unique identifier of the Step. This id must be unique in the workflow.
+     * This id is stored in the StepResult to identify wich Step generated it.
+     * @return the id of the Step
+     */
     int getId();
-    Integer getNextStepId();
 
+    /**
+     * Returns the id of the next step. If it is null, the Workflow ends.
+     * @return the id of the next step
+     */
+    @Nullable Integer getNextStepId();
+
+
+    /**
+     * Sets the result of the execution of the Step
+     * @param stepResult the result of the execution of the Step
+     */
     void setStepResult(StepResult stepResult);
+
+    /**
+     * Returns the result of the execution of the Step
+     * @return the result of the execution of the Step
+     */
     StepResult getStepResult();
 
+
+    /**
+     * Sets the resourse id of the html help file to show as help of the Step.
+     * The file must be stored in the res/raw folder.
+     * @param helpResourseId the resourse id of the html help file
+     */
     void setHelpResourseId(Integer helpResourseId);
-    Integer getHelpResourseId();
+
+    /**
+     * Returns the resourse id of the html help file. If it is null, it's assumed that the Step has no help to show
+     * @return the resourse id of the html help file
+     */
+    @Nullable Integer getHelpResourseId();
 }

@@ -31,7 +31,7 @@ public class Workflow implements Serializable {
      */
     public Workflow() {
 
-        steps = new HashMap<>();
+        this.steps = new HashMap<>();
     }
 
     /**
@@ -46,6 +46,9 @@ public class Workflow implements Serializable {
         this.steps = new HashMap<>();
 
         for (Step step: steps) {
+
+            if (this.steps.get(step.getId()) != null)
+                throw new RuntimeException("Step with id:"+String.valueOf(step.getId())+" already exists in the workflow.");
 
             this.steps.put(step.getId(),step);
         }
@@ -84,6 +87,9 @@ public class Workflow implements Serializable {
      * @param step The Step to add to the workflow
      */
     public void addStep(Step step) {
+
+        if (this.steps.get(step.getId()) != null)
+            throw new RuntimeException("Step with id:"+String.valueOf(step.getId())+" already exists in the workflow.");
 
         if (steps.isEmpty())
             firstStep = step;
