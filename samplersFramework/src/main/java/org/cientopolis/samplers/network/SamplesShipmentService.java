@@ -18,6 +18,13 @@ import org.cientopolis.samplers.persistence.DAO_Factory;
 
 import java.util.List;
 
+/**
+ * Created by Xavier on 06/03/2018.
+ * The service responsible for checking if there are samples to send, and send them to the server
+ * calling to the {@link SendSamplesService} service.
+ * It's called when a sample is saved by {@link org.cientopolis.samplers.ui.TakeSampleActivity},
+ * and also when wi-fi connection is detected by {@link WiFiBroadcastReceiver}
+ */
 public class SamplesShipmentService extends Service {
 
     public SamplesShipmentService() {

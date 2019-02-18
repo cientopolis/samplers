@@ -4,7 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SamplersClassGenerator {
 
@@ -14,10 +16,12 @@ public class SamplersClassGenerator {
     private String mainHelpFileName;
     private static boolean authenticationEnabled = false;
     private static boolean authenticationOptional = true;
+    private Map<String,String> customParams;
 
     public SamplersClassGenerator(String package_name, String manifest_path, String strings_path, String raw_path) {
         this.package_name = package_name;
         this.steps = new ArrayList<>();
+        this.customParams = new HashMap<>();
 
         RawFilesManagement.setRawPath(raw_path);
 
@@ -34,6 +38,10 @@ public class SamplersClassGenerator {
 
     public void addStep(StepClassGenerator step) {
         steps.add(step);
+    }
+
+    public void addCustomParam(String paramName, String paraValue) {
+        customParams.put(paramName, paraValue);
     }
 
     public void setMainHelpFileName(String mainHelpFileName) {
@@ -108,8 +116,14 @@ public class SamplersClassGenerator {
             output.addAll(steps.get(i).generateStep(i,"workflow"));
         }
 
+        // Custom Params -----------------------------
+        for (String paramName : customParams.keySet()) {
+            output.add("        workflow.addCustomParam(\""+paramName+"\", \""+customParams.get(paramName)+"\");");
+        }
+        
         output.add("        return workflow;");
         output.add("    }");
+        // -----------------------------------------------------------------------------------------
 
         // getMainHelpResourceId() Help File -------------------------------------------------------
         output.add("    @Override");

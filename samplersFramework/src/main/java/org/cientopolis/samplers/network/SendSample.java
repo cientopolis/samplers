@@ -23,6 +23,9 @@ import okhttp3.Response;
 
 /**
  * Created by Xavier on 14/03/2017.
+ * A class to send a {@link Sample}
+ * It uses Java ZIP libraries to zip the sample and OkHTTP libraries to send it.
+ * It must not be used in the main thread.
  */
 
 class SendSample {

@@ -9,6 +9,9 @@ import android.util.Log;
 
 /**
  * Created by Xavier on 18/02/2018.
+ * Broadcast receiver for noticing wi-fi connections
+ * When wi-fi connection is connected calls to {@link SamplesShipmentService} to check if there are samples
+ * availables to send.
  */
 
 public class WiFiBroadcastReceiver extends BroadcastReceiver {

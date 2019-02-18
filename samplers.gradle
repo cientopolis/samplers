@@ -139,8 +139,15 @@ task samplers_config {
                 class_generator.addStep(stepClassGenerator)
             }
 
-
         }
+
+        // Custom Params
+        if (json.workflow.customParams != null) {
+            json.workflow.customParams.eachWithIndex { customParam, i ->
+                class_generator.addCustomParam(customParam.paramName, customParam.paramValue)
+            }
+        }
+
 
         def activity_name = "MyMainSamplersActivity"
         def welcomeMessage = json.application.welcomeMessage

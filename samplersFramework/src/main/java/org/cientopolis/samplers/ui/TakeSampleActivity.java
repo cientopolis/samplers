@@ -71,6 +71,8 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
 
         if (savedInstanceState == null) { // First execution
             sample = new Sample();
+            sample.setCustomParams(workflow.getCustomParams());
+            Log.e("TakeSampleActivity", "Custom params added");
 
             if (AuthenticationManager.isAuthenticationEnabled() && (AuthenticationManager.getUser(getApplicationContext()) == null))
                 login();

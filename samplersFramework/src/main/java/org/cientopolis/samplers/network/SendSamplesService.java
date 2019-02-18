@@ -9,6 +9,8 @@ import org.cientopolis.samplers.framework.Sample;
 
 /**
  * Created by Xavier on 18/02/2018.
+ * A Service to send a {@link Sample}. It receives a {@link Sample} as an extra param and sends it using the {@link SendSample} class.
+ * It was conceived as a service because the need of sending samples in the background.
  */
 
 public class SendSamplesService extends IntentService {

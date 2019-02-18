@@ -3,7 +3,9 @@ package org.cientopolis.samplers.framework;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Xavier on 07/02/2017.
@@ -17,6 +19,7 @@ public class Sample implements Serializable {
     private Date startDateTime;
     private Date endDateTime;
     private boolean sent;
+    private Map<String,String> customParams;
 
     /**
      * Default constructor.
@@ -27,6 +30,7 @@ public class Sample implements Serializable {
         startDateTime = new Date();
         steps = new ArrayList<>();
         sent = false;
+        customParams = new HashMap<>();
     }
 
     /**
@@ -130,5 +134,37 @@ public class Sample implements Serializable {
                 ", sent=" + sent +
                 ", steps=" + steps +
                 '}';
+    }
+
+    /**
+     * Adds a custom param to the Sample
+     * Associates the specified value (@param paraValue) with the specified key (@param paramName) in the customParams map.
+     * If the map previously contained a mapping for the key, the old value is replaced.
+     *
+     * @param paramName the key with which the specified value is to be associated
+     * @param paraValue the value to be associated with the specified key
+     */
+    public void setCustomParam(String paramName, String paraValue){
+        customParams.put(paramName, paraValue);
+    }
+
+    /**
+     * Adds a map of custom params to the Sample
+     * Copies all of the mappings from the specified map to the customParams map.
+     * These mappings will replace any mappings that the customParams map had for any of the keys currently in the specified map.
+     * @param customParams mappings to be stored in the customParams map
+     */
+    public void setCustomParams(Map<String,String> customParams){
+        this.customParams.putAll(customParams);
+    }
+
+    /**
+     * Retrieves a previously added custom param from the Sample
+     * Returns the value to which the specified key (@param paramName) is mapped, or null if the customParams map contains no mapping for the key.
+     * @param paramName the key whose associated value is to be returned
+     * @return the value to which the specified key is mapped, or null if the customParams map contains no mapping for the key
+     */
+    public String getCustomParam(String paramName) {
+        return customParams.get(paramName);
     }
 }

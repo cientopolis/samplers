@@ -106,6 +106,8 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         workflow.addStep(new SelectOneStep(7, optionsToSelect2, "Seleccione solo uno"));
 */
 
+        workflow.addCustomParam("Param1", "Value 1");
+        workflow.addCustomParam("Param 2", "Value 2");
 
         return workflow;
     }
