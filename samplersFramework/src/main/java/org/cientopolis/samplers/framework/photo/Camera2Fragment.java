@@ -296,7 +296,7 @@ public class Camera2Fragment extends Fragment {
                 if(imageReader != null){
                     imageReader = null;
                 }
-                imageReader = ImageReader.newInstance(/*largest.getWidth(), largest.getHeight()*/600,800, ImageFormat.JPEG, /*maxImages*/2);
+                imageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight() /*600,800*/, ImageFormat.JPEG, /*maxImages*/ 2);
                 imageReader.setOnImageAvailableListener(onImageAvailableListener, backgroundHandler);
 
                 // Find out if we need to swap dimension to get the preview size relative to sensor coordinate.
