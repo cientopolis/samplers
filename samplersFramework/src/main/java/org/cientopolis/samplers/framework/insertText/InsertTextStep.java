@@ -8,6 +8,8 @@ import org.cientopolis.samplers.framework.base.BaseStep;
 
 public class InsertTextStep extends BaseStep {
 
+    private static final String STEP_RESOURCE_NAME = "step_insert_text";
+
     private String textToShow;
     private String sampleText;
     private int maxLength;
@@ -45,6 +47,11 @@ public class InsertTextStep extends BaseStep {
 
     public InsertTextStep.InputType getInputType() {
         return inputType;
+    }
+
+    @Override
+    public String getStepResourceName() {
+        return STEP_RESOURCE_NAME;
     }
 
     @Override

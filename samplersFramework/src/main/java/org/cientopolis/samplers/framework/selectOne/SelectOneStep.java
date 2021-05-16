@@ -10,6 +10,8 @@ import java.util.ArrayList;
  */
 public class SelectOneStep extends BaseStep {
 
+    private static final String STEP_RESOURCE_NAME = "step_select_one";
+
     private ArrayList<SelectOneOption> optionsToSelect;
     private String title;
 
@@ -33,6 +35,11 @@ public class SelectOneStep extends BaseStep {
 
     public String getTitle() {
         return title;
+    }
+
+    @Override
+    public String getStepResourceName() {
+        return STEP_RESOURCE_NAME;
     }
 
     @Override

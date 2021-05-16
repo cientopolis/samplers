@@ -8,6 +8,8 @@ import org.cientopolis.samplers.framework.base.BaseStep;
 
 public class InsertTimeStep extends BaseStep {
 
+    private static final String STEP_RESOURCE_NAME = "step_insert_time";
+
     private String textToShow;
     private Integer nextStepId;
 
@@ -18,6 +20,11 @@ public class InsertTimeStep extends BaseStep {
         this.nextStepId = nextStepId;
     }
 
+
+    @Override
+    public String getStepResourceName() {
+        return STEP_RESOURCE_NAME;
+    }
 
     @Override
     public Integer getNextStepId() {

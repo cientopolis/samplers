@@ -8,6 +8,8 @@ import org.cientopolis.samplers.framework.base.BaseStep;
  */
 public class PhotoStep extends BaseStep {
 
+    private static final String STEP_RESOURCE_NAME = "step_photo";
+
     private String instructionsToShow;
     private Integer nextStepId;
 
@@ -20,6 +22,11 @@ public class PhotoStep extends BaseStep {
 
     public String getInstructionsToShow() {
         return instructionsToShow;
+    }
+
+    @Override
+    public String getStepResourceName() {
+        return STEP_RESOURCE_NAME;
     }
 
     @Override

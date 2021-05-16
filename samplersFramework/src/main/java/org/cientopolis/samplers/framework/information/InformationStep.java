@@ -8,6 +8,7 @@ import org.cientopolis.samplers.framework.base.BaseStep;
  */
 public class InformationStep extends BaseStep {
 
+    private static final String STEP_RESOURCE_NAME = "step_information";
     private Integer nextStepId;
     private String textToShow;
 
@@ -23,6 +24,11 @@ public class InformationStep extends BaseStep {
         return textToShow;
     }
 
+
+    @Override
+    public String getStepResourceName() {
+        return STEP_RESOURCE_NAME;
+    }
 
     @Override
     public Integer getNextStepId() {

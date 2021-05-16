@@ -25,6 +25,7 @@ import org.cientopolis.samplers.framework.StepFragment;
 import org.cientopolis.samplers.framework.StepFragmentInteractionListener;
 import org.cientopolis.samplers.network.SamplesShipmentService;
 import org.cientopolis.samplers.persistence.DAO_Factory;
+import org.cientopolis.samplers.resources.ResourcesManager;
 
 
 import java.util.Date;
@@ -41,6 +42,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     protected Sample sample;
     protected Step actualStep;
     protected ImageView img_help;
+    private TextView lb_step_name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,9 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
 
         // Step count TextView
         lb_step_count = (TextView) findViewById(R.id.lb_step_count);
+
+        // Step name
+        lb_step_name = (TextView) findViewById(R.id.lb_step_name);
 
         // Help Button
         img_help = (ImageView) findViewById(R.id.img_take_sample_help);
@@ -188,6 +193,15 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
         this.actualStep = newActualStep;
 
         if (this.actualStep != null) {
+
+            // Step name label
+            String step_name = ResourcesManager.getStringResourceByName(getApplicationContext(),this.actualStep.getStepResourceName());
+
+            if ((step_name != null) && (lb_step_name != null))
+                lb_step_name.setText(step_name);
+
+
+            // Help button
             if (this.actualStep.getHelpResourseId() != null)
                 img_help.setVisibility(View.VISIBLE);
             else

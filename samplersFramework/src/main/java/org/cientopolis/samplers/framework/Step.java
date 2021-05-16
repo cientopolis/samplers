@@ -11,6 +11,13 @@ import java.io.Serializable;
 public interface Step extends Serializable{
 
     /**
+     * Returns the resource name of the step. It is used to show it to the user.
+     * NOTE: This resource name must exists in the strings.xml
+     * @return The step resource name
+     */
+    String getStepResourceName();
+
+    /**
      * Returns the Fragment class wich will be used to execute the Step
      * @param <T> T must extends StepFragment
      * @return The Fragment class

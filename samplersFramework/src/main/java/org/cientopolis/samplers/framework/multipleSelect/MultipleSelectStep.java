@@ -10,6 +10,8 @@ import java.util.ArrayList;
  */
 public class MultipleSelectStep extends BaseStep {
 
+    private static final String STEP_RESOURCE_NAME = "step_multiple_select";
+
     private ArrayList<MultipleSelectOption> optionsToSelect;
     private String title;
     private Integer nextStepId;
@@ -37,6 +39,11 @@ public class MultipleSelectStep extends BaseStep {
         return title;
     }
 
+
+    @Override
+    public String getStepResourceName() {
+        return STEP_RESOURCE_NAME;
+    }
 
     @Override
     public Integer getNextStepId() {

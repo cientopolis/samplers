@@ -9,6 +9,8 @@ import org.cientopolis.samplers.framework.base.BaseStep;
 
 public class LocationStep extends BaseStep {
 
+    private static final String STEP_RESOURCE_NAME = "step_location";
+
     private Integer nextStepId;
     private String textToShow;
 
@@ -23,6 +25,11 @@ public class LocationStep extends BaseStep {
     public String getTextToShow(){
 
         return textToShow;
+    }
+
+    @Override
+    public String getStepResourceName() {
+        return STEP_RESOURCE_NAME;
     }
 
     @Override

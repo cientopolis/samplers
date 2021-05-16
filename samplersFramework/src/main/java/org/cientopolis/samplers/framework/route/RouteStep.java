@@ -8,6 +8,8 @@ import org.cientopolis.samplers.framework.base.BaseStep;
 
 public class RouteStep extends BaseStep {
 
+    private static final String STEP_RESOURCE_NAME = "step_route";
+
     private Integer nextStepId;
     private String textToShow;
     private long interval;
@@ -20,6 +22,11 @@ public class RouteStep extends BaseStep {
         this.nextStepId = nextStepId;
         this.interval = 5000;
         this.mapZoom = 15;
+    }
+
+    @Override
+    public String getStepResourceName() {
+        return STEP_RESOURCE_NAME;
     }
 
     @Override

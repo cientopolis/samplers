@@ -1,6 +1,18 @@
 <resources>
     <string name="app_name">Samplers Application</string>
 
+    <!-- Steps -->
+    <string name="step_information">Información</string>
+    <string name="step_photo">Foto</string>
+    <string name="step_insert_date">Fecha</string>
+    <string name="step_insert_time">Hora</string>
+    <string name="step_insert_text">Texto</string>
+    <string name="step_location">Posición GPS</string>
+    <string name="step_multiple_select">Selccionar</string>
+    <string name="step_select_one">Seleccionar</string>
+    <string name="step_sound_record">Sonido</string>
+    <string name="step_route">Recorrido</string>
+
     <!-- Main Menu Options -->
     <string name="action_settings">Configuración</string>
     <string name="action_samples">Muestras</string>

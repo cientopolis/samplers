@@ -9,6 +9,8 @@ import org.cientopolis.samplers.framework.base.BaseStep;
 
 public class SoundRecordStep extends BaseStep {
 
+    private static final String STEP_RESOURCE_NAME = "step_sound_record";
+
     private String instructionsToShow;
     private Integer nextStepId;
 
@@ -17,6 +19,11 @@ public class SoundRecordStep extends BaseStep {
         this.instructionsToShow = anInstructionsToShow;
         this.nextStepId = nextStepId;
         stepFragmentClass = SoundRecordFragment.class;
+    }
+
+    @Override
+    public String getStepResourceName() {
+        return STEP_RESOURCE_NAME;
     }
 
     @Override
