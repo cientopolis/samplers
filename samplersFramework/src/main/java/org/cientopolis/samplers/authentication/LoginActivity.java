@@ -2,7 +2,7 @@ package org.cientopolis.samplers.authentication;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import org.cientopolis.samplers.R;
 
 public class LoginActivity extends Activity implements LoginFragmentInteractionListener {

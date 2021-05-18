@@ -1,7 +1,7 @@
 package org.cientopolis.samplers.framework;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import org.cientopolis.samplers.framework.selectOne.SelectOneStep;

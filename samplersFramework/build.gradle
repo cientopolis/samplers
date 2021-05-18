@@ -2,14 +2,14 @@ apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 30
-    buildToolsVersion '26.0.3'
+    buildToolsVersion '30.0.2'
     defaultConfig {
         //applicationId "org.cientopolis.samplers"
         minSdkVersion 17
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
         release {
@@ -24,14 +24,14 @@ dependencies {
     //compile 'com.github.bumptech.glide:glide:3.7.0'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
     // Android dependencies
-    implementation 'com.android.support:design:24.2.1'
-    implementation 'com.android.support:support-v4:24.2.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
 
     // Test dependencies
@@ -39,11 +39,11 @@ dependencies {
 
     // Libraries dependencies
     // Location
-    implementation ('com.google.android.gms:play-services-location:12.0.1')
+    implementation ('com.google.android.gms:play-services-location:18.0.0')
     // Maps
-    implementation ('com.google.android.gms:play-services-maps:12.0.1')
+    implementation ('com.google.android.gms:play-services-maps:17.0.1')
     // Authentication with Google
-    implementation ('com.google.android.gms:play-services-auth:12.0.1')
+    implementation ('com.google.android.gms:play-services-auth:19.0.0')
 
     // Added manually as libraries (.jar in libs folder)
     //compile 'com.google.code.gson:gson:2.8.0'

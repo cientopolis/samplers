@@ -69,7 +69,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         workflow.addStep(new SelectOneStep(2, optionsToSelect2, "¿Quiere sacar una foto?"));
 
         // PhotoStep
-        PhotoStep photoStep = new PhotoStep(3, "Saque una foto de su gato",null);
+        PhotoStep photoStep = new PhotoStep(3, "Saque una foto de su gato",5);
         // set help resource
         photoStep.setHelpResourseId(R.raw.photohelp);
         workflow.addStep(photoStep);

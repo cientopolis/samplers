@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.media.MediaRecorder;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import org.cientopolis.samplers.persistence.MultimediaIOManagement;

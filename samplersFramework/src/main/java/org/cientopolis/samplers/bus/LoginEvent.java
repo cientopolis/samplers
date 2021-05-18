@@ -1,6 +1,6 @@
 package org.cientopolis.samplers.bus;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import org.cientopolis.samplers.authentication.User;
 
