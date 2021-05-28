@@ -13,7 +13,6 @@ import java.io.Serializable;
 public abstract class BaseStep implements Step, Serializable {
     protected Class stepFragmentClass;
     protected int id;
-    protected StepResult stepResult;
     protected Integer helpResourseId;
 
     public BaseStep(int id) {
@@ -37,23 +36,10 @@ public abstract class BaseStep implements Step, Serializable {
 
 
     @Override
-    public void setStepResult(StepResult stepResult) {
-        this.stepResult = stepResult;
-    }
-
-    @Override
-    public StepResult getStepResult() {
-        return stepResult;
-    }
-
-
-    @Override
     public String toString() {
         return this.getClass().getSimpleName() +"{" +
                 "id=" + id +
-                ", nextStepId=" + String.valueOf(getNextStepId()) +
                 ", stepFragmentClass=" + stepFragmentClass.getSimpleName() +
-                ", stepResult=" + stepResult +
                 '}';
     }
 

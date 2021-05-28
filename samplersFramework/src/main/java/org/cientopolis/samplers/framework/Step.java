@@ -40,23 +40,10 @@ public interface Step extends Serializable{
 
     /**
      * Returns the id of the next step. If it is null, the Workflow ends.
+     * @param stepResult the result of the execution of the Step
      * @return the id of the next step
      */
-    @Nullable Integer getNextStepId();
-
-
-    /**
-     * Sets the result of the execution of the Step
-     * @param stepResult the result of the execution of the Step
-     */
-    void setStepResult(StepResult stepResult);
-
-    /**
-     * Returns the result of the execution of the Step
-     * @return the result of the execution of the Step
-     */
-    StepResult getStepResult();
-
+    @Nullable Integer getNextStepId(StepResult stepResult);
 
     /**
      * Sets the resourse id of the html help file to show as help of the Step.

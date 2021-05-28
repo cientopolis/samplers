@@ -1,5 +1,6 @@
 package org.cientopolis.samplers.framework.multipleSelect;
 
+import org.cientopolis.samplers.framework.StepResult;
 import org.cientopolis.samplers.framework.base.BaseStep;
 
 
@@ -46,7 +47,7 @@ public class MultipleSelectStep extends BaseStep {
     }
 
     @Override
-    public Integer getNextStepId() {
+    public Integer getNextStepId(StepResult stepResult) {
         return nextStepId;
     }
 

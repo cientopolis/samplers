@@ -1,5 +1,6 @@
 package org.cientopolis.samplers.framework.photo;
 
+import org.cientopolis.samplers.framework.StepResult;
 import org.cientopolis.samplers.framework.base.BaseStep;
 
 
@@ -30,7 +31,7 @@ public class PhotoStep extends BaseStep {
     }
 
     @Override
-    public Integer getNextStepId() {
+    public Integer getNextStepId(StepResult stepResult) {
         return nextStepId;
     }
 

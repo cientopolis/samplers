@@ -1,5 +1,6 @@
 package org.cientopolis.samplers.framework.insertDate;
 
+import org.cientopolis.samplers.framework.StepResult;
 import org.cientopolis.samplers.framework.base.BaseStep;
 
 /**
@@ -27,7 +28,7 @@ public class InsertDateStep extends BaseStep {
     }
 
     @Override
-    public Integer getNextStepId() {
+    public Integer getNextStepId(StepResult stepResult) {
         return nextStepId;
     }
 

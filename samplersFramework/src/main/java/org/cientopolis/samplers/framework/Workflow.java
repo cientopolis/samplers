@@ -74,8 +74,8 @@ public class Workflow implements Serializable {
                 // TODO: For SelectOneStep test over all posible step results (all options to select)
                 //((SelectOneStep) step).getOptionsToSelect()
             }
-            else if ((step.getNextStepId() != null) && (steps.get(step.getNextStepId()) == null)) {
-                Log.e("Workflow","NextStepId="+String.valueOf(step.getNextStepId())+" of step id="+String.valueOf(step.getId())+" not found in the workflow");
+            else if ((step.getNextStepId(null) != null) && (steps.get(step.getNextStepId(null)) == null)) {
+                Log.e("Workflow","NextStepId="+String.valueOf(step.getNextStepId(null))+" of step id="+String.valueOf(step.getId())+" not found in the workflow");
                 ok = false;
             }
         }
@@ -106,13 +106,13 @@ public class Workflow implements Serializable {
      *
      * @return The next step in the workflow.
      */
-    public @Nullable Step nextStep() {
+    public @Nullable Step nextStep(StepResult stepResult) {
         Step step = null;
 
         if (this.actualStep == null)
             step = this.firstStep;
         else {
-            Integer nextStepId = this.actualStep.getNextStepId();
+            Integer nextStepId = this.actualStep.getNextStepId(stepResult);
             if (nextStepId != null) {
                 step = steps.get(nextStepId);
             }
@@ -173,8 +173,8 @@ public class Workflow implements Serializable {
      * Check if the workflow is at the end
      * @return True if the workflow is positioned at the end, false otherwise
      */
-    public boolean isEnd() {
-        return (this.actualStep != null) && (this.actualStep.getNextStepId() == null);
+    public boolean isEnd(StepResult stepResult) {
+        return (this.actualStep != null) && (this.actualStep.getNextStepId(stepResult) == null);
     }
 
     /**

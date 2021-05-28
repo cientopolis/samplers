@@ -1,5 +1,6 @@
 package org.cientopolis.samplers.framework.information;
 
+import org.cientopolis.samplers.framework.StepResult;
 import org.cientopolis.samplers.framework.base.BaseStep;
 
 
@@ -31,7 +32,7 @@ public class InformationStep extends BaseStep {
     }
 
     @Override
-    public Integer getNextStepId() {
+    public Integer getNextStepId(StepResult stepResult) {
         return nextStepId;
     }
 

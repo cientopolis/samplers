@@ -82,7 +82,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
             if (AuthenticationManager.isAuthenticationEnabled() && (AuthenticationManager.getUser(getApplicationContext()) == null))
                 login();
             else
-                nextStep();
+                nextStep(null);
         }
 
         //refreshStepStateOnScreen();
@@ -135,10 +135,10 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
         }
     }
 
-    private void nextStep() {
+    private void nextStep(StepResult stepResult) {
         if (workflow != null) {
-            if (!workflow.isEnd()) {
-                setActualStep(workflow.nextStep());
+            if (!workflow.isEnd(stepResult)) {
+                setActualStep(workflow.nextStep(stepResult));
 
                 FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
@@ -218,11 +218,10 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     public void onStepFinished(StepResult stepResult) {
         Log.e("onStepFinished","actualStep:"+actualStep);
 
-        actualStep.setStepResult(stepResult);
         sample.addStepResult(stepResult);
 
         // go to the next step
-        nextStep();
+        nextStep(stepResult);
     }
 
     @Override
@@ -245,7 +244,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
     @Override
     public void onLogin(@Nullable User user) {
         if ((user != null) || (AuthenticationManager.isAuthenticationOptional())) {
-            nextStep();
+            nextStep(null);
         }
     }
 

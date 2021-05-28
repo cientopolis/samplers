@@ -1,6 +1,7 @@
 package org.cientopolis.samplers.framework.soundRecord;
 
 
+import org.cientopolis.samplers.framework.StepResult;
 import org.cientopolis.samplers.framework.base.BaseStep;
 
 /**
@@ -27,7 +28,7 @@ public class SoundRecordStep extends BaseStep {
     }
 
     @Override
-    public Integer getNextStepId() {
+    public Integer getNextStepId(StepResult stepResult) {
         return nextStepId;
     }
 

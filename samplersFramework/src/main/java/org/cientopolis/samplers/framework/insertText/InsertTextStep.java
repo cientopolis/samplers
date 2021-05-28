@@ -1,5 +1,6 @@
 package org.cientopolis.samplers.framework.insertText;
 
+import org.cientopolis.samplers.framework.StepResult;
 import org.cientopolis.samplers.framework.base.BaseStep;
 
 /**
@@ -55,7 +56,7 @@ public class InsertTextStep extends BaseStep {
     }
 
     @Override
-    public Integer getNextStepId() {
+    public Integer getNextStepId(StepResult stepResult) {
         return nextStepId;
     }
 
