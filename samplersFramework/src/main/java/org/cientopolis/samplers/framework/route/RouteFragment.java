@@ -210,7 +210,7 @@ public class RouteFragment extends StepFragment {
 
     @Override
     protected StepResult getStepResult() {
-        return new RouteStepResult(getStep().getId(), mRoute);
+        return new RouteStepResult(getStep(), mRoute);
     }
 
 

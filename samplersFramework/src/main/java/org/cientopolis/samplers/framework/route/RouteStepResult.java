@@ -2,6 +2,7 @@ package org.cientopolis.samplers.framework.route;
 
 import android.location.Location;
 
+import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.StepResult;
 import org.cientopolis.samplers.framework.base.BaseStepResult;
 
@@ -16,8 +17,8 @@ public class RouteStepResult extends BaseStepResult {
 
     private List<Location> route;
 
-    public RouteStepResult(int stepId, List<Location> route) {
-        super(stepId);
+    public RouteStepResult(Step step, List<Location> route) {
+        super(step);
         this.route = route;
     }
 

@@ -21,11 +21,11 @@ public class PhotoStepResult extends BaseStepResult {
     /**
      * Constructor.
      *
-     * @param stepId The id of the {@link Step} that generated the StepResult.
+     * @param step The id of the {@link Step} that generated the StepResult.
      * @param imageFileName The filename of the photo file
      */
-    public PhotoStepResult(int stepId, String imageFileName) {
-        super(stepId);
+    public PhotoStepResult(Step step, String imageFileName) {
+        super(step);
         this.imageFileName = imageFileName;
     }
 

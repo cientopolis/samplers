@@ -11,15 +11,15 @@ public abstract class BaseStepResult implements StepResult {
     /**
      * The id of the {@link Step} that generated the StepResult.
      */
-    private int stepId;
+    private Step step;
 
     /**
      * Constructor.
      *
-     * @param stepId The id of the {@link Step} that generated the StepResult.
+     * @param step the {@link Step} that generated the StepResult.
      */
-    public BaseStepResult(int stepId) {
-        this.stepId = stepId;
+    public BaseStepResult(Step step) {
+        this.step = step;
     }
 
     /**
@@ -28,8 +28,8 @@ public abstract class BaseStepResult implements StepResult {
      * @return The id of the {@link Step} that generated the {@link StepResult}.
      */
     @Override
-    public int getStepId() {
-        return stepId;
+    public Step getStep() {
+        return step;
     }
 
 

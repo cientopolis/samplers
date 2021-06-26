@@ -12,11 +12,11 @@ public interface StepResult extends Serializable {
 
 
     /**
-     * Returns the id of the {@link Step} that generated the {@link StepResult}.
+     * Returns the {@link Step} that generated the {@link StepResult}.
      *
-     * @return The id of the {@link Step} that generated the {@link StepResult}.
+     * @return the {@link Step} that generated the {@link StepResult}.
      */
-    int getStepId();
+    Step getStep();
 
 
     /**

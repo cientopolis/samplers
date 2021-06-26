@@ -69,7 +69,7 @@ public class InsertTimeFragment extends StepFragment {
 
         GregorianCalendar calendar =new GregorianCalendar(0,0,0,hour, minute,0);
 
-        return new InsertTimeStepResult(getStep().getId(),calendar.getTime());
+        return new InsertTimeStepResult(getStep(),calendar.getTime());
     }
 
 }

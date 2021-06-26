@@ -170,7 +170,7 @@ public class TakeSampleActivity extends Activity implements StepFragmentInteract
                 sample.setEndDateTime(new Date());
 
                 // Save the sample localy
-                DAO_Factory.getSampleDAO(getApplicationContext()).save(sample);
+                DAO_Factory.getSampleDAO(getApplicationContext()).insert(sample);
 
                 // try to send sample
                 checkToSendSample();

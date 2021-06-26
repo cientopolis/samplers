@@ -63,7 +63,7 @@ public class InsertDateFragment extends StepFragment {
         GregorianCalendar calendar =new GregorianCalendar(datePicker.getYear(),
                 datePicker.getMonth(),datePicker.getDayOfMonth());
 
-        return new InsertDateStepResult(getStep().getId(),calendar.getTime());
+        return new InsertDateStepResult(getStep(),calendar.getTime());
     }
 
 

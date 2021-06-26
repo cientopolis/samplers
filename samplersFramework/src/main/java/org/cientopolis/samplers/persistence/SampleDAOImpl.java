@@ -123,7 +123,6 @@ class SampleDAOImpl implements SampleDAO {
 
     }
 
-    @Override
     public Long save(Sample sample) {
         Log.e("SampleDAOImpl", "Saving sample: "+sample.toString());
 
@@ -137,6 +136,8 @@ class SampleDAOImpl implements SampleDAO {
 
         Gson gson = GsonProvider.newGsonInstance(); //new Gson();
         String jsonObject = gson.toJson(sample);
+
+        Log.e("SampleDAOImpl", "Sample JSON: "+jsonObject);
 
         FileOutputStream outputStream;
 
@@ -229,18 +230,28 @@ class SampleDAOImpl implements SampleDAO {
 
 
     @Override
-    public boolean delete(Sample sample) {
-        Boolean ok = false;
+    public Long insert(Sample sample) {
+        return save(sample);
+    }
+
+    @Override
+    public Long update(Sample sample) {
+        return save(sample);
+    }
+
+    @Override
+    public void delete(Sample sample) {
+
         try {
             File sampleDir = getSampleDir(myContext,sample);
             //deletes all contents before deleting folder
             deleteRecursive(sampleDir);
-            ok = true;
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Log.e("SampleDAOImpl", "delete sample complete + ok = "+String.valueOf(ok));
-        return ok;
+        Log.e("SampleDAOImpl", "delete sample complete");
+
     }
 
     //helper function

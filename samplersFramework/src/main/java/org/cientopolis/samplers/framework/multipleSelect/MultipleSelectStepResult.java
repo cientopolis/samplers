@@ -22,11 +22,11 @@ public class MultipleSelectStepResult extends BaseStepResult {
     /**
      * Constructor.
      *
-     * @param stepId The id of the {@link Step} that generated the StepResult.
+     * @param step The id of the {@link Step} that generated the StepResult.
      * @param selectedOptions The list of the selected options.
      */
-    public MultipleSelectStepResult(int stepId, List<MultipleSelectOption> selectedOptions) {
-        super(stepId);
+    public MultipleSelectStepResult(Step step, List<MultipleSelectOption> selectedOptions) {
+        super(step);
         this.selectedOptions = selectedOptions;
     }
 

@@ -12,9 +12,9 @@ public class InformationStepResult extends BaseStepResult {
     /**
      * Constructor.
      *
-     * @param stepId The id of the {@link Step} that generated the StepResult.
+     * @param step The id of the {@link Step} that generated the StepResult.
      */
-    public InformationStepResult(int stepId) {
-        super(stepId);
+    public InformationStepResult(Step step) {
+        super(step);
     }
 }

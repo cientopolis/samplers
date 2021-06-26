@@ -24,12 +24,12 @@ public class LocationStepResult extends BaseStepResult {
     /**
      * Constructor.
      *
-     * @param stepId The id of the {@link Step} that generated the StepResult.
+     * @param step The id of the {@link Step} that generated the StepResult.
      * @param latitude The latitude of the position collected.
      * @param longitude The longitude of the position collected.
      */
-    public LocationStepResult(int stepId, double latitude, double longitude) {
-        super(stepId);
+    public LocationStepResult(Step step, double latitude, double longitude) {
+        super(step);
         this.latitude = latitude;
         this.longitude = longitude;
     }

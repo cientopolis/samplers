@@ -3,6 +3,7 @@ package org.cientopolis.samplers.persistence.gson;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.StepResult;
 
 /**
@@ -13,10 +14,11 @@ public abstract class GsonProvider {
 
     public static Gson newGsonInstance() {
 
-        Gson gson = new GsonBuilder().registerTypeAdapter(StepResult.class, new InterfaceAdapter<StepResult>())
+        return new GsonBuilder()
+                .registerTypeAdapter(StepResult.class, new InterfaceAdapter<StepResult>())
+                .registerTypeAdapter(Step.class, new InterfaceAdapter<Step>())
+                .registerTypeAdapter(Class.class, new ClassAdapter())
                 .create();
-
-        return gson;
     }
 
 }

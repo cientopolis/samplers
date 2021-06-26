@@ -8,18 +8,18 @@ import org.cientopolis.samplers.framework.selectOne.SelectOneOption;
 import org.cientopolis.samplers.framework.selectOne.SelectOneStep;
 import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.Workflow;
-import org.junit.Test;
+//import org.junit.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
+//import static org.junit.Assert.assertEquals;
 
 /**
  * Created by lilauth on 3/14/17.
  */
 
 public class SamplersModelUnitTest {
-
+/*
     private MultipleSelectStep multipleSelectStep;
 
     @Test
@@ -77,7 +77,7 @@ public class SamplersModelUnitTest {
         assertEquals(5, selectOneStep.getId());
     }
 
-
+*/
 
 
 

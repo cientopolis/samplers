@@ -49,7 +49,7 @@ public class InformationFragment extends StepFragment {
     @Override
     protected StepResult getStepResult() {
 
-        return new InformationStepResult(getStep().getId());
+        return new InformationStepResult(getStep());
     }
 
 

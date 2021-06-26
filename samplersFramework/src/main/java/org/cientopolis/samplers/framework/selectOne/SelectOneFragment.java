@@ -115,7 +115,7 @@ public class SelectOneFragment extends StepFragment {
 
     @Override
     protected StepResult getStepResult() {
-        SelectOneStepResult selectOneStepResult = new SelectOneStepResult(getStep().getId(),selectedOption);
+        SelectOneStepResult selectOneStepResult = new SelectOneStepResult(getStep(),selectedOption);
         return selectOneStepResult;
     }
 

@@ -22,11 +22,11 @@ public class InsertTimeStepResult extends BaseStepResult {
     /**
      * Constructor.
      *
-     * @param stepId The id of the {@link Step} that generated the StepResult.
+     * @param step The id of the {@link Step} that generated the StepResult.
      * @param selected_time The selected time.
      */
-    public InsertTimeStepResult(int stepId, Date selected_time) {
-        super(stepId);
+    public InsertTimeStepResult(Step step, Date selected_time) {
+        super(step);
         this.selected_time = selected_time;
     }
 

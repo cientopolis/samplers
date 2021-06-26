@@ -35,7 +35,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         super.onCreate(savedInstanceState);
 
         // Set the network configuration
-        NetworkConfiguration.setURL("http://192.168.0.10/samplers/upload.php");
+        NetworkConfiguration.setURL("https://192.168.0.10/samplers/upload.php");
         NetworkConfiguration.setPARAM_NAME_SAMPLE("sample");
         NetworkConfiguration.setPARAM_NAME_USER_ID("user_id");
         NetworkConfiguration.setPARAM_NAME_AUTHENTICATION_TYPE("authentication_type");
@@ -51,7 +51,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         Workflow workflow = new Workflow();
 
         // InformationStep
-        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",3));
+        workflow.addStep(new InformationStep(1, "Informacion de prueba para ver que se muestra bien",6));
 
         // Insert Time
         workflow.addStep(new InsertTimeStep(101, "Seleccione la Hora de la muestra",102));

@@ -1,5 +1,6 @@
 package org.cientopolis.samplers.framework.soundRecord;
 
+import org.cientopolis.samplers.framework.Step;
 import org.cientopolis.samplers.framework.StepResult;
 import org.cientopolis.samplers.framework.base.BaseStepResult;
 
@@ -11,8 +12,8 @@ public class SoundRecordStepResult extends BaseStepResult {
 
     private String soundFileName;
 
-    public SoundRecordStepResult(int stepId, String soundFileName) {
-        super(stepId);
+    public SoundRecordStepResult(Step step, String soundFileName) {
+        super(step);
         this.soundFileName = soundFileName;
     }
 

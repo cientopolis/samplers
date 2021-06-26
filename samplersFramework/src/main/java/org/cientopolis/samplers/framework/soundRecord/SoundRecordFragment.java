@@ -182,7 +182,7 @@ public class SoundRecordFragment extends StepFragment {
         if (cut != -1) {
             fileName = fileName.substring(cut + 1);
         }
-        return new SoundRecordStepResult(getStep().getId(),fileName);
+        return new SoundRecordStepResult(getStep(),fileName);
     }
 
 

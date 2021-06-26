@@ -191,7 +191,7 @@ public class LocationFragment extends StepFragment {
 
     @Override
     protected StepResult getStepResult() {
-        return new LocationStepResult(getStep().getId(),mLocation.getLatitude(), mLocation.getLongitude());
+        return new LocationStepResult(getStep(),mLocation.getLatitude(), mLocation.getLongitude());
     }
 
 

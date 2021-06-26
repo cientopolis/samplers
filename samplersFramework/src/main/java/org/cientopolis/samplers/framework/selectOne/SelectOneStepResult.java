@@ -21,11 +21,11 @@ public class SelectOneStepResult extends BaseStepResult {
     /**
      * Constructor.
      *
-     * @param stepId The id of the {@link Step} that generated the StepResult.
+     * @param step The id of the {@link Step} that generated the StepResult.
      * @param selectedOption The selected option.
      */
-    public SelectOneStepResult(int stepId, SelectOneOption selectedOption) {
-        super(stepId);
+    public SelectOneStepResult(Step step, SelectOneOption selectedOption) {
+        super(step);
         this.selectedOption = selectedOption;
     }
 

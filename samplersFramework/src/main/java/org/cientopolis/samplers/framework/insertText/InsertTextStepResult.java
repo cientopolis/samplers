@@ -20,11 +20,11 @@ public class InsertTextStepResult extends BaseStepResult {
     /**
      * Constructor.
      *
-     * @param stepId The id of the {@link Step} that generated the StepResult.
+     * @param step The id of the {@link Step} that generated the StepResult.
      * @param insertedText The inserted text.
      */
-    public InsertTextStepResult(int stepId, String insertedText){
-        super(stepId);
+    public InsertTextStepResult(Step step, String insertedText){
+        super(step);
         this.insertedText = insertedText;
     }
 

@@ -122,7 +122,7 @@ public class MultipleSelectFragment extends StepFragment {
 
     @Override
     protected StepResult getStepResult() {
-        return new MultipleSelectStepResult(getStep().getId(), selectedOptions);
+        return new MultipleSelectStepResult(getStep(), selectedOptions);
     }
 
 
