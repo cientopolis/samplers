@@ -3,44 +3,42 @@ package org.cientopolis.samplers.persistence.gson;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-
 import java.lang.reflect.Type;
+
+
+/**
+ * Created by Xavier on 26/06/2021.
+ * Serializer/Deserializer class for StepFragmentClass (contained in Step)
+ * Solution adapted from {@link InterfaceAdapter}
+ */
 
 public class ClassAdapter implements JsonSerializer<Class>, JsonDeserializer<Class> {
 
-
     @Override
     public Class deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-        /*final JsonObject wrapper = (JsonObject) jsonElement;
-        final JsonElement typeName = get(wrapper, "type");
-        final JsonElement data = get(wrapper, "data");
-        final Type actualType = typeForName(typeName);*/
-        return  null; //jsonDeserializationContext.deserialize(data, actualType);
+        Class returnClass;
+
+        // Look up for the class with the name serialized
+        try {
+            String className = jsonElement.getAsString();
+            returnClass =  Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace(); // for debug
+            returnClass = null; // no class found, null returned
+        }
+
+        return  returnClass;
     }
 
     @Override
     public JsonElement serialize(Class aClass, Type type, JsonSerializationContext jsonSerializationContext) {
-        final JsonObject wrapper = new JsonObject();
-        wrapper.addProperty("type", "Class");
-        wrapper.add("data", jsonSerializationContext.serialize(aClass.getName()));
-        return null; //wrapper;
+
+        // Serialize only de class name as String
+        return jsonSerializationContext.serialize(aClass.getName());
     }
 
-    private Type typeForName(final JsonElement typeElem) {
-        try {
-            return Class.forName(typeElem.getAsString());
-        } catch (ClassNotFoundException e) {
-            throw new JsonParseException(e);
-        }
-    }
-
-    private JsonElement get(final JsonObject wrapper, String memberName) {
-        final JsonElement elem = wrapper.get(memberName);
-        if (elem == null) throw new JsonParseException("no '" + memberName + "' member found in what was expected to be an interface wrapper [ClassAdapter]");
-        return elem;
-    }
 }

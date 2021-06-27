@@ -42,14 +42,6 @@ dependencies {
     //    exclude group: 'com.android.support', module: 'support-annotations'
     //})
 
-    // Room
-/*
-    def room_version = "2.3.0"
-    implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
-    testImplementation "androidx.room:room-testing:$room_version"
-
- */
 
     // Libraries dependencies
     // Location

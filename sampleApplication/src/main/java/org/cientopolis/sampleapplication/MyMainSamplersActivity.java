@@ -35,7 +35,7 @@ public class MyMainSamplersActivity  extends SamplersMainActivity {
         super.onCreate(savedInstanceState);
 
         // Set the network configuration
-        NetworkConfiguration.setURL("https://192.168.0.10/samplers/upload.php");
+        NetworkConfiguration.setURL("http://192.168.0.10/samplers/upload.php");
         NetworkConfiguration.setPARAM_NAME_SAMPLE("sample");
         NetworkConfiguration.setPARAM_NAME_USER_ID("user_id");
         NetworkConfiguration.setPARAM_NAME_AUTHENTICATION_TYPE("authentication_type");
