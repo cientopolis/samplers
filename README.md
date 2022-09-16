@@ -1,7 +1,6 @@
 # Samplers
 Samplers is a framework to build mobile citizen science applications.
 
-# UNDER DEVELOPMENT v0.7
 
 ## Steps to use the framework
 
